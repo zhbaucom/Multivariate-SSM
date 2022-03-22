@@ -1,0 +1,333 @@
+```{r}
+library(mvtnorm)
+library(tidyverse)
+```
+
+
+```{r}
+pdmat <- function(x)Matrix::nearPD(x)$mat
+#Forward filtering backward sampling.
+# y = y[[2]]; V = V;W = W;m0 = m0;C0 = C0; timeDiff = timeDiff
+ffbs.joint = function(y,V,W,m0,C0, timeDiff){
+  T = ncol(y); n = nrow(y)
+  a = matrix(0, n, T); R = array(0, dim = c(n, cs, T)) 
+  m = matrix(0, n, T); C = array(0, dim = c(n, cs, T)) ; B = array(0, dim = c(n, cs, T-1))
+  H = array(0, dim = c(n, cs, T-1)); mm = matrix(0, n, T); CC = array(0, dim = c(n, cs, T))
+  x = matrix(0, n, T); llike = 0.0 
+  is.na.y <- is.na(y)
+  t <- 0
+  t <- t+1
+  for (t in 1:T){ 
+    if(t==1){
+      a[,1] = m0; R[,,1] = C0 + W
+    }else{
+      ##### NEEEEEDS incorporate uneven timeDiff
+      a[,t] = m[,t-1]; R[,,t] = C[,,t-1] + timeDiff * W
+    }
+    f = a[,t]
+    Q = R[,,t] + V 
+    A = t(solve(Q, R[,,t]))
+ 
+    
+    ######## NEEEEDS to let some outcomes be missing depedning on the iteration 
+    Av = ifelse(is.na(y[,t]), 0, A %*% (y[,t]-f))
+    m[,t] = a[,t]+Av 
+    # C[,,t] = R[,,t]-crossprod(A, Q) %*% A
+    C[,,t] = R[,,t]- A %*% R[,,t]
+    # C[,,t] = R[,,t]- R[,,t] %*% solve(Q) %*% R[,,t]
+    
+    if(t > 1){
+      B[,,t-1] = t(solve(R[,,t], C[,,t-1]))
+
+      # H[,,t-1] = C[,,t-1]-R[,,t] %*% crossprod(B[,,t-1]) 
+      H[,,t-1] = C[,,t-1]- B[,,t - 1] %*% tcrossprod(R[,,t],B[,,t - 1])
+    }
+  
+    # llike = llike + sum(dmvnorm(y[,t],f,(Q),log=TRUE), na.rm = TRUE) 
+  }
+  
+  # plot(alpha[1,])
+  # lines(m[1,], col = "red")
+  
+  
+  mm[,T] = m[,T]; CC[,,T] = C[,,T]
+  
+  ###### Deal with Unequal times
+  # C <- C * !is.na.y
+  # B <- B * !is.na.y[,-1]
+  
+  x[,T] = rmvnorm(1, mean = m[,T], sigma = (C[,,T]), checkSymmetry = FALSE) 
+  
+  
+  # x[,T] = m[,T]
+  t <- T-1
+  for (t in (T-1):1){ 
+    
+    # mm[,t] = m[,t] + solve(R[,,t+1]) %*% C[,,t] %*% (mm[,t+1]-a[,t+1])
+    # CC[,,t] = C[,,t] - solve(crossprod(R[,,t+1])) %*% crossprod(C[,,t])%*%(R[,,t+1]-CC[,,t+1])
+
+    
+    ## ADJUST WITH UNEQUAL TIMES>>>>>>>
+    ## MATRIX MIGHT NOT BE SYMMETRIC , checkSymmetry = FALSE
+    x[,t] = rmvnorm(1,m[,t]+B[,,t]%*%(x[,t+1]-a[,t+1]),(H[,,t] + C[,,t] * (H[,,t] == 0)), checkSymmetry = FALSE)
+  
+  } 
+  
+
+
+return(list(x=x,m=m,C=C,mm=mm,CC=CC,llike=llike))
+}
+
+
+
+```
+
+
+```{r}
+#Forward filtering backward sampling.
+# y = y[[2]]; V = V;W = W;m0 = m0;C0 = C0; timeDiff = timeDiff
+ffbs.joint = function(y,V,W,m0,C0, timeDiff){
+  T = ncol(y); n = nrow(y)
+  a = matrix(0, n, T); R = array(0, dim = c(n, cs, T)) 
+  m = matrix(0, n, T); C = array(0, dim = c(n, cs, T)) ; B = array(0, dim = c(n, cs, T-1))
+  H = array(0, dim = c(n, cs, T-1)); mm = matrix(0, n, T); CC = array(0, dim = c(n, cs, T))
+  x = matrix(0, n, T); llike = 0.0 
+  is.na.y <- is.na(y)
+  t <- 0
+  t <- t+1
+  for (t in 1:T){ 
+    if(t==1){
+      a[,1] = m0; R[,,1] = C0 + W
+    }else{
+      ##### NEEEEEDS incorporate uneven timeDiff
+      a[,t] = m[,t-1]; R[,,t] = C[,,t-1] + timeDiff * W
+    }
+    f = a[,t]
+    Q = R[,,t] + V 
+    A = R[,,t] %*% solve(Q)
+ 
+    
+    ######## NEEEEDS to let some outcomes be missing depedning on the iteration 
+    # Av = ifelse(is.na(y[,t]), 0, A %*% (y[,t]-f))
+    Av = A %*% (y[,t]-f)
+    m[,t] = a[,t]+Av 
+    # C[,,t] = R[,,t]-crossprod(A, Q) %*% A
+    C[,,t] = R[,,t]- A %*% R[,,t]
+    # C[,,t] = R[,,t]- R[,,t] %*% solve(Q) %*% R[,,t]
+    
+    if(t > 1){
+      # B[,,t-1] = t(solve(R[,,t], C[,,t-1]))
+      B[,,t-1] = C[,,t-1] %*% solve(R[,,t])
+
+      # H[,,t-1] = C[,,t-1]-R[,,t] %*% crossprod(B[,,t-1]) 
+      H[,,t-1] = C[,,t-1]- B[,,t - 1] %*% tcrossprod(R[,,t],B[,,t - 1])
+    }
+  
+    # llike = llike + sum(dmvnorm(y[,t],f,(Q),log=TRUE), na.rm = TRUE) 
+  }
+  
+  # plot(alpha[1,])
+  # lines(m[1,], col = "red")
+  
+  
+  mm[,T] = m[,T]; CC[,,T] = C[,,T]
+  
+  ###### Deal with Unequal times
+  # C <- C * !is.na.y
+  # B <- B * !is.na.y[,-1]
+  
+  x[,T] = rmvnorm(1, mean = m[,T], sigma = (C[,,T]), checkSymmetry = FALSE) 
+  
+  
+  # x[,T] = m[,T]
+  t <- T-1
+  for (t in (T-1):1){ 
+    
+    # mm[,t] = m[,t] + solve(R[,,t+1]) %*% C[,,t] %*% (mm[,t+1]-a[,t+1])
+    # CC[,,t] = C[,,t] - solve(crossprod(R[,,t+1])) %*% crossprod(C[,,t])%*%(R[,,t+1]-CC[,,t+1])
+
+    
+    ## ADJUST WITH UNEQUAL TIMES>>>>>>>
+    ## MATRIX MIGHT NOT BE SYMMETRIC , checkSymmetry = FALSE
+    # x[,t] = rmvnorm(1,m[,t]+B[,,t]%*%(x[,t+1]-a[,t+1]),(H[,,t] + C[,,t] * (H[,,t] == 0)), checkSymmetry = FALSE)
+   x[,t] = rmvnorm(1,mean = m[,t]+B[,,t]%*%(x[,t+1]-a[,t+1]), sigma = H[,,t], checkSymmetry = FALSE)
+  } 
+  
+
+
+return(list(x=x,m=m,C=C,mm=mm,CC=CC,llike=llike))
+}
+
+
+```
+
+
+
+```{r}
+numits <- 1000
+TT <- T <- 8
+cs <- 2
+n <- 100
+sigeta <- c(15, 10)
+# Sigma <- matrix(c(1, .2, .2, 1), 2)
+# A <- matrix(runif(cs^2)*2-1, ncol=cs)
+# Sig2 <- 4 * crossprod(A)
+
+# Sig2 <- matrix(c(25, 5, 5, 20), 2)
+Sig2 <- matrix(c(25, 0, 0, 20), 2)
+Sigma <-  sigeta * diag(cs)
+
+
+etas <- rmvnorm(TT * n, sigma = Sigma)
+etaInd <- sort(rep(1:n, TT))
+
+SubEtas <- lapply(1:n, function(x){
+  etas[etaInd == x,]
+})
+
+alpha <- lapply(SubEtas, function(x){
+  apply(x, 2, cumsum) %>% t()
+})
+
+
+y <- lapply(alpha, function(x){
+  x + t(rmvnorm(TT, sigma = Sig2))
+})
+
+# W = Sigma
+W = Sigma
+V = Sig2
+timeDiff = 1
+m0 <- 0 
+C0 <- diag(1, cs)
+
+
+c0 <- 0.01
+d0 <- 0.01
+###Need another way to set "TT", not ncol (y)
+prior.nu <- cs + 1
+prior.Gamma <- diag(1, cs)
+
+
+
+
+vcovWish <- array(NA, dim = c(cs, cs, numits))
+blist <- list()
+minimizer <- numeric(length(numits))
+sigma2.eta.Track <- matrix(NA, nrow = numits, ncol = cs)
+
+
+# alist <- list()
+for(It in 1:numits){
+  bout <- lapply(y, function(yeach){
+    ffbs.joint(y = yeach, V = V,W = W,m0 = m0,C0 = C0, timeDiff = timeDiff)$x
+  })
+  
+  ind <- 1
+  ####### Sigma epsilon
+  # fp <- lapply(1:n, function(ind){
+  #   adif <- y[[ind]] - bout[[ind]]
+  # 
+  #   alphabar <- apply(adif, 2, function(x)x - rowMeans(adif))
+  # 
+  #   (TT-1) * cov(t(alphabar))
+  # 
+  # }) %>%
+  #   Reduce("+", .)
+
+  fp <- lapply(1:n, function(ind){
+    adif <- y[[ind]] - bout[[ind]]
+    tcrossprod(adif)
+  }) %>%
+    Reduce("+", .)
+
+  V.star <- vcovWish[,,It] <-  cIRT::riwishart(prior.nu + n * (TT), fp + prior.Gamma)
+  
+  V <- V.star
+  
+  ####### Sigma eta
+  aout <- bout[[2]]
+  
+  ad <- lapply(bout, function(aout){
+    apply(aout, 1, diff)^2
+  }) %>%
+    do.call("rbind", .) %>%
+    apply(2, function(x)sum((x)))
+  
+  sigma2.eta.star <- sigma2.eta.Track[It,] <- 1/sapply(ad, function(x) rgamma(1, ((n*(TT-1))/2 +c0), d0+x/2))
+  
+  # ads <- lapply(bout, function(aout){
+  #   apply(aout, 1, diff)
+  # }) %>%
+  # unlist()
+  # ad <- sum((ads - mean(ads))^2)
+  # 
+  # sigma2.eta.Track[It,] <- sigma2.eta.star <- 1/rgamma(1, ((n*TT*cs)/2 +c0), d0+ad/2)
+
+ W <- sigma2.eta.star * diag(cs)
+  
+  
+  
+
+}
+
+Sig2
+
+apply(vcovWish, 1:2, mean)
+
+Sig2 > apply(vcovWish[,,], 1:2, quantile, .025) & Sig2 < apply(vcovWish[,,], 1:2, quantile, .975)
+
+
+
+
+
+plot(vcovWish[1,1,])
+abline(h = Sig2[1,1], col = "red")
+
+plot(vcovWish[2,1,])
+abline(h = Sig2[2,1], col = "red")
+
+plot(vcovWish[2,2,])
+abline(h = Sig2[2,2], col = "red")
+
+
+CI <- apply(sigma2.eta.Track, 2, quantile, c(.025, 0.975))
+CI[1,] < sigeta & CI[2,] > sigeta
+
+plot(sigma2.eta.Track[,1])
+abline(h = sigeta[1], col = "red")
+
+plot(sigma2.eta.Track[,2])
+abline(h = sigeta[2], col = "red")
+
+
+
+```
+
+
+
+
+
+```{r}
+sub <- 2
+param <- 2
+Time <- 1
+divide <- function(x, d) x/d
+
+
+posd <- map(blist, sub) %>%
+  map(~.x[param,]) %>%
+  map_dbl(Time)
+
+
+var(posd)
+Sigma[1,1]
+
+plot(posd)
+abline(h = mean(posd), col = "red")
+abline(h = alpha[[sub]][param, Time])
+```
+
+
+
+

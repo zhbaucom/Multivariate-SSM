@@ -1,0 +1,357 @@
+---
+output:
+  bookdown::pdf_document2
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{amsmath}
+- \usepackage{algorithm,algorithmic}
+---
+
+
+For this project, we fit a joint model using the SSM framework. This allows us to measure similarity in underlying constructs for different cognitive tests and compare the effect of some variable across different tests e.g. does APOE have a significantly different effect on cognitive trajectory for the Trails A and Trails B tests? Let $y_{ijk}$ represent the outcome of cognitive test $k\in \{1, 2, 3, ..., K\}$ at time $j\in \{1, 2, 3, ..., J\}$ for subject $i \in \{1, 2, 3, ..., N\}$. The model can then be formulated as,
+
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+\vdots\\
+y_{ijK}
+\end{bmatrix}
+&= \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta^{(1)}}\\
+\boldsymbol{x_{ij}\beta^{(2)}}\\
+\vdots\\
+\boldsymbol{x_{ij}\beta^{(K)}} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix} 
+\sim N(0, \Sigma_\varepsilon
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\vdots\\
+\alpha_{i(j-1)K}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix} \sim N(0, \delta_{ij}\Sigma_\eta)
+\end{aligned}
+\end{equation*}
+
+
+In this model representation, $\Sigma_\varepsilon \in R^{KxK}$ and $\Sigma_\eta \in R^{KxK}$. Utilizing $\Sigma_\varepsilon$ and $\Sigma_\eta$ allows for estimation of correlation between cognitive tests. However, we must make restrictions on the possible values of the matrices for model identifiability. We propose the use of two different models, 
+
+
+Model 1:
+
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\eta =
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & \sigma^{2(1,2)}_\varepsilon & \cdots & \sigma^{2(1, K)}_\varepsilon\\
+\sigma^{2(1,2)}_\varepsilon & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\varepsilon & & &\sigma^{2(K)}_\varepsilon
+\end{bmatrix},
+\ \ \ 
+\Sigma_\eta = 
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & 0 & \cdots & 0\\
+0 & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+0 & & &\sigma^{2(K)}_\eta
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+Model 2:
+
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & 0 & \cdots & 0\\
+0 & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+0 & & &\sigma^{2(K)}_\varepsilon
+\end{bmatrix},
+\ \ \ 
+\Sigma_\eta =
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & \sigma^{2(1,2)} & \cdots & \sigma^{2(1, K)}_\eta\\
+\sigma^{2(1,2)}_\eta & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\eta & & &\sigma^{2(K)}_\eta
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+Both models of the correlation structure between the tests makes different assumptions regarding the underlying nature of the test. Model 1 assumes that any similarity we see in the cognitive scores for a given observation time is due to a correlated random effect on the day of the test. Model 2 makes the assumption that the underlying cognitive process is correlated between the tests across time.
+
+For both models we propose the use of Bayesian estimation to estimate all parameters of interest.
+
+
+Posterior of $\alpha$
+
+Largely the same from before [Paper1], we are able to run the Kalman Filter independently for each subject $i \in \{1, 2, ..., N\}$.
+
+\begin{algorithm}
+\caption{Kalman Filter and Smoother for Bayesian Estimation}\label{alg:bkfks}
+\textbf{Kalman Filter}\\ 
+For $j$ in $1, 2, ..., J$:
+\begin{enumerate}
+  \item {Predicted state:} $\boldsymbol{\alpha}_{ij|i(j-1)} = \boldsymbol{\alpha}_{i(j-1)|i(j-1)}$
+  \item {Predicted state variance:} $\boldsymbol{P_{ij|i(j-1)} = P_{i(j-1)|i(j-1)}} + \sigma^2_\eta$
+  \item {Kalman Gain:} $\boldsymbol{K_ij} = \boldsymbol{\frac{\boldsymbol{P}_{ij|i(j-1)}}{\boldsymbol{P}_{ij|i(j-1)} + \sigma^2_\varepsilon}}$
+  \item {Updated state estimate:} $\boldsymbol{\alpha}_{ij|ij} = \boldsymbol{\alpha}_{ij|i(j-1)} + \boldsymbol{K_ij} (\boldsymbol{\tilde y_ij- \alpha_{ij|i(j-1)}})$
+  \item {Updated state covariance:} $\boldsymbol{P_{ij|ij}} = (1-\boldsymbol{K_ij})\boldsymbol{P_{ij|i(j-1)}}$
+\end{enumerate}
+\textbf{Kalman Smoother}\\  
+For $j^*$ in J, J-1, ..., 1:
+\begin{enumerate}
+  \item Smoothed predicted state:  $\boldsymbol{\alpha}_{iJ|i(j^*-1)} =\boldsymbol{\alpha}_{i(j^*-1)|i(j^*-1)} + \boldsymbol{L}_{i(j^*-1)} (\boldsymbol{\alpha}_{ij^*|iJ} - \boldsymbol{\alpha}_{ij^*|i(j^*-1)})$
+  \item Smoothed predicted state variance:  $\boldsymbol{P_{i(j^*-1)|iJ}} = \boldsymbol{P_{i(j^*-1)|i(j^*-1)}} - \boldsymbol{L_{i(j^*-1)}^2 (P_{ij^*|iJ} -P_{ij^*|i(j^*-1)}})$
+\end{enumerate}
+Where $\boldsymbol{L_{i(j^*-1)} = P_{{i(j^*-1)}|{i(j^*-1)}}  P^{-1}_{ij^*|i(j^*-1)}}$.\\
+NOTE: The algorithm is run independently for each $i \in \{1, 2, ..., N\}$.
+\end{algorithm}
+
+
+
+
+
+Let $\psi = \{\Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta}\}$, the vector of the other unknown parameters. Also note, the $k$ index is dropped and all $k$-length parameters are now denoted as vectors. For the posterior of $\boldsymbol{\alpha}$ we seek to find the distribution defined by,
+
+
+
+\begin{equation*}
+\begin{aligned}
+P_\psi(\boldsymbol{\alpha}_{i(0:J)}|\boldsymbol{y}_{i(1:J)}) &=  P_\psi(\boldsymbol{\alpha}_{iJ}|\boldsymbol{y}_{i(1:J)})P_\psi(\boldsymbol{\alpha}_{i(J-1)}|\boldsymbol{\alpha}_{i(J)}, \boldsymbol{y}_{1:(J-1)}) ...  P_\psi(\boldsymbol{\alpha}_{i0}|\boldsymbol{\alpha}_{i1})
+\end{aligned}
+\end{equation*}
+
+
+Therefore we need the following densities for $j$ in $1, 2, ..., J-1$ and $i$ in $1, 2, ..., N$:
+
+
+\begin{equation*}
+\begin{aligned}
+P_\psi(\boldsymbol{\alpha}_{ij}|\boldsymbol{\alpha}_{i(j+1)}, \boldsymbol{y}_{i(1:j)}) \propto P_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{y}_{i(1:j)})P_\psi(\boldsymbol{\alpha}_{i(j+1)}| \boldsymbol{\alpha}_{ij})
+\end{aligned}
+\end{equation*}
+
+
+
+From the Kalman Filter we calculate $\boldsymbol{\alpha}_{ij}|\boldsymbol{y}_{i(1:j)} \sim N_\psi(\boldsymbol{\alpha}_{ij|ij}, \boldsymbol{P}_{ij|ij})$ and $\boldsymbol{\alpha}_{i(j+1)}|\boldsymbol{\alpha}_{ij} \sim N_\psi(\boldsymbol{\alpha}_{ij}, \Sigma_\eta)$. After combining the two densities $\boldsymbol{m}_{ij} = E_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)}) = \boldsymbol{\alpha}_{ij|ij} + \boldsymbol{L}_{ij} (\boldsymbol{\alpha}_{i(j+1)} - \boldsymbol{\alpha}_{i(j+1)|ij})$ and $\boldsymbol{R}_{ij} = \text{Var}_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)})= \boldsymbol{P}_{ij|ij} - \boldsymbol{L}_{ij}^2 \boldsymbol{P}_{i(j+1)|ij}$ [@shumway_stoffer_2017]. Because of normality, the posterior distribution for $\boldsymbol{\alpha}_{ij}$ is $N(\boldsymbol{m}_{ij}, \boldsymbol{R}_{ij})$.
+
+For the backward sampling procedure we start by sampling a $\boldsymbol{\alpha}_{iJ^*}$ from a $N_\psi(m_{iJ}, \boldsymbol{R}_{iJ})$, then setting $\boldsymbol{\alpha}_{iJ^*} = \boldsymbol{\alpha}_{iJ}$ for the calculation of $\boldsymbol{m}_{i(J-1)}$ to then sample $\boldsymbol{\alpha}_{i(J-1)}^*$ from a $N_\psi(\boldsymbol{m}_{i(J-1)}, \boldsymbol{R}_{i(J-1)})$. This process continues until a whole chain $\boldsymbol{\alpha}_{i(0:J)}^*$ has been sampled.
+
+Using Bayes rule, the $\beta$ posterior can be written as follows,
+
+
+\begin{equation*}
+\begin{aligned}
+P(\boldsymbol{\beta}|Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon) = \frac{P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta})P(\boldsymbol{\beta})}{P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon)}
+\end{aligned}
+\end{equation*}
+
+
+Next, we focus our attention on $P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta})$,
+
+
+\begin{equation*}
+\begin{aligned}
+P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) = &P(\boldsymbol{y}_1, ..., \boldsymbol{y}_J, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \Sigma_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \Sigma_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|{\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta)\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= &P(\Sigma_\varepsilon)P(\Sigma_\eta)\bigg(\prod^J_{k=0} P(\boldsymbol{\alpha}_k|\boldsymbol{\alpha}_{k-1},\Sigma_{\eta})\bigg) \prod^J_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \Sigma_\varepsilon, \boldsymbol{\beta})\\
+\propto & \prod^J_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \Sigma_\varepsilon, \boldsymbol{\beta})
+\end{aligned}
+\end{equation*}
+
+
+Due to independence from subject to subject we can write the -2 log likelihood as,
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) \propto & \sum^N_{i=1}\sum^T_{j=1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})' \Sigma_\varepsilon(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{\beta})\\
+\text{where,}\\
+y_j = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, \ \ \
+\alpha_j = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix}, \ \ \ &
+\boldsymbol{ \mathbb{X}}_{ij} = \begin{bmatrix}\boldsymbol{x}_{ij} & 0 & \dots & 0 \\ 0 & \boldsymbol{x}_{ij} \\ \vdots & & \ddots \\
+0 & & & \boldsymbol{x}_{ij}\end{bmatrix} \ \ \
+\beta = \begin{bmatrix}\boldsymbol{\beta}_1\\ \boldsymbol{\beta}_2 \\ \vdots \\ \boldsymbol{\beta}_K\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+Next, we write the -2 log likelihood in terms of $\beta$,
+
+
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta}) 
+\propto & \boldsymbol{\beta}'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij})\boldsymbol{\beta} -2\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta} 
+\end{aligned}
+\end{equation*}
+
+Similarly, the prior can be written in a similar format,
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(\boldsymbol{\beta}) &\propto 
+(\boldsymbol{\beta} - \theta)'\Sigma_{\beta}^{-1}(\boldsymbol{\beta} - \theta) \\
+&\propto \boldsymbol{\beta}'\Sigma_{\beta}^{-1}\boldsymbol{\beta} - 2\theta\Sigma_{\beta}^{-1}\boldsymbol{\beta}
+\end{aligned}
+\end{equation*}
+
+
+Combining the two we are able to get the proportionality of the posterior,
+
+
+\begin{equation*}
+\begin{aligned}
+&\beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij})\beta -2\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij}\beta + \beta'\Sigma_{\beta}^{-1}\beta - 2\theta\Sigma_{\beta}^{-1}\beta \\
+&= \beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1})\beta -2(\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}) \beta
+\end{aligned}
+\end{equation*}
+
+
+
+Which, after completing the square, has the form
+
+
+\begin{equation*}
+\begin{aligned}
+(\boldsymbol{\beta} - \boldsymbol{\Sigma}^{-1} B)'
+\boldsymbol{\Sigma}
+(\boldsymbol{\beta} - \boldsymbol{\Sigma}^{-1}B)
+\end{aligned}
+\end{equation*}
+
+
+
+Where, $B = \sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}$ and $\boldsymbol{\Sigma} = \sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1}p$.
+
+Thus, the posterior for $\beta$ has the following distribution,
+
+
+\begin{equation*}
+\boldsymbol{\beta}\sim N(\Sigma^{-1}B, \Sigma^{-1})
+\end{equation*}
+
+
+
+
+
+
+For the posterior of $\Sigma_\varepsilon$, if we assume the matrix is non-diagnol as in Model 1, then we give $\Sigma_\varepsilon$ an inverse-Wishart distribution.
+
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon &\sim \text{Inv-Wishart}_{\nu_0}(\Lambda_0)\\
+P(\Sigma_\varepsilon) &\propto |\Sigma_\varepsilon|^{-(\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0\Sigma_\varepsilon^{-1}))\\
+P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\varepsilon) &\propto |\Sigma_\varepsilon|^{-(NJ)/2}\text{exp}(-\sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})'\Sigma_\varepsilon^{-1}(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})/2 \\
+P(\Sigma_\varepsilon|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\varepsilon)P(\Sigma_\varepsilon) \\ &\propto |\Sigma_\varepsilon|^{-(NJ +\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0 + \sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})^2)\Sigma_\varepsilon^{-1})\\
+\Sigma_\varepsilon & \sim \text{Inv-Wishart}_{\nu_0 + NJ}(\Lambda_0+\sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})^2)
+\end{aligned}
+\end{equation*}
+
+The posterior for the diagnol matrix $\Sigma_\eta$ can be calculated independently for each test as was previously shown [Paper1] using the inverse-gamma for each test.
+
+
+
+On the other hand, if $\Sigma_\eta$ is non-diagonal as was shown in Model 2,
+
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\eta &\sim \text{Inv-Wishart}_{\nu_0}(\Lambda_0)\\
+P(\Sigma_\eta) &\propto |\Sigma_\eta|^{-(\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0\Sigma_\eta^{-1}))\\
+P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\eta) &\propto |\Sigma_\eta|^{-(N(J-1))/2}\text{exp}(-\sum^N_{i = 1}\sum^{J}_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})'\Sigma_\eta^{-1}(\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})/2 \\
+P(\Sigma_\eta|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\eta)P(\Sigma_\eta) \\ &\propto |\Sigma_\eta|^{-(N(J-1) +\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0 + \sum^N_{i = 1}\sum^J_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})^2)\Sigma_\eta^{-1})\\
+\Sigma_\eta & \sim \text{Inv-Wishart}_{\nu_0 + N(J-1)}(\Lambda_0+\sum^N_{i = 1}\sum^J_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})^2)
+\end{aligned}
+\end{equation*}
+
+
+The posterior for the diagnol matrix $\Sigma_\varepsilon$ can again be calculated independently for each test as was previously shown [Paper1].
+
+The covariance matrix $\Sigma_\varepsilon$ from model 1 and $\Sigma_\eta$ from model 2, both offer meaningful insight into underlying constructs of cognition. Additionally, these models allow for comparison of linear effects across different tests.
+
+In order to compare effects across cognition test, the test must be standardized. However, ad-hoc outcome standardization and joint-modeling using the SSM models does not allow for direct comparison of effects across tests. This is because it would not take into account what amount of variance is coming from the observation equation and what amount of variance is coming from the underlying temporal cognition process. To standardize the outcome we instead rely on estimating $\Sigma_\varepsilon^{(m)}$ at each iteration $m \in \{1, 2, ..., M\}$, then multiplying $\tilde{\boldsymbol{\beta}}^{(m)} = \begin{bmatrix}\boldsymbol{\beta}_1^{(m)} & ... & \boldsymbol{\beta}_K^{(m)}\end{bmatrix}$ with $(\Sigma_\varepsilon^{(m)})^{-1}$. This will yield a standardized effect estimate for each test that can then be compared to on another.
+
+At iteration $m$ our model is as follows,  
+
+
+\begin{equation*}
+\begin{aligned}
+\boldsymbol{y}_{ij} &= \boldsymbol{\alpha}_{ij}^{(m)} + \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)} + \boldsymbol{\varepsilon}_{ij}\\
+\boldsymbol{y}_{ij}-\boldsymbol{\alpha}_{ij}^{(m)} &=   \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)} + \boldsymbol{\varepsilon}_{ij}\\
+(\boldsymbol{y}_{ij}-\boldsymbol{\alpha}_{ij}^{(m)})(\Sigma_{\varepsilon}^{(m)})^{-1} &=   \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1} + \boldsymbol{\varepsilon}_{ij}(\Sigma_{\varepsilon}^{(m)})^{-1}\\
+\boldsymbol{y}_{ij}^{(m)*} &= \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1} + \boldsymbol{\varepsilon}_{ij}^*
+\end{aligned}
+\end{equation*}
+
+
+
+Where $\boldsymbol{y}_{ij}^{(m)*}\sim N(0, I)$, meaning each test has the same observed variance 1 and each tend has had the trend compenent removed. We then let $\beta^{(m)*} = \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1}$ which is a standardized linear effect estimate and the respective components can be used for hypothesis testing across tests.
+

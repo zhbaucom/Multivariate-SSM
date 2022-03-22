@@ -1,0 +1,145 @@
+---
+output:
+  pdf_document: 
+    latex_engine: xelatex
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{amsmath}
+- \usepackage{algorithm,algorithmic}
+---
+
+
+To calculate the posterior, the following still holds:
+
+
+\begin{equation*}
+\begin{aligned}
+P(\boldsymbol{\beta}|Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon) = \frac{P(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta})P(\boldsymbol{\beta})}{P(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon)}
+\end{aligned}
+\end{equation*}
+
+and 
+
+
+\begin{equation*}
+\begin{aligned}
+P(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta}) = &P(\boldsymbol{y}_1, ..., \boldsymbol{y}_J, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \sigma^2_\eta, \sigma^2_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \sigma^2_\eta, \sigma^2_\varepsilon \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \sigma^2_\eta, \sigma^2_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \sigma^2_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \sigma^2_\eta, \sigma^2_\varepsilon, \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \sigma^2_\eta, \sigma^2_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \sigma^2_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|{\boldsymbol{\alpha}_{T-1}}, \sigma^2_\eta)\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \sigma^2_\eta, \sigma^2_\varepsilon | \boldsymbol{\beta})\\
+= &P(\sigma^2_\varepsilon)P(\sigma^2_\eta)\bigg(\prod^T_{k=0} P(\boldsymbol{\alpha}_k|\boldsymbol{\alpha}_{k-1},\sigma^2_{\eta})\bigg) \prod^T_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \sigma^2_\varepsilon, \boldsymbol{\beta})\\
+\propto & \prod^T_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \sigma^2_\varepsilon, \boldsymbol{\beta})
+\end{aligned}
+\end{equation*}
+
+For simplicity we can further write,
+
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta}) \propto & \sum^T_{j=1} (\boldsymbol{y}_j - \boldsymbol{\alpha}_j - \boldsymbol{X}_j\boldsymbol{\beta})' \Sigma_\varepsilon(\boldsymbol{y}_j - \boldsymbol{\alpha}_j - \boldsymbol{X}_j\boldsymbol{\beta})\\
+\text{where,}\\
+y_j = \begin{bmatrix}y_{1j}\\y_{2j}\end{bmatrix}, \ \ \
+\alpha_j = \begin{bmatrix}\alpha_{1j}\\\alpha_{2j}\end{bmatrix}, \ \ \ &
+X_j \beta = \begin{bmatrix}X_j \beta_1\\X_j \beta_2\end{bmatrix}, \ \ \
+\Sigma_\varepsilon = \begin{bmatrix} \sigma^2_{\varepsilon 1} \\ & \ddots \\ & & \sigma^2_{\varepsilon2} \\ & & & \ddots\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+Because $\Sigma_{\varepsilon}$ is diagnol we can rewrite this portion as,
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta}) \propto &
+\frac{\sum^T_{j=1} (\boldsymbol{y}_{j1} - \boldsymbol{\alpha}_{j1} - \boldsymbol{X}_j\boldsymbol{\beta}_1) ^ 2}{\sigma^2_{\varepsilon1}}+
+\frac{\sum^T_{j=1} (\boldsymbol{y}_{j2} - \boldsymbol{\alpha}_{j2} - \boldsymbol{X}_j\boldsymbol{\beta}_2) ^2}{\sigma^2_{\varepsilon2}} \\
+\propto & \frac{\beta_1'(\sum^T_{j=1}X_j'X_j)\beta_1 -2\sum^T_{j=1}(y_{j1} - \alpha_{j1})'X_j\beta_1}{\sigma^2_{\varepsilon1}} +
+\frac{\beta_2'(\sum^T_{j=1}X_j'X_j)\beta_2 -2\sum^T_{j=1}(y_{j2} - \alpha_{j2})'X_j\beta_2}{\sigma^2_{\varepsilon2}} 
+\end{aligned}
+\end{equation*}
+
+
+Similarly for the prior we have,
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(\boldsymbol{\beta}) \propto 
+\frac{(\beta_1 - \theta_1) ^ 2}{\sigma^2_\beta}+
+\frac{(\beta_2 - \theta_2) ^ 2}{\sigma^2_\beta}
+\end{aligned}
+\end{equation*}
+
+
+So for the posterior of $\beta$,
+
+
+
+\begin{equation*}
+\begin{aligned}
+& \frac{\beta_1'(\sum^T_{j=1}X_j'X_j)\beta_1 -2\sum^T_{j=1}(y_{j1} - \alpha_{j1})'X_j\beta_1}{\sigma^2_{\varepsilon1}} +  \frac{(\beta_1 - \theta_1) ^ 2}{\sigma^2_\beta}
+\\ 
+& \ \ + \frac{\beta_2'(\sum^T_{j=1}X_j'X_j)\beta_2 -2\sum^T_{j=1}(y_{j2} - \alpha_{j2})'X_j\beta_2}{\sigma^2_{\varepsilon2}} +
+\frac{(\beta_2 - \theta_2) ^ 2}{\sigma^2_\beta}
+\end{aligned}
+\end{equation*}
+
+
+which we have previously seen has the form
+
+
+\begin{equation*}
+\begin{aligned}
+\frac{(\boldsymbol{\beta_1} - \boldsymbol{\Sigma_1}^{-1} B_1)'
+\boldsymbol{\Sigma_1}
+(\boldsymbol{\beta_1} - \boldsymbol{\Sigma_1}^{-1}B_1)}{\sigma^2_{\varepsilon1}\sigma^2_\beta} +
+\frac{(\boldsymbol{\beta_2} - \boldsymbol{\Sigma_2}^{-1} B_2)'
+\boldsymbol{\Sigma_2}
+(\boldsymbol{\beta_2} - \boldsymbol{\Sigma_2}^{-1}B_2)}{\sigma^2_{\varepsilon2}\sigma^2_\beta} 
+\end{aligned}
+\end{equation*}
+
+
+
+Where, $B_r = \sigma^2_\beta\big(\sum^T_{j=1}\boldsymbol{y}_{jr}-\boldsymbol{\alpha}_{jr}\big)'\boldsymbol{X}_j -\sigma^2_{\varepsilon r}\boldsymbol{\theta_r}'$ and $\boldsymbol{\Sigma}_r = \big(\sigma^2_\beta\sum^T_{j=1}\boldsymbol{X}_j'\boldsymbol{X}_j\big)+\sigma^2_{\varepsilon r} \boldsymbol{I}_p$.
+
+This means we have the following posterior distribution,
+
+
+\begin{equation*}
+\begin{bmatrix}
+\beta_1 \\
+\beta_2
+\end{bmatrix} \sim
+N(
+\begin{bmatrix}
+\Sigma_1^{-1}B_1 \\
+\Sigma_2^{-1}B_2
+\end{bmatrix},
+\begin{bmatrix}
+\sigma^2_{\varepsilon 1}\sigma^2_{\beta}\Sigma_1^{-1} & 0\\
+0 & \sigma^2_{\varepsilon 1}\sigma^2_{\beta}\Sigma_2^{-1}
+\end{bmatrix}
+)
+\end{equation*}
+
+
+

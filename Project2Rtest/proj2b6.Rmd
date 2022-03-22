@@ -1,0 +1,422 @@
+```{r}
+library(mvtnorm)
+library(tidyverse)
+```
+
+
+
+
+```{r}
+pdmat <- function(x)Matrix::nearPD(x)$mat
+#Forward filtering backward sampling.
+# y = y[[2]]; V = V;W = W;m0 = m0;C0 = C0; timeDiff = timeDiff
+ffbs.joint = function(y,V,W,m0,C0, timeDiff){
+  T = ncol(y); n = nrow(y)
+  a = matrix(0, n, T); R = array(0, dim = c(n, cs, T)) 
+  m = matrix(0, n, T); C = array(0, dim = c(n, cs, T)) ; B = array(0, dim = c(n, cs, T-1))
+  H = array(0, dim = c(n, cs, T-1)); mm = matrix(0, n, T); CC = array(0, dim = c(n, cs, T))
+  x = matrix(0, n, T); llike = 0.0 
+  is.na.y <- is.na(y)
+  t <- 0
+  t <- t+1
+  for (t in 1:T){ 
+    if(t==1){
+      a[,1] = m0; R[,,1] = C0 + W
+    }else{
+      ##### NEEEEEDS incorporate uneven timeDiff
+      a[,t] = m[,t-1]; R[,,t] = C[,,t-1] + timeDiff[t-1] * W
+    }
+    f = a[,t]
+    Q = R[,,t] + V 
+    A = R[,,t] %*% solve(Q)
+ 
+    
+    ######## NEEEEDS to let some outcomes be missing depedning on the iteration 
+    # Av = ifelse(is.na(y[,t]), 0, A %*% (y[,t]-f))
+    Av = A %*% (y[,t]-f)
+    m[,t] = a[,t]+Av 
+    # C[,,t] = R[,,t]-crossprod(A, Q) %*% A
+    C[,,t] = R[,,t]- A %*% R[,,t]
+    # C[,,t] = R[,,t]- R[,,t] %*% solve(Q) %*% R[,,t]
+    
+    if(t > 1){
+      # B[,,t-1] = t(solve(R[,,t], C[,,t-1]))
+      B[,,t-1] = C[,,t-1] %*% solve(R[,,t])
+
+      # H[,,t-1] = C[,,t-1]-R[,,t] %*% crossprod(B[,,t-1]) 
+      H[,,t-1] = C[,,t-1]- B[,,t - 1] %*% tcrossprod(R[,,t],B[,,t - 1])
+    }
+  
+    # llike = llike + sum(dmvnorm(y[,t],f,(Q),log=TRUE), na.rm = TRUE) 
+  }
+  
+  # plot(alpha[1,])
+  # lines(m[1,], col = "red")
+  
+  
+  mm[,T] = m[,T]; CC[,,T] = C[,,T]
+  
+  ###### Deal with Unequal times
+  # C <- C * !is.na.y
+  # B <- B * !is.na.y[,-1]
+  
+  x[,T] = rmvnorm(1, mean = m[,T], sigma = (C[,,T]), checkSymmetry = FALSE) 
+  
+  
+  # x[,T] = m[,T]
+  t <- T-1
+  for (t in (T-1):1){ 
+    
+    # mm[,t] = m[,t] + solve(R[,,t+1]) %*% C[,,t] %*% (mm[,t+1]-a[,t+1])
+    # CC[,,t] = C[,,t] - solve(crossprod(R[,,t+1])) %*% crossprod(C[,,t])%*%(R[,,t+1]-CC[,,t+1])
+
+    
+    ## ADJUST WITH UNEQUAL TIMES>>>>>>>
+    ## MATRIX MIGHT NOT BE SYMMETRIC , checkSymmetry = FALSE
+    # x[,t] = rmvnorm(1,m[,t]+B[,,t]%*%(x[,t+1]-a[,t+1]),(H[,,t] + C[,,t] * (H[,,t] == 0)), checkSymmetry = FALSE)
+   x[,t] = rmvnorm(1,mean = m[,t]+B[,,t]%*%(x[,t+1]-a[,t+1]), sigma = H[,,t], checkSymmetry = FALSE)
+  } 
+  
+
+
+return(list(x=x,m=m,C=C,mm=mm,CC=CC,llike=llike))
+}
+
+
+
+```
+
+
+```{r}
+# set.seed(123)
+numits <- 10000
+cs <- 2
+n <- 100
+sigeps <- c(25, 20)
+SIGeps <- diag(sigeps)
+# Sigma <- matrix(c(1, .2, .2, 1), 2)
+# A <- matrix(runif(cs^2)*2, ncol=cs)
+# Sigma <-  t(A) %*% A
+Sigma <- matrix(c(10, 2, 2, 10), 2)
+# Sigma <- 10 * diag(cs)
+TT <- 10
+
+B1 <- c(4, 2, 1)
+B2 <- c(-3, 0, 1)
+# B1 <- c(4)
+# B2 <- c(-3)
+B <- cbind(B1, B2)
+
+etas <- rmvnorm(TT * n, sigma = Sigma)
+
+
+mydatraw <- data.frame(
+  id = sort(rep(1:n, TT)),
+  time = 1:TT,
+  eta1 = etas[,1],
+  eta2 = etas[,2]
+) %>%
+  group_by(id) %>%
+  mutate(
+
+    alpha1 = cumsum(eta1), 
+    alpha2 = cumsum(eta2),
+    x1 = time,
+    x2 = rbinom(1, 1, .5) * time,
+    oind = c(sample(c(TRUE, rep(FALSE, TT-2))), FALSE),
+    oind = any(oind) & time >= time[oind],
+    oind = time*oind,
+    x3 = ifelse(oind > 0, time - min(oind[oind> 0]), 0),
+    Kern1 = B1[1] * x1 + B1[2] * x2 + B1[3] * x3,
+    Kern2 = B2[1] * x1 + B2[2] * x2 + B2[3] * x3,
+    # Kern1 = B1[1] * x1,
+    # Kern2 = B2[1] * x1,
+    y1 = alpha1  + Kern1 + rnorm(TT, sd = sqrt(sigeps[1])),
+    y2 = alpha2  + Kern2 + rnorm(TT, sd = sqrt(sigeps[2])),
+    # Keep = TRUE
+    Keep = c(TRUE, sample(c(TRUE, FALSE), TT - 2, replace = TRUE), TRUE)
+  ) 
+
+mydat <- mydatraw %>% 
+  filter(Keep) %>%
+  mutate(timeDiff = c(diff(time), NA))%>%
+  ungroup()
+  
+ndat <- mydat %>%
+  group_by(id) %>%
+  nest() %>%
+  .[["data"]] 
+
+y <- ndat %>%
+  map(~select(.x, y1, y2)) %>%
+  map(~t(as.matrix(.x)))
+
+
+X <- ndat %>%
+  # map(~select(.x, x1, x2, x3)) %>%
+  map(~select(.x, starts_with("x"))) %>%
+  map(~(as.matrix(.x)))
+
+time <- ndat %>%
+  map("time")
+
+timeDiff <- ndat %>%
+  map("timeDiff") %>%
+  map(~.x[!is.na(.x)])
+
+
+
+ 
+Neta <- (map_dbl(timeDiff, length) %>% sum())
+Ntotal <-  nrow(mydat)
+
+W = Sigma
+# W = diag(c(30, 30), cs)
+V = SIGeps
+# V = diag(c(15, 15), cs)
+# timeDiff = 1
+m0 <- 0 
+C0 <- diag(1, cs)
+###Need another way to set "TT", not ncol (y)
+prior.nu.eta <- cs + 1
+prior.Gamma.eta <- diag(1, cs)
+
+c0 <- 0.01
+d0 <- 0.01
+
+###
+# Beta.Initial <- numeric(length(B))
+# Beta.Initial <- B # matrix(0, nrow(B), ncol(B))
+B1.initial <- lm(y1 ~ x1 + x2 + x3 , data = mydat)$coef[-1]
+B2.initial <- lm(y2 ~ x1 + x2 + x3 , data = mydat)$coef[-1]
+Beta.Initial <- cbind(B1.initial, B2.initial)
+
+sigma2.beta <- 10
+
+B.star <- Beta.Initial
+B2 <- matrix(B.star, ncol = cs)
+
+XtX <- mydat %>%
+  select(starts_with("x")) %>%
+  as.matrix() %>%
+  crossprod()
+
+sig2beta_XtX <- sigma2.beta * XtX
+
+
+
+
+ex <- eigen(sig2beta_XtX, symm = TRUE)
+
+Beta.Track <- array(NA, dim = c(ncol(X[[1]]), cs, numits))
+
+vcovWish <- array(NA, dim = c(cs, cs, numits))
+sigma2.eps.Track <- matrix(NA, nrow = numits, ncol = cs)
+blist <- list()
+
+# alist <- list()
+It <- 0
+it <- It+1
+
+
+
+```
+
+
+```{r}
+
+for(It in 1:numits){
+  
+  
+  i <- 1
+  y.star <- lapply(1:n, function(i){
+     y[[i]]-t(X[[i]] %*% B.star)
+    })
+
+
+  
+  ####### alpha
+  # bout <- alpha2
+  bout <- lapply(1:n, function(i){
+    ffbs.joint(y = y.star[[i]], V = V,W = W,m0 = m0,C0 = C0, timeDiff = timeDiff[[i]])$x
+  })
+  
+  
+  
+  ####### Sigma eta
+  # aout <- bout[[1]]
+  # i <- n
+  # timeKeep[[i]]
+  
+
+  fp <- lapply(1:n, function(i){
+     apply(bout[[i]], 1, function(z)diff(z)) / sqrt( timeDiff[[i]] )
+
+  }) %>%
+    do.call("rbind", .) %>%
+    crossprod()
+  
+  
+  W <- cIRT::riwishart(prior.nu.eta + Neta, fp + prior.Gamma.eta)
+  vcovWish[,,It] <- W
+  
+  ###### Sigma eps
+
+  or <- lapply(1:n, function(i){
+    (y.star[[i]] - bout[[i]])^2
+  })  %>%
+    do.call("cbind", .) %>%
+    apply(1, function(x)sum((x)))
+
+
+  sigma2.eps.star <- sigma2.eps.Track[It,] <- sapply(or, function(x)1/rgamma(1, ((Ntotal)/2 +c0), d0+x/2))
+  # sigma2.eps.star <- sigma2.eps.Track[It,] <- diag(V)
+  V <- sigma2.eps.star * diag(cs)
+  
+  
+  
+  
+    # #### Beta Post
+
+
+  v.star <- lapply(1:n, function(i){
+    (y[[i]]-bout[[i]])
+  })
+
+  B.sum <- lapply(1:n, function(i){
+    (v.star[[i]] %*% X[[i]])
+  }) %>%
+    Reduce("+", .)
+
+  B.Big <- sigma2.beta * B.sum - tcrossprod(V, Beta.Initial)
+
+  # Sigma.Inv <- 1/(sigma2.beta * crossprod(X) + sigma2.eps.star)
+  # 1/Sigma.Inv
+  eppps <- sigma2.eps.star[1]
+
+  Sigma.Inv <- lapply(sigma2.eps.star, function(eppps)tcrossprod(ex$vectors/(ex$values + eppps)[col(ex$vectors)], ex$vectors))
+
+  BetaSim <- lapply(1:cs, function(i){
+    # mvtnorm::rmvnorm(1, mean = crossprod(Sigma.Inv[i], B.Big[i]), sigma = Sigma.Inv[i] * sigma2.eps.star[i] * sigma2.beta)[1,]
+  rmvnorm(1, mean = crossprod(Sigma.Inv[[i]], B.Big[i,]), sigma = Sigma.Inv[[i]] * sigma2.eps.star[i] * sigma2.beta)
+  }) %>%
+    do.call("rbind", .) %>%
+    t()
+
+
+  B.star <- Beta.Track[,,It] <- BetaSim
+  
+  # Beta.Track[,,It] <- BetaSim
+
+  
+}
+
+
+
+
+```
+
+```{r}
+thin <- 1
+# burn <- numits/2 + 1
+burn <- 1000
+burnp <- burn/thin 
+
+# apply(vcovWish, 1:2, mean)
+# Sigma
+# 
+# Sigma > apply(vcovWish[,,seq(1, numits, thin)], 1:2, quantile, .025) & Sigma < apply(vcovWish[,,seq(1, numits, thin)], 1:2, quantile, .975)
+
+
+CI <- quantile(vcovWish[1,1,seq(burn, numits, thin)], c(.025, .975))
+Covered <- CI[1] < Sigma[1,1] & CI[2] > Sigma[1,1]
+plot(vcovWish[1,1,seq(1, numits, thin)], main = paste("ETA11 Covered: ", Covered))
+abline(h = CI[1], col = "green")
+abline(h = CI[2], col = "green")
+abline(h = Sigma[1,1], col = "red")
+abline(v = burnp, lty = 2)
+
+
+CI <- quantile(vcovWish[1,2,seq(burn, numits, thin)], c(.025, .975))
+Covered <- CI[1] < Sigma[1,2] & CI[2] > Sigma[1,2]
+plot(vcovWish[1,2,seq(1, numits, thin)], main = paste("ETA21 Covered: ", Covered))
+abline(h = CI[1], col = "green")
+abline(h = CI[2], col = "green")
+abline(h = Sigma[1,2], col = "red")
+abline(v = burnp, lty = 2)
+
+
+CI <- quantile(vcovWish[2,2,seq(burn, numits, thin)], c(.025, .975))
+Covered <- CI[1] < Sigma[2,2] & CI[2] > Sigma[2,2]
+plot(vcovWish[2,2,seq(1, numits, thin)], main = paste("ETA22 Covered: ", Covered))
+abline(h = CI[1], col = "green")
+abline(h = CI[2], col = "green")
+abline(h = Sigma[2,2], col = "red")
+abline(v = burnp, lty = 2)
+
+
+
+
+
+CI <- quantile(sigma2.eps.Track[seq(burn, numits, thin), 1], c(.025, .975))
+Covered <- CI[1] < diag(SIGeps)[1] & CI[2] > diag(SIGeps)[1]
+plot(sigma2.eps.Track[seq(1, numits, thin), 1], main = paste("EPS1 Covered: ", Covered))
+abline(h = CI[1], col = "green")
+abline(h = CI[2], col = "green")
+abline(h = diag(SIGeps)[1], col = "red")
+abline(v = burnp, lty = 2)
+
+
+CI <- quantile(sigma2.eps.Track[seq(burn, numits, thin), 2], c(.025, .975))
+Covered <- CI[1] < diag(SIGeps)[2] & CI[2] > diag(SIGeps)[2]
+plot(sigma2.eps.Track[seq(1, numits, thin), 2], main = paste("EPS2 Covered: ", Covered))
+abline(h = CI[1], col = "green")
+abline(h = CI[2], col = "green")
+abline(h = diag(SIGeps)[2], col = "red")
+abline(v = burnp, lty = 2)
+
+
+betadf <- map(1:numits, function(i){
+  bdf <- Beta.Track[,,i] %>%
+    as.data.frame()
+  colnames(bdf) <- paste("C", 1:ncol(bdf), sep = "")
+  row.names(bdf) <- paste("B", 1:nrow(bdf), sep = "")
+  
+  bdf %>% 
+    rownames_to_column("Beta") %>%
+    gather("outcome", "value", starts_with("C")) %>%
+    mutate(Param = paste(Beta, outcome, sep = ""), iteration = i)
+}) %>%
+  do.call("rbind", .)
+
+# B <- B %>% matrix(ncol = 1)
+betadf %>%
+  group_by(Param) %>%
+  nest() %>%
+  mutate(plots = map2(data, Param,function(df, title){
+    
+    df <- filter(df, iteration %in% seq(1, numits, thin))
+    
+    i <- substr(df$Beta[1], 2, nchar(df$Beta[1])) %>% as.numeric()
+    j <- substr(df$outcome[1], 2, nchar(df$outcome[1])) %>% as.numeric()
+    
+    CI <- quantile(df$value[df$iteration >= burn], c(0.025, 0.975))
+    B.mean <- mean(df$value[df$iteration >= burn])
+    Covered <- CI[1] < B[i,j] & CI[2] > B[i,j]
+    
+    df %>%
+      ggplot(aes(x = iteration, y = value)) + 
+      geom_point() +
+      geom_hline(yintercept = B[i,j], color = "red") +
+      geom_hline(aes(yintercept = B.mean),color = "blue") +
+      geom_hline(aes(yintercept = CI[1]),color = "green") +
+      geom_hline(aes(yintercept = CI[2]),color = "green") +
+      geom_vline(aes(xintercept = burnp), linetype = 2) +
+
+      ggtitle(paste(title, "Covered:", Covered))
+  })) %>%
+  .[["plots"]]
+
+
+```
+

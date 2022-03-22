@@ -1,0 +1,16 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+
+A number of different cognition tests are offered through the NACC. These tests are aimed to measure the different underlying constructs of overall cognitive ability. By jointly modeling cognitive tests within the same domain we wish to address two questions: 1.) Does a given parameter have a different effect for each test and 2.) how similar are the underlying cognitive processes for each test after accounting for the modelled linear effects and random error.
+
+To jointly model the cognitive outcomes, we propose the use of two different Correlated Local Linear Trend (CLLT) State Space Models (SSM). The proposed models differ from the Local Linear Trend model (LLT) in that they allow for in-subject correlation between cognitive tests. To account for the correlation between tests, we allow for two possibilities. First, that the correlation exists in the observation equation. This assumes that any correlation in the test outcomes exists due to correlated unobserved effects on the outcome for a given day, which are uncorrelated across time. The second proposed model assumes the correlation exists in the underlying state equation. This assumes that correlation in the outcome exists because of correlated unobserved effects that are correlated over time.
+
+As was shown in [Paper1], the Bayesian estimation method on cognition data was shown to be superior to other estimation methods. For this reason, we choose to solely focus our attention on Bayesian estimation process. 
+
+We start by comparing the CLLT methods to independent LLT estimation when controlling the underlying data generation process. This not only verifies the effectiveness of the CLLTs ability to accurately estimate cross-test correlation at varying levels, but also illustrates deficiencies of independent estimation.
+
+The CLLTs are then compared to independent LLTs when estimating a simulated linear effect on the digit forward and digit backward cognition test offered in the NACC. We propose the use of a likelihood fit statistics to decide on the "best" CLLT model.
+

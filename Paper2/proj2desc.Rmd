@@ -1,0 +1,303 @@
+---
+title: "Project 2 Description"
+output: html_document
+---
+
+https://isdsa.org/_media/jbds/v1n2/v1n2p2.pdf
+
+For this project, we fit a join model using the SSM framework. This allows us to compare the effect of some variable accross different tests e.g. does APOE have a significantly differnt effect on cognitive trajectory for the Trails A and Trails B tests? To capture the correlation between between outcomes, we assume that the correlation exists within the underlying latent state that accounts for cognition that is not accounted for by the predictors in the model. Our proposed model has the following form for subject $i$ for $i \in \{1, 2, ..., n\}$.
+
+$$
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+\vdots\\
+y_{ijK}
+\end{bmatrix}
+&= \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix}
++ 
+
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta^{(1)}}\\
+\boldsymbol{x_{ij}\beta^{(2)}}\\
+\vdots\\
+\boldsymbol{x_{ij}\beta^{(K)}} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix} 
+\sim N(0, \Sigma_\varepsilon
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i1(j-1)}\\
+\alpha_{i2(j-1)}\\
+\vdots\\
+\alpha_{iq(j-1)}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix} \sim N(0, \delta_{ij}\Sigma_\eta)
+\end{aligned}
+\end{equation*}
+$$
+
+In this model representation, $\Sigma_\varepsilon \in R^{qxq}$ is a diagnol matrix, where the diagnol entries are the variances for the respective outcomes. The variance parameter $\Sigma_\eta \in R^{qxq}$, however, is non-diagnol, but symmetric matrix. Where $\sigma^{2(k)}$ is the variance of the underlying state for test $k$ for $k \in \{1, 2, ..., q\}$ and $\sigma^{2(v,w)}$ is the covariance of test $v$ and $w$ for $v < w$ where $v,w \in \{1, 2, ..., q\}$. 
+
+
+Option 1:
+
+$$
+\Sigma_\eta =
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & \sigma^{2(1,2)}_\varepsilon & \cdots & \sigma^{2(1, K)}_\varepsilon\\
+\sigma^{2(1,2)}_\varepsilon & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\varepsilon & & &\sigma^{2(K)}_\varepsilon
+\end{bmatrix},
+\ \ \ 
+\begin{equation*}
+\begin{aligned}
+\Sigma_\eta = 
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & 0 & \cdots & 0\\
+0 & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+0 & & &\sigma^{2(K)}_\eta\\
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+$$
+Option 2
+
+$$
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & 0 & \cdots & 0\\
+0 & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+0 & & &\sigma^{2(K)}_\varepsilon\\
+\end{bmatrix},
+\ \ \ 
+\Sigma_\eta =
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & \sigma^{2(1,2)} & \cdots & \sigma^{2(1, K)}_\eta\\
+\sigma^{2(1,2)}_\eta & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\eta & & &\sigma^{2(K)}_\eta
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+$$
+
+
+Posterior of $\alpha$
+
+Largely the same from before, we are able to run the Kalman Filter independently for each subject $i \in \{1, 2, ..., N\}$.
+
+
+$$
+\begin{equation*}
+\begin{aligned}
+\boldsymbol{\alpha}_{ij|i(j-1)} = \boldsymbol{\alpha}_{i(j-1)|i(j-1)}, \ \ \ & \boldsymbol{P_{ij|i(j-1)} = P_{i(j-1)|i(j-1)}} + \Sigma_\eta\\
+\boldsymbol{\alpha}_{ij|ij} = \boldsymbol{\alpha}_{ij|i(j-1)} + \boldsymbol{K_{ij}} (\boldsymbol{\tilde y_{ij}- \alpha_{ij|i(j-1)}}), \ \ \ & \boldsymbol{P_{ij|ij}} = (1-\boldsymbol{K_{ij}})\boldsymbol{P_{ij|i(j-1)}}\\
+\boldsymbol{K_{ij}} = \boldsymbol{\boldsymbol{P}_{ij|i(j-1)}\boldsymbol{P}_{ij|i(j-1)}^{-1} + \Sigma_\varepsilon}, \ \ \ &\boldsymbol{L}_{i(j-1)}(\boldsymbol{\alpha}_{ij|ij} - \boldsymbol{\alpha}_{ij|i(j-1)})
+\end{aligned}
+\end{equation*}
+$$
+Let $\psi = \{\Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta}\}$, the vector of the other unknown parameters. For the posterior of $\boldsymbol{\alpha}$ we seek to find the distribution defined by,
+!!!!!!!!!!!FIX!!!!!!!!!!!!!!!!!!!!!!!!
+
+$$
+\begin{equation*}
+\begin{aligned}
+P_\psi(\boldsymbol{\alpha}_{i(0:J)}|\boldsymbol{y}_{i(1:J)}) &=  P_\psi(\boldsymbol{\alpha}_{iJ}|\boldsymbol{y}_{i(1:J)})P_\psi(\boldsymbol{\alpha}_{i(j-1)}|\boldsymbol{\alpha}_{i(j-2)}, \boldsymbol{y}_{1:(J-1)}) ...  P_\psi(\boldsymbol{\alpha}_{i1}|\boldsymbol{\alpha}_{i0})
+\end{aligned}
+\end{equation*}
+$$
+
+Therefore we need the following densities for $j$ in $1, 2, ..., J-1$ and $i$ in $1, 2, ..., N$:
+
+$$
+\begin{equation*}
+\begin{aligned}
+P_\psi(\boldsymbol{\alpha}_{ij}|\boldsymbol{\alpha}_{i(j-1)}, \boldsymbol{y}_{i(1:j)}) \propto P_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{y}_{i(1:j)})P_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j-1)})
+\end{aligned}
+\end{equation*}
+$$
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+From the Kalman Filter we calculated $\boldsymbol{\alpha}_{ij}|\boldsymbol{y}_{i(1:j)} \sim N_\psi(\boldsymbol{\alpha}_{ij|ij}, \boldsymbol{P}_{ij|ij})$ and $\boldsymbol{\alpha}_{i(j+1)}|\boldsymbol{\alpha}_{ij} \sim N_\psi(\boldsymbol{\alpha}_{ij}, \Sigma_\eta)$. After combining the two densities $\boldsymbol{m}_{ij} = E_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)}) = \boldsymbol{\alpha}_{ij|ij} + \boldsymbol{L}_{ij} (\boldsymbol{\alpha}_{i(j+1)} - \boldsymbol{\alpha}_{i(j+1)|ij})$ and $\boldsymbol{R}_{ij} = \text{Var}_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)})= \boldsymbol{P}_{ij|ij} - \boldsymbol{L}_{ij}^2 \boldsymbol{P}_{i(j+1)|ij}$ [@shumway_stoffer_2017]. Because of normality, the posterior distribution for $\boldsymbol{\alpha}_{ij}$ is $N(\boldsymbol{m}_{ij}, \boldsymbol{R}_{ij})$.
+
+For the backward sampling procedure we start by sampling a $\boldsymbol{\alpha}_{iJ^*}$ from a $N_\psi(m_{iJ}, \boldsymbol{R}_{iJ})$, then setting $\boldsymbol{\alpha}_{iJ^*} = \boldsymbol{\alpha}_{iJ}$ for the calculation of $\boldsymbol{m}_{i(J-1)}$ to then sample $\boldsymbol{\alpha}_{i(J-1)}^*$ from a $N_\psi(\boldsymbol{m}_{i(J-1)}, \boldsymbol{R}_{i(J-1)})$. This process continues until a whole chain $\boldsymbol{\alpha}_{i(0:J)}^*$ has been sampled.
+
+Posterior of $\beta$
+
+For either posterior, as was shown in paper 1
+
+$$
+\begin{equation*}
+\begin{aligned}
+P(\boldsymbol{\beta}|Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon) = \frac{P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta})P(\boldsymbol{\beta})}{P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon)}
+\end{aligned}
+\end{equation*}
+$$
+
+and 
+
+$$
+\begin{equation*}
+\begin{aligned}
+P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) = &P(\boldsymbol{y}_1, ..., \boldsymbol{y}_J, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \Sigma_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \Sigma_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|{\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta)\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= &P(\Sigma_\varepsilon)P(\Sigma_\eta)\bigg(\prod^J_{k=0} P(\boldsymbol{\alpha}_k|\boldsymbol{\alpha}_{k-1},\Sigma_{\eta})\bigg) \prod^J_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \Sigma_\varepsilon, \boldsymbol{\beta})\\
+\propto & \prod^J_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \Sigma_\varepsilon, \boldsymbol{\beta})
+\end{aligned}
+\end{equation*}
+$$
+
+Due to independence from subject to subject, for simplicity we can further write,
+
+
+$$
+\begin{equation*}
+\begin{aligned}
+-2logP(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) \propto & \sum^N_{i=1}\sum^T_{j=1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})' \Sigma_\varepsilon(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{\beta})\\
+\text{where,}\\
+y_j = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, \ \ \
+\alpha_j = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix}, \ \ \ &
+\boldsymbol{ \mathbb{X}}_{ij} = \begin{bmatrix}\boldsymbol{x}_{ij} & 0 & \dots & 0 \\ 0 & \boldsymbol{x}_{ij} \\ \vdots & & \ddots \\
+0 & & & \boldsymbol{x}_{ij}\end{bmatrix} \ \ \
+\beta = \begin{bmatrix}\beta_1\\ \beta_2 \\ \vdots \\ \beta_K\end{bmatrix}
+\end{aligned}
+\end{equation*}
+$$
+
+
+
+$$
+\begin{equation*}
+\begin{aligned}
+-2logP(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta}) 
+\propto & \beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij})\beta -2\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij}\beta 
+\end{aligned}
+\end{equation*}
+$$
+
+
+$$
+\begin{equation*}
+\begin{aligned}
+-2logP(\boldsymbol{\beta}) &\propto 
+(\beta - \theta)'\Sigma_{\beta}^{-1}(\beta - \theta) \\
+&\propto \beta'\Sigma_{\beta}^{-1}\beta - 2\theta\Sigma_{\beta}^{-1}\beta
+\end{aligned}
+\end{equation*}
+$$
+
+
+
+$$
+\begin{equation*}
+\begin{aligned}
+&\beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij})\beta -2\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij}\beta + \beta'\Sigma_{\beta}^{-1}\beta - 2\theta\Sigma_{\beta}^{-1}\beta \\
+&= \beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1})\beta -2(\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}) \beta
+\end{aligned}
+\end{equation*}
+$$
+
+
+which, after completing the square, has the form
+
+$$
+\begin{equation*}
+\begin{aligned}
+(\boldsymbol{\beta} - \boldsymbol{\Sigma}^{-1} B)'
+\boldsymbol{\Sigma}
+(\boldsymbol{\beta} - \boldsymbol{\Sigma}^{-1}B)
+\end{aligned}
+\end{equation*}
+$$
+
+
+Where, $B = \sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}$ and $\boldsymbol{\Sigma} = \sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1}p$.
+
+This means we have the following posterior distribution,
+
+$$
+\begin{equation*}
+\beta\sim N(\Sigma^{-1}B, \Sigma^{-1})
+\end{equation*}
+$$
+
+
+
+
+
+For the posterior of $\Sigma_\varepsilon$, if we assume the matrix is non-diagnol, then we give $\Sigma_\varepsilon$ and inverse-Wishart distribution.
+
+$$
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon &\sim \text{Inv-Wishart}_{\nu_0}(\Lambda_0)\\
+P(\Sigma_\varepsilon) &\propto |\Sigma_\varepsilon|^{-(\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0\Sigma_\varepsilon^{-1}))\\
+P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\varepsilon) &\propto |\Sigma_\varepsilon|^{-(NJ)/2}\text{exp}(-\sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})'\Sigma_\varepsilon^{-1}(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})/2 \\
+P(\Sigma_\varepsilon|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\varepsilon)P(\Sigma_\varepsilon) \\ &\propto |\Sigma_\varepsilon|^{-(NJ +\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0 + \sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})^2)\Sigma_\varepsilon^{-1})\\
+\Sigma_\varepsilon & \sim \text{Inv-Wishart}_{\nu_0 + NJ}(\Lambda_0+\sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})^2)
+\end{aligned}
+\end{equation*}
+$$
+
+
+On the other hand, if $\Sigma_\eta$ is non-diagonal,
+
+$$
+\begin{equation*}
+\begin{aligned}
+\Sigma_\eta &\sim \text{Inv-Wishart}_{\nu_0}(\Lambda_0)\\
+P(\Sigma_\eta) &\propto |\Sigma_\eta|^{-(\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0\Sigma_\eta^{-1}))\\
+P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\eta) &\propto |\Sigma_\eta|^{-(N(J-1))/2}\text{exp}(-\sum^N_{i = 1}\sum^{J}_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})'\Sigma_\eta^{-1}(\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})/2 \\
+P(\Sigma_\eta|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\eta)P(\Sigma_\eta) \\ &\propto |\Sigma_\eta|^{-(N(J-1) +\nu_0+p+1)/2}\text{exp}(-tr(\Lambda_0 + \sum^N_{i = 1}\sum^J_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})^2)\Sigma_\eta^{-1})\\
+\Sigma_\eta & \sim \text{Inv-Wishart}_{\nu_0 + N(J-1)}(\Lambda_0+\sum^N_{i = 1}\sum^J_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})^2)
+\end{aligned}
+\end{equation*}
+$$
+
