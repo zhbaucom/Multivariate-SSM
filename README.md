@@ -5,18 +5,18 @@ Functions to create and estimate multivariate state space models
 
 In the project “SSM for Repeated Measures”, we established that the
 Bayesian LLT was superior to commonly used LMEMs in fitting longitudinal
-data. The projects extends that method to allow for multivariate
+data. This project extends that method to allow for multivariate
 Bayesian LLT, meaning, multiple outcomes. The important gains from this
 approach is to increase power, estimate inter-relatedness in tests after
-accounting for predictors of interest, and lastly be able to compare
+accounting for predictors of interest, and lastly being able to compare
 effects across different outcomes.
 
-To measure outcome inter-relatedness we allow for a subjects observation
+To measure outcome inter-relatedness we allow for a subject's observation
 errors and latent cognition processes to be correlated. Estimating these
 correlation process can be used to detect larger underlying cognition
 constructs. To compare linear effects, we propose an in-Gibb’s sampler
 standardization to ensure outcomes are on the same scale. This process
-relies on accurate observation error correlation. Oen cannot simply
+relies on accurate estimation of observation error correlation. One cannot simply
 standardize outcomes beforehand because it will not take into account
 the variance coming from the latent cognition process.
 
