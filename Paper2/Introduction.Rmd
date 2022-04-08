@@ -1,17 +1,56 @@
 ---
-title: "Untitled"
-output: html_document
+title: "MLLT"
+output: pdf_document
 ---
 
-Understanding cognition is a focal aim of the NACC. We wish to utilize provided by the NACC in order to better understand how and why we experience cognitive decline. Cognition is multifaceted in nature. For example, the NACC has 4 main facets that a number of cognition tests aims to provide: attention, motor, verbal, memory. Although we have shown that the Bayesian LLT offers an inuitive and accurate fit to the NACC data, we only provided the model to fit univariate cases. A more holistic approach to modeling "cognition" would be able to account for inter-relatedness between the tests provided by the NACC. For this cause, we propose the use of a Multivariate Local Linear Trend Model (MLLT). 
 
-A number of different cognition tests are offered through the NACC. These tests are aimed to measure the different underlying constructs of overall cognitive ability. By jointly modeling cognitive tests within the same domain we wish to address two questions: 1.) Does a given parameter have a different effect for each test and 2.) how similar are the underlying cognitive processes for each test after accounting for the modeled linear effects and random error.
 
-To jointly model the cognitive outcomes, we propose the use of two different Correlated Local Linear Trend (CLLT) State Space Models (SSM). The proposed models differ from the Local Linear Trend model (LLT) in that they allow for in-subject correlation between cognitive tests. To account for the correlation between tests, we allow for two possibilities. First, that the correlation exists in the observation equation. This assumes that any correlation in the test outcomes exists due to correlated unobserved effects on the outcome for a given day, which are uncorrelated across time. The second proposed model assumes the correlation exists in the underlying state equation. This assumes that correlation in the outcome exists because of correlated unobserved effects that are correlated over time.
+Understanding the overall cognition process for those suffering with Alzheimer's Disease (AD) has been an emerging line of statistical research. Defining this process can lead to early diagnosis and the implementation of possible interventions which can create positive impacts for those suffering with AD and their caretakers. Cognition, however, is complex and is multifaceted in nature. A number of studies have used multivariate methods to assess overall cognition from a battery of neuropsychological tests. 
 
-As was shown in [Paper1], the Bayesian estimation method on cognition data was shown to be superior to other estimation methods. For this reason, we choose to solely focus our attention on Bayesian estimation process. 
+Promising studies such as [Diagnosis of Alzheimer’s disease using neuropsychological testing improved by multivariate analyses] successfully have used dimensionality reduction techniques to estimate prominent latent factors of AD. A drawback in [] is that they aim to estimate the latent factors of cognition at a single moment in time, rather than taking into account a subjects cognition process through time. This could lead to an increased amount of variability as participants may not be in the same stage of AD progression. The study [Factor Structure of the National Alzheimer's Coordinating Centers Uniform Dataset Neuropsychological Battery: An Evaluation of Invariance Between and Within Groups Over Time] seeks to improve on this by separately computing factors at two different moments in time for those impaired and unimpaired. Although multiple measurement are taken, they are not controlling for variation in cognitive trajectory that may be due to age, gender, sex, education, genetics, or other possible causes over time. 
 
-We start by comparing the CLLT methods to independent LLT estimation when controlling the underlying data generation process. This not only verifies the effectiveness of the CLLTs ability to accurately estimate cross-test correlation at varying levels, but also illustrates deficiencies of independent estimation.
+In order to gain insight into latent factors of cognitive decline, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT). The MLLT is an extension of the Local Linear Trend model (LLT) described in [Paper1] which was shown to accurately estimate effects on cognitive trajectory by allowing for a latent underlying cognition process. 
 
-The CLLTs are then compared to independent LLTs when estimating a simulated linear effect on the digit forward and digit backward cognition test offered in the NACC. We propose the use of a likelihood fit statistics to decide on the "best" CLLT model.
+The proposed MLLT differs from the LLT, as described in [Paper1], in that it allows for the estimation of in-subject correlation between varying cognition tests over time. By jointly modeling cognitive tests we are able to estimate inter-relatedness of cognitive processes for each test after accounting for possible covariates, in addition to estimating covariates of interest. The MMLT also has the added benefit of allowing for testing if a given independent variable has a different effect across multiple tests.
 
+Estimating correlation in underlying cognition processes can be achieved in the model specification. The proposed MLLT assumes that the cognition processes are correlated over time. Therefore, we use our Bayesian estimation process to estimate the covariance matrix directly which can then be used to estimate correlation between underlying cognition processes.
+
+To test if an independent variable has a significantly different effect between tests, we rely on outcome standardization. Pre-standardizing the data is ineffective as, according to our model, variation in the outcome can come from the measurement error or the latent cognition process. For this reason we propose standardizing the outcome during each step of the Bayesian Gibb's sampler.
+
+To account for the correlation between tests, we allow for three possibilities. First, the correlation exists in the observation errors. This assumes that any correlation in the test outcomes exists due to correlated unobserved effects on the outcome for a given day, which are uncorrelated across time. The second proposed model assumes the correlation exists in the underlying latent cognition process. This assumes that correlation in the outcome exists because of correlated unobserved effects that are correlated over time. At lastly, that there is some correlation in the observation error and in the latent cognition process.
+
+
+To test the validity of the MLLT, we start by comparing the MLLT methods to independent LLT estimation when controlling the underlying data generation process. This not only verifies the effectiveness of the MLLTs ability to accurately estimate cross-test correlation at varying levels, but also illustrates deficiencies of independent estimation.
+
+
+The MLLTs are then compared to independent LLTs when estimating a simulated linear effect on the digit forward and digit backward cognition test offered in the NACC. We show that the MLLT is just as accurate as the LLT at estimating linear effects of interest, with the additional ability for cross-test comparisons and underlying cognition between tests.
+
+
+After verifing the MLLT's added benefits, we fit the MLLT to the NACC.....
+
+SUMMARIZE WHY MLLT IS THE BEST!
+
+
+
+====================== scrap ===============================
+
+This is a problem because ....... loss of longitudinal information ....... problems aligning where each participant is in disease progression ........
+
+
+Another draw back from these latent factor models is that they are not controlling for variation in cognition that may be due to age, gender, sex, education, genetics, or other possible causes. 
+
+
+In order to better accommodate inter-relatedness between aspects of cognition, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT).
+
+
+
+A number of different studies have used multivariate methods to assess subject level cognition from a battery of neuropsychological tests.
+
+These tests don't offer longitudinal assessment. Longitudinal assessment allows for the ability to control for other covariates. Able to line up where they are on disease progression. Able to bi-pass declaring factors and their relationships.
+
+
+
+The NACC offers a battery of repeated measurement tests, aimed at measuring an overall cognitive ability of those suffering with AD. Much of the research committed to cognitive decline focuses on outcomes modeled independently or summary measurements. A more holistic approach to modeling "cognition" is to account for inter-relatedness between the tests provided by the NACC. For this cause, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT). 
+
+
+ Bayesian estimation, utilizing Gibb's sampling, proved to be the most reliable and most efficient of the estimation procedures.
