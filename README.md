@@ -28,15 +28,15 @@ superior to the other likelihood based counterparts.
 ## How to Use
 
 ``` r
-source("functions/BayesKalmJoint.R")
-BayesKalmJoint(
-  data, outcomes, predictors, timevar, id, 
-  initialization = "Bayes", numits = 1000, 
+source("functions/JBLLT.R")
+JBLLT(
+  method = "os", data, outcomes, predictors, timevar, id, 
+  initialization = "Bayes", numits = 1000, burn = 500, 
   silence = FALSE, seed = NULL, 
-  numitInit = 1500, burnInit = 500 
+  numitInit = 1500, burnInit = 500, seed.init = NULL
 )
 ```
 
 Here we provide all data for fitting. The `outcomes`, `predictors`,
 `timevar`, and `id` should all be characters corresponding to columns in
-the `data`.
+the `data`. Notice that you must clarify if their is allowed correlation in the observation equation `method = "o"`, in the state equation `method = "s"`, or both `method = "os"` (default).
