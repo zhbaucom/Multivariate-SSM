@@ -92,7 +92,7 @@ y_{ijK}
 In this model representation, $\Sigma_\varepsilon \in R^{KxK}$ and $\Sigma_\eta \in R^{KxK}$. Utilizing $\Sigma_\varepsilon$ and $\Sigma_\eta$ allows for estimation of correlation between cognitive tests. However, allowing for non-zero elements in the non-diagonal adds a possibly large number of parameters to estimate. We propose the use of three different models, 
 
 
-Model 1: Correlation is in Measurement eq.
+Model O: Correlation is in Measurement eq.
 
 \begin{equation*}
 \begin{aligned}
@@ -115,7 +115,7 @@ Model 1: Correlation is in Measurement eq.
 \end{equation*}
 
 
-Model 2: Correlation is in State eq.
+Model S: Correlation is in State eq.
 
 
 \begin{equation*}
@@ -138,7 +138,7 @@ Model 2: Correlation is in State eq.
 \end{aligned}
 \end{equation*}
 
-Model 3: Correlation is in both Measurement & State eq.
+Model OS: Correlation is in both Measurement & State eq.
 
 \begin{equation*}
 \begin{aligned}
@@ -160,7 +160,7 @@ Model 3: Correlation is in both Measurement & State eq.
 \end{equation*}
 
 
-The correlation allowed between the models makes different assumptions regarding the underlying nature of the test. Model 1 assumes that any similarity we see in the cognitive scores for a given observation time is due to a correlated random effect on the day of the test. Model 2 makes the assumption that the underlying cognitive process is correlated between the tests across time. Model 3 allows for both types of correlation.
+The correlation allowed between the models makes different assumptions regarding the underlying nature of the test. Model O assumes that any similarity we see in the cognitive scores for a given observation time is due to a correlated random effect on the day of the test. Model S makes the assumption that the underlying cognitive process is correlated between the tests across time. Model OS allows for both types of correlation.
 
 For all models we propose the use of Bayesian estimation to estimate all parameters of interest.
 
@@ -326,7 +326,7 @@ Thus, the posterior for $\beta$ has the following distribution,
 
 
 
-For the posterior of $\Sigma_\varepsilon$, if we assume the matrix is non-diagonal as in Model 1 and 3, then we give $\Sigma_\varepsilon$ an inverse-Wishart distribution.
+For the posterior of $\Sigma_\varepsilon$, if we assume the matrix is non-diagonal as in Model O and OS, then we give $\Sigma_\varepsilon$ an inverse-Wishart distribution.
 
 
 \begin{equation*}
@@ -339,11 +339,11 @@ P(\Sigma_\varepsilon|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & 
 \end{aligned}
 \end{equation*}
 
-The posterior for the diagnol matrix $\Sigma_\eta$ can be calculated independently for each test as was previously shown [Paper1] using the inverse-gamma for each test.
+The posterior for the diagonal matrix $\Sigma_\eta$ can be calculated independently for each test as was previously shown [Paper1] using the inverse-gamma for each test.
 
 
 
-On the other hand, if $\Sigma_\eta$ is non-diagonal as was shown in Model 2 and 3,
+On the other hand, if $\Sigma_\eta$ is non-diagonal as was shown in Model O and OS,
 
 
 \begin{equation*}
@@ -357,7 +357,7 @@ P(\Sigma_\eta|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, 
 \end{equation*}
 
 
-The posterior for the diagnol matrix $\Sigma_\varepsilon$ can again be calculated independently for each test as was previously shown [Paper1].
+The posterior for the diagonal matrix $\Sigma_\varepsilon$ can again be calculated independently for each test as was previously shown [Paper1].
 
 The covariance matrix $\Sigma_\varepsilon$ and $\Sigma_\eta$, both offer meaningful insight into underlying constructs of cognition. Additionally, these models allow for comparison of linear effects across different tests.
 

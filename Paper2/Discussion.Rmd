@@ -1,8 +1,10 @@
 ---
-title: "Untitled"
-output: html_document
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    toc: false
 ---
 
-Similar to the LLT, the dynamic MLLT is able to  estimate linear effects of interest as well, but, unlike the LLT, the MLLT can also provide accurate inference of linear effects across different cognitive outcomes. To test if an independent variable has a significantly different effect between tests, we rely on outcome standardization, which relies on accurate estimation of the observation error correlation matrix. Pre-standardizing the data is ineffective as, according to our model, variation in the outcome can come from the measurement error or from the latent cognition process. For this reason we propose standardizing the outcome during each step of the Bayesian Gibb's sampler.
+Similar to the LLT, the dynamic MLLT is able to  estimate linear effects of interest well, but, unlike the LLT, the MLLT can also provide accurate inference of linear effects across different cognitive outcomes. To test if an independent variable has a significantly different effect between tests, we rely on outcome standardization, which relies on accurate estimation of the observation error correlation matrix. Pre-standardizing the data is ineffective as, according to our model, variation in the outcome can come from the measurement error or from the latent cognition process. For this reason we propose standardizing the outcome during each step of the Bayesian Gibb's sampler.
 
 Depending on statistical power and the objectives of an analysis, different assumptions of the underlying model can be assumed. First, it can be assumed that correlation in the observations exists only in the observation errors. This assumption can be made when linear effects and cross test linear effect comparisons are of primary interest. Next, it can be assumed that the correlation exists only in the underlying latent cognition process. This can be used when the primary focus of the analysis is understanding latent constucts of cognition. However, for an ample sample size we can assume that there is correlation in the observation error and in the latent cognition process. This is the preffered model and provides the most accurate results regardless of analysis aims.
