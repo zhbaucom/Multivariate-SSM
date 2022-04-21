@@ -1,0 +1,98 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={MLLT},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{MLLT}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+Alzheimer's Disease (AD), a neurodegenerative disease, effects tens of millions of people world-wide and the prevalence is expected to increase with the aging baby boomer population. AD refers to a protein build-up in the brain, leading to brain matter deterioration. Brain deterioration often presents itself outwardly in the form of a decreased ability to perform simple tasks and provide for oneself. The impact of AD is costly. The {[}\url{https://www.alz.org/media/documents/alzheimers-facts-and-figures.pdf}{]} estimates that \$271 billion in unpaid care was accumulated for those living with AD in 2021. This does not take into account the emotional toll of caring for a loved one suffering from AD. Although testing for biomarkers or providing brain scans can be effective in diagnosing AD, understanding the overall cognition process for those suffering with Alzheimer's Disease (AD) has been an emerging line of statistical research. Defining this process can lead to early diagnosis and the implementation of possible interventions to create positive impacts for those suffering with AD and their caretakers. Cognition, however, is complex, multifaceted, and is measured indirectly.
+
+Much research has been undertaken to describe the cognitive process of AD. Large organizations, like the National Alzheimer's Coordinating Center (NACC), offer a battery of repeated neuropsychological tests in order to best estimate cognition as a whole over time. This is vital as different domains of cognition are not homogeneous in their timing or rate of decline through the AD process {[}{]}. With obvious shortcomings in modeling a single neuropsychological test, a number of studies rely on multivariate methods on a battery of tests to describe the domains of cognition. The cross-sectional study {[}Diagnosis of Alzheimer's disease using neuropsychological testing improved by multivariate analyses{]} uses dimensionality reduction techniques to estimate prominent latent factors of AD at a single measurement time. The study {[}Factor Structure of the National Alzheimer's Coordinating Centers Uniform Dataset Neuropsychological Battery: An Evaluation of Invariance Between and Within Groups Over Time{]} seeks to improve on this study by separately computing factors at two different moments in time for those impaired and unimpaired.
+
+A drawback of a cross-sectional study is that it aims to estimate the latent factors of cognition at a single moment in time, rather than taking into account a subject's cognition process through time. This could lead to an increased amount of variability as participants may not be in the same stage of AD progression. Although having multiple measurement can help, controlling for variation in cognitive trajectory that may be due to age, gender, sex, education, genetics, or other possible causes over time is needed as latent factors could be due to cohort differences. Only measuring factors at two time points may also be insufficient in describing the dynamic AD progression.
+
+In order to gain more accurate insight into latent factors of cognitive decline, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT). The MLLT is an extension of the Local Linear Trend model (LLT) described in {[}Paper1{]} which was shown to accurately estimate effects on cognitive trajectory by allowing for a latent underlying cognition process. The proposed MLLT differs from the LLT in that it allows for the estimation of within subject correlation in the latent cognitive processes and the observation error for each respective outcome. The correlation of the latent cognitive process provides insight into the constucts of cognition and how they correlate through time. This model stands out as it estimates inter-relatedness of cognitive processes for each test while also accounting for unique cohort characteristic. The proposed MLLT can be neatly modelled using a similar Bayesian Gibb's sampling process as was shown in {[}paper1{]}.
+
+To test the validity of the MLLT, we start by comparing the MLLT methods to independent LLT estimation when controlling the underlying data generation process. By controlling the underlying data generation process, we are able to verify the MLLT effectiveness against the chosen true parameters. This simulation study not only verifies the effectiveness of the MLLTs ability to accurately estimate cross-test correlation at varying levels, but also illustrates deficiencies of independently estimating different cognition scores.
+
+The MLLT model is then compared to independent LLTs when estimating a simulated linear effect on a battery of real tests offered by the NACC. When adding a linear effect, we know the parameter we want to estimate correctly, but we do not know the underlying cognition process. Accurate estimation of the added linear effect is indicative that the proposed model fits the data well and estimating the correlation in the underlying cognition processes is appropriatte. In this real data simulation we show that the MLLT is just as accurate as the LLT at estimating linear effects of interest, but also has the added ability to offer more accurate insights into the cognition process over time.
+
+After verifing the MLLT's added benefits, we fit the proposed model to data provided by the NACC. The NACC offers a battery of neuropsychological tests aimed to address different components of cognition. From our model, we show compelling insight into how different cognition tests load to one-another to provide a clearer picture of cognitive decline as it pertains to AD.
+
+The multivariate local linear trend model is shown to fit the nueropsychological data provided by the NACC very well. The ability to control for cohort characteristics while estimating underlying congitive constructs in a longitudinal manner make this model very dynamic and effective.
+
+\end{document}

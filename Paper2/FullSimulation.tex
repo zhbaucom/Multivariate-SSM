@@ -1,0 +1,287 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\hypertarget{simulation-controlling-underlying-data-generation-process}{%
+\subsection{Simulation Controlling Underlying Data Generation Process}\label{simulation-controlling-underlying-data-generation-process}}
+
+The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. We use three different MLLT models when generating and fitting the data. The three MLLT models are: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS).
+
+The covariates are randomly generated to mirror the predictors of interest (section\_\_\_\_\_\_\_). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with between 2-12 observations. The ``true'' linear effects \(\boldsymbol{\beta}\), observation error covariance (\(\Sigma_\varepsilon\)), and underlying state process covariance (\(\Sigma_\eta\)) are denoted in equation (\_\_\_\_\_\_\_\_\_\_\_).
+
+The underlying data generation is as follows,
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+y_{ij3}
+\end{bmatrix}
+&= \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\alpha_{ij3}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta_1}\\
+\boldsymbol{x_{ij}\beta_2}\\
+\boldsymbol{x_{ij}\beta_3} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\varepsilon_{ij3}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\varepsilon_{ij3}
+\end{bmatrix} 
+\sim N(0, \Sigma_\varepsilon = 
+\begin{bmatrix}
+15 & 2.4 & 1\\
+2.4 & 15 & 1\\
+1 & 1 & 10
+\end{bmatrix}
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\alpha_{ij3}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\alpha_{i(j-1)3}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\eta_{ij3}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\eta_{ij3}
+\end{bmatrix} \sim N(0, \delta_{ij} (\Sigma_\eta =
+\begin{bmatrix}
+5 & 3.7 & 0\\
+3.7 & 5 & 0\\
+0 & 0 & 2
+\end{bmatrix})
+)\\
+\boldsymbol{\beta} &= \begin{bmatrix} \boldsymbol{\beta_1} & \boldsymbol{\beta_2} &  \boldsymbol{\beta_3} \end{bmatrix} = 
+\begin{bmatrix}
+4 & -3 & 0\\
+2 & 0 & 0\\
+1 & 1 & 0
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters in \(\boldsymbol{\beta}\) were chosen to have no, small, medium, large, and negative effects. The covariance matrices \(\boldsymbol{\Sigma_\varepsilon}\) and \(\boldsymbol{\Sigma_\eta}\) were chosen to approximate values observed when the MLLT models were fit to real data.
+
+Each simulation is carried out 1000 times. The most effective model is one that is unbiased, maintains 95\% coverage, and small parameter variance (indicated by small confidence interval length) for the parameters in \(\boldsymbol{\beta}\), \(\boldsymbol{\Sigma_\varepsilon}\), and \(\boldsymbol{\Sigma_\eta}\). Maintaining proper 95\% coverage indicates proper type I error at the level of 0.05. If we can fix type I error, the next step is to minimize type II error which then leads to greater power to detect significant differnces. Minimizing type II error will occurs by minimizing the parameter variance if the estimates are unbiased and have proper 95\% coverage. As we are using a Bayesian Gibb's sampling approach, the confidence interval is used to judge parameter variance.
+
+The Bayesian Gibb's sampler is repeated 5000 times with a burn-in of 2000 for each model. This means samples 2001-5000 are used for parameter inference.
+
+\hypertarget{fully-simulated-results}{%
+\subsubsection{Fully Simulated Results}\label{fully-simulated-results}}
+
+The LLT, O, S, and OS models all show unbiasedness and near 95\% coverage in the linear effect parameters. This occurs despite the LLT, O, and S models having a level of misspecification in the covariance parameters. In the linear effects there is not a large difference in confidence interval length between the different methods. The O, S, and OS models measure up well to the LLT.
+
+The parameters in \(\Sigma_\varepsilon\) vary much more. The LLT and the S models assume there is not any covariance in the observation error, therefore, do not seek to estimate the non-diagnol values of \(\Sigma_\varepsilon\). Even so, the LLT and S models are fairly accurate in estimating the observation variances. The O model, which does assume observation error covariance, greatly over estimates the covariance parameters. This is because the O model assumes no covariance in the state equation, therefore, any correlation in the state equation ends up being allocated to the observation error. Additionally, we see the same principle for the S model in estimating \(\Sigma_\eta\). The covariance parameters of \(\Sigma_\eta\) are inflated as model S is assuming correlation truly occurring in \(\Sigma_\varepsilon\) is actually occurning in the underlying cognitive process.
+
+The OS model, which is correctly specified, unsurprisingly accurately estimates the \(\Sigma_\varepsilon\) and \(\Sigma_\eta\). Similar studies were conducted, except O or S were correctly specified. When either O or S were correctly specified they slightly outperformed the OS model. This is because the OS model estimates \(K(K-1)/2\) more parameters than the other models. But, as can be seen from this simulation analysis, if O or S are mispecified it can lead to miscalculation in the covariance matrices. The OS model is much more robust in terms of handling different observation error and cognitive process correlation.
+
+Shortcomings are also blatantly evident as the LLT provides no observation error or cognitive process correlation estimation. The O and S models do provide some insight into the inter-relatedness between cognition tests, but the OS provides the most descriptive form of the correlations. Even with the added benefits of the MLLT, it perform just as well as the LLT in modeling linear effects.
+
+\begin{longtable}[t]{l|l|r|r|r|r|r}
+\hline
+Test & Variable & Beta & LLT & O & S & OS\\
+\hline
+Y1 & X1 & 4 & 0.955 & 0.940 & 0.956 & 0.945\\
+\hline
+Y1 & X2 & 2 & 0.949 & 0.930 & 0.963 & 0.952\\
+\hline
+Y1 & X3 & 1 & 0.965 & 0.949 & 0.972 & 0.963\\
+\hline
+Y2 & X1 & -3 & 0.946 & 0.935 & 0.961 & 0.950\\
+\hline
+Y2 & X2 & 0 & 0.949 & 0.934 & 0.965 & 0.949\\
+\hline
+Y2 & X3 & 1 & 0.950 & 0.938 & 0.963 & 0.962\\
+\hline
+Y3 & X1 & 0 & 0.945 & 0.942 & 0.945 & 0.944\\
+\hline
+Y3 & X2 & 0 & 0.944 & 0.953 & 0.953 & 0.952\\
+\hline
+Y3 & X3 & 0 & 0.942 & 0.947 & 0.946 & 0.944\\
+\hline
+\end{longtable}
+
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 15.0 & 14.914 & 15.677 & 14.053 & 14.977\\
+\hline
+1,2 & 2.4 & 0.000 & 5.024 & 0.000 & 2.280\\
+\hline
+2,2 & 15.0 & 14.949 & 15.715 & 14.096 & 15.009\\
+\hline
+1,3 & 1.0 & 0.000 & 0.994 & 0.000 & 0.990\\
+\hline
+2,3 & 1.0 & 0.000 & 1.018 & 0.000 & 1.010\\
+\hline
+3,3 & 10.0 & 10.029 & 10.046 & 9.995 & 10.061\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.945 & 0.885 & 0.804 & 0.936\\
+\hline
+1,2 & 0.000 & 0.007 & 0.000 & 0.940\\
+\hline
+2,2 & 0.946 & 0.890 & 0.819 & 0.949\\
+\hline
+1,3 & 0.000 & 0.924 & 0.000 & 0.941\\
+\hline
+2,3 & 0.000 & 0.956 & 0.000 & 0.960\\
+\hline
+3,3 & 0.956 & 0.955 & 0.958 & 0.955\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 5.000 & 4.908 & 4.234 & 5.910 & 4.971\\
+\hline
+1,2 & 3.714 & 0.000 & 0.000 & 4.981 & 3.821\\
+\hline
+2,2 & 5.000 & 4.909 & 4.232 & 5.902 & 4.975\\
+\hline
+1,3 & 0.000 & 0.000 & 0.000 & 0.431 & -0.030\\
+\hline
+2,3 & 0.000 & 0.000 & 0.000 & 0.436 & -0.024\\
+\hline
+3,3 & 2.000 & 1.912 & 1.919 & 1.963 & 1.924\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.944 & 0.775 & 0.759 & 0.946\\
+\hline
+1,2 & 0.000 & 0.000 & 0.367 & 0.940\\
+\hline
+2,2 & 0.947 & 0.732 & 0.756 & 0.949\\
+\hline
+1,3 & 1.000 & 1.000 & 0.722 & 0.925\\
+\hline
+2,3 & 1.000 & 1.000 & 0.711 & 0.924\\
+\hline
+3,3 & 0.944 & 0.949 & 0.956 & 0.946\\
+\hline
+\end{longtable}
+
+\end{document}

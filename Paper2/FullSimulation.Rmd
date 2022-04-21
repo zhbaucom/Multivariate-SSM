@@ -1,0 +1,267 @@
+---
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    toc: false
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+```
+
+
+## Simulation Controlling Underlying Data Generation Process
+
+The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. We use three different MLLT models when generating and fitting the data. The three MLLT models are: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS). 
+
+The covariates are randomly generated to mirror the predictors of interest (section_______). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with between 2-12 observations. The "true" linear effects $\boldsymbol{\beta}$, observation error covariance ($\Sigma_\varepsilon$), and underlying state process covariance ($\Sigma_\eta$) are denoted in equation (___________).
+
+The underlying data generation is as follows,
+
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+y_{ij3}
+\end{bmatrix}
+&= \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\alpha_{ij3}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta_1}\\
+\boldsymbol{x_{ij}\beta_2}\\
+\boldsymbol{x_{ij}\beta_3} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\varepsilon_{ij3}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\varepsilon_{ij3}
+\end{bmatrix} 
+\sim N(0, \Sigma_\varepsilon = 
+\begin{bmatrix}
+15 & 2.4 & 1\\
+2.4 & 15 & 1\\
+1 & 1 & 10
+\end{bmatrix}
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\alpha_{ij3}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\alpha_{i(j-1)3}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\eta_{ij3}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\eta_{ij3}
+\end{bmatrix} \sim N(0, \delta_{ij} (\Sigma_\eta =
+\begin{bmatrix}
+5 & 3.7 & 0\\
+3.7 & 5 & 0\\
+0 & 0 & 2
+\end{bmatrix})
+)\\
+\boldsymbol{\beta} &= \begin{bmatrix} \boldsymbol{\beta_1} & \boldsymbol{\beta_2} &  \boldsymbol{\beta_3} \end{bmatrix} = 
+\begin{bmatrix}
+4 & -3 & 0\\
+2 & 0 & 0\\
+1 & 1 & 0
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+
+
+for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $\boldsymbol{\beta}$ were chosen to have no, small, medium, large, and negative effects. The covariance matrices $\boldsymbol{\Sigma_\varepsilon}$ and $\boldsymbol{\Sigma_\eta}$ were chosen to approximate values observed when the MLLT models were fit to real data.
+
+Each simulation is carried out 1000 times. The most effective model is one that is unbiased, maintains 95% coverage, and small parameter variance (indicated by small confidence interval length) for the parameters in $\boldsymbol{\beta}$, $\boldsymbol{\Sigma_\varepsilon}$, and $\boldsymbol{\Sigma_\eta}$. Maintaining proper 95% coverage indicates proper type I error at the level of 0.05. If we can fix type I error, the next step is to minimize type II error which then leads to greater power to detect significant differnces. Minimizing type II error will occurs by minimizing the parameter variance if the estimates are unbiased and have proper 95% coverage. As we are using a Bayesian Gibb's sampling approach, the confidence interval is used to judge parameter variance. 
+
+The Bayesian Gibb's sampler is repeated 5000 times with a burn-in of 2000 for each model. This means samples 2001-5000 are used for parameter inference.
+
+
+### Fully Simulated Results
+
+The LLT, O, S, and OS models all show unbiasedness and near 95% coverage in the linear effect parameters. This occurs despite the LLT, O, and S models having a level of misspecification in the covariance parameters. In the linear effects there is not a large difference in confidence interval length between the different methods. The O, S, and OS models measure up well to the LLT.
+
+The parameters in $\Sigma_\varepsilon$ vary much more. The LLT and the S models assume there is not any covariance in the observation error, therefore, do not seek to estimate the non-diagnol values of $\Sigma_\varepsilon$. Even so, the LLT and S models are fairly accurate in estimating the observation variances. The O model, which does assume observation error covariance, greatly over estimates the covariance parameters. This is because the O model assumes no covariance in the state equation, therefore, any correlation in the state equation ends up being allocated to the observation error. Additionally, we see the same principle for the S model in estimating $\Sigma_\eta$. The covariance parameters of $\Sigma_\eta$ are inflated as model S is assuming correlation truly occurring in $\Sigma_\varepsilon$ is actually occurning in the underlying cognitive process.
+
+The OS model, which is correctly specified, unsurprisingly accurately estimates the $\Sigma_\varepsilon$ and $\Sigma_\eta$. Similar studies were conducted, except O or S were correctly specified. When either O or S were correctly specified they slightly outperformed the OS model. This is because the OS model estimates  $K(K-1)/2$ more parameters than the other models. But, as can be seen from this simulation analysis, if O or S are mispecified it can lead to miscalculation in the covariance matrices. The OS model is much more robust in terms of handling different observation error and cognitive process correlation.
+
+Shortcomings are also blatantly evident as the LLT provides no observation error or cognitive process correlation estimation. The O and S models do provide some insight into the inter-relatedness between cognition tests, but the OS provides the most descriptive form of the correlations. Even with the added benefits of the MLLT, it perform just as well as the LLT in modeling linear effects.
+
+```{r, fig.height=6}
+fse <- readRDS("Paper2/paperData/Fake_Effects.RDS") %>%
+  map2(names(.), ~cbind(.x, method = .y) %>% mutate(beta = c(4, 2, 1, -3, 0, 1, 0, 0, 0))) %>%
+  do.call("rbind", .) %>%
+  mutate(
+    Variable = case_when(
+      Beta %in% paste("B", c(1, 4, 7), sep = "") ~ "X1",
+      Beta %in% paste("B", c(1, 4, 7)+1, sep = "") ~ "X2",
+      Beta %in% paste("B", c(1, 4, 7)+2, sep = "") ~ "X3"
+    ), 
+    Test = case_when(
+      Beta %in% paste("B", 1:3, sep = "") ~ "Y1",
+      Beta %in% paste("B", (1:3) + 3, sep = "") ~ "Y2",
+      Beta %in% paste("B", (1:3) + 6, sep = "") ~ "Y3"
+    ),
+    BLCL = LCL - (AvgMean - avgBias),
+    BUCL = UCL - (AvgMean - avgBias),
+    Method = case_when(
+      method == "Dub" ~ "OS",
+      method == "St" ~ "S",
+      method == "Obs" ~ "O",
+      method == "Ind" ~ "LLT",
+    ) %>%
+      factor(levels = c("LLT", "O", "S", "OS")),
+    Coverage = round(Coverage, 3)
+  )
+
+fse %>%
+  select(Test, Variable, Beta = beta, Coverage, Method) %>%
+  spread(Method, Coverage) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+```
+
+
+
+```{r, fig.height=6}
+fse %>%
+  ggplot(aes(x = Method, y = avgBias, color = Method, shape = Method)) +
+  geom_hline(yintercept = 0) + 
+  geom_point(size = 5) +
+  geom_errorbar(aes(ymin = BLCL, ymax = BUCL)) +
+  facet_grid(Test ~ Variable) +
+  scale_color_manual(values = c("#405E92",   "#DF3116",     "#DFB916", "#409247"))  +
+  scale_shape_manual(values = c(15,10,  9, 8))  +
+  ylab("Avg Bias")  +
+  theme_bw()
+```
+
+
+
+
+
+```{r}
+## Fully Simulated Correlated Measurement Error
+EpsL <- readRDS("Paper2/paperData/Fake_Eps.RDS")
+
+sigeps <- c(15, 15, 10)
+SIGeps <- diag(sigeps)
+SIGeps[1,2] <- SIGeps[2, 1] <- 2.4
+SIGeps[1,3] <- SIGeps[3, 1] <- 1
+SIGeps[2,3] <- SIGeps[3, 2] <- 1
+
+EpsLdf <- EpsL %>%
+  map("avg") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = SIGeps[!lower.tri(SIGeps)]) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EpsLdf %>%
+  select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+```{r}
+## Fully Simulated Correlated Measurement Error Coverage
+EpsLdfcov <- EpsL %>%
+  map("coverage") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EpsLdfcov %>%
+  select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+
+
+```{r}
+## Fully Simulated Correlated Latent Variables
+Sigma <- c(5, 3.714281, 0, 3.714281, 5, 0, 0, 0, 2) %>%
+  matrix(3, 3)
+
+EtaL <- readRDS("Paper2/paperData/Fake_Eta.RDS")
+
+
+
+EtaLdf <- EtaL %>%
+  map("avg") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = Sigma[!lower.tri(Sigma)]) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(Sigma)])
+
+EtaLdf %>%
+  select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+
+
+
+```{r}
+## Fully Simulated State Variance Coverage
+EtaLdfcov <- EtaL %>%
+  map("coverage") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EtaLdfcov %>%
+  select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+

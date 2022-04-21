@@ -1,56 +1,33 @@
 ---
 title: "MLLT"
-output: pdf_document
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    toc: false
 ---
 
 
 
-Understanding the overall cognition process for those suffering with Alzheimer's Disease (AD) has been an emerging line of statistical research. Defining this process can lead to early diagnosis and the implementation of possible interventions which can create positive impacts for those suffering with AD and their caretakers. Cognition, however, is complex and is multifaceted in nature. A number of studies have used multivariate methods to assess overall cognition from a battery of neuropsychological tests. 
-
-Promising studies such as [Diagnosis of Alzheimer’s disease using neuropsychological testing improved by multivariate analyses] successfully have used dimensionality reduction techniques to estimate prominent latent factors of AD. A drawback in [] is that they aim to estimate the latent factors of cognition at a single moment in time, rather than taking into account a subjects cognition process through time. This could lead to an increased amount of variability as participants may not be in the same stage of AD progression. The study [Factor Structure of the National Alzheimer's Coordinating Centers Uniform Dataset Neuropsychological Battery: An Evaluation of Invariance Between and Within Groups Over Time] seeks to improve on this by separately computing factors at two different moments in time for those impaired and unimpaired. Although multiple measurement are taken, they are not controlling for variation in cognitive trajectory that may be due to age, gender, sex, education, genetics, or other possible causes over time. 
-
-In order to gain insight into latent factors of cognitive decline, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT). The MLLT is an extension of the Local Linear Trend model (LLT) described in [Paper1] which was shown to accurately estimate effects on cognitive trajectory by allowing for a latent underlying cognition process. 
-
-The proposed MLLT differs from the LLT, as described in [Paper1], in that it allows for the estimation of in-subject correlation between varying cognition tests over time. By jointly modeling cognitive tests we are able to estimate inter-relatedness of cognitive processes for each test after accounting for possible covariates, in addition to estimating covariates of interest. The MMLT also has the added benefit of allowing for testing if a given independent variable has a different effect across multiple tests.
-
-Estimating correlation in underlying cognition processes can be achieved in the model specification. The proposed MLLT assumes that the cognition processes are correlated over time. Therefore, we use our Bayesian estimation process to estimate the covariance matrix directly which can then be used to estimate correlation between underlying cognition processes.
-
-To test if an independent variable has a significantly different effect between tests, we rely on outcome standardization. Pre-standardizing the data is ineffective as, according to our model, variation in the outcome can come from the measurement error or the latent cognition process. For this reason we propose standardizing the outcome during each step of the Bayesian Gibb's sampler.
-
-To account for the correlation between tests, we allow for three possibilities. First, the correlation exists in the observation errors. This assumes that any correlation in the test outcomes exists due to correlated unobserved effects on the outcome for a given day, which are uncorrelated across time. The second proposed model assumes the correlation exists in the underlying latent cognition process. This assumes that correlation in the outcome exists because of correlated unobserved effects that are correlated over time. At lastly, that there is some correlation in the observation error and in the latent cognition process.
+Alzheimer's Disease (AD), a neurodegenerative disease, effects tens of millions of people world-wide and the prevalence is expected to increase with the aging baby boomer population.  AD refers to a protein build-up in the brain, leading to brain matter deterioration. Brain deterioration often presents itself outwardly in the form of a decreased ability to perform simple tasks and provide for oneself. The impact of AD is costly. The [https://www.alz.org/media/documents/alzheimers-facts-and-figures.pdf] estimates that $271 billion in unpaid care was accumulated for those living with AD in 2021. This does not take into account the emotional toll of caring for a loved one suffering from AD. Although testing for biomarkers or providing brain scans can be effective in diagnosing AD, understanding the overall cognition process for those suffering with Alzheimer's Disease (AD) has been an emerging line of statistical research. Defining this process can lead to early diagnosis and the implementation of possible interventions to create positive impacts for those suffering with AD and their caretakers. Cognition, however, is complex, multifaceted, and is measured indirectly. 
 
 
-To test the validity of the MLLT, we start by comparing the MLLT methods to independent LLT estimation when controlling the underlying data generation process. This not only verifies the effectiveness of the MLLTs ability to accurately estimate cross-test correlation at varying levels, but also illustrates deficiencies of independent estimation.
+Much research has been undertaken to describe the cognitive process of AD. Large organizations, like the National Alzheimer's Coordinating Center (NACC), offer a battery of repeated neuropsychological tests in order to best estimate cognition as a whole over time. This is vital as different domains of cognition are not homogeneous in their timing or rate of decline through the AD process []. With obvious shortcomings in modeling a single neuropsychological test, a number of studies rely on multivariate methods on a battery of tests to describe the domains of cognition. The cross-sectional study [Diagnosis of Alzheimer’s disease using neuropsychological testing improved by multivariate analyses] uses dimensionality reduction techniques to estimate prominent latent factors of AD at a single measurement time. The study [Factor Structure of the National Alzheimer's Coordinating Centers Uniform Dataset Neuropsychological Battery: An Evaluation of Invariance Between and Within Groups Over Time] seeks to improve on this study by separately computing factors at two different moments in time for those impaired and unimpaired.
 
 
-The MLLTs are then compared to independent LLTs when estimating a simulated linear effect on the digit forward and digit backward cognition test offered in the NACC. We show that the MLLT is just as accurate as the LLT at estimating linear effects of interest, with the additional ability for cross-test comparisons and underlying cognition between tests.
+A drawback of a cross-sectional study is that it aims to estimate the latent factors of cognition at a single moment in time, rather than taking into account a subject's cognition process through time. This could lead to an increased amount of variability as participants may not be in the same stage of AD progression. Although having multiple measurement can help, controlling for variation in cognitive trajectory that may be due to age, gender, sex, education, genetics, or other possible causes over time is needed as latent factors could be due to cohort differences. Only measuring factors at two time points may also be insufficient in describing the dynamic AD progression.
+
+In order to gain more accurate insight into latent factors of cognitive decline, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT). The MLLT is an extension of the Local Linear Trend model (LLT) described in [Paper1] which was shown to accurately estimate effects on cognitive trajectory by allowing for a latent underlying cognition process. The proposed MLLT differs from the LLT in that it allows for the estimation of within subject correlation in the latent cognitive processes and the observation error for each respective outcome. The correlation of the latent cognitive process provides insight into the constucts of cognition and how they correlate through time. This model stands out as it estimates inter-relatedness of cognitive processes for each test while also accounting for unique cohort characteristic. The proposed MLLT can be neatly modelled using a similar Bayesian Gibb's sampling process as was shown in [paper1].
 
 
-After verifing the MLLT's added benefits, we fit the MLLT to the NACC.....
-
-SUMMARIZE WHY MLLT IS THE BEST!
+To test the validity of the MLLT, we start by comparing the MLLT methods to independent LLT estimation when controlling the underlying data generation process. By controlling the underlying data generation process, we are able to verify the MLLT effectiveness against the chosen true parameters. This simulation study not only verifies the effectiveness of the MLLTs ability to accurately estimate cross-test correlation at varying levels, but also illustrates deficiencies of independently estimating different cognition scores.
 
 
-
-====================== scrap ===============================
-
-This is a problem because ....... loss of longitudinal information ....... problems aligning where each participant is in disease progression ........
+The MLLT model is then compared to independent LLTs when estimating a simulated linear effect on a battery of real tests offered by the NACC. When adding a linear effect, we know the parameter we want to estimate correctly, but we do not know the underlying cognition process. Accurate estimation of the added linear effect is indicative that the proposed model fits the data well and estimating the correlation in the underlying cognition processes is appropriatte. In this real data simulation we show that the MLLT is just as accurate as the LLT at estimating linear effects of interest, but also has the added ability to offer more accurate insights into the cognition process over time.
 
 
-Another draw back from these latent factor models is that they are not controlling for variation in cognition that may be due to age, gender, sex, education, genetics, or other possible causes. 
+After verifing the MLLT's added benefits, we fit the proposed model to data provided by the NACC. The NACC offers a battery of neuropsychological tests aimed to address different components of cognition. From our model, we show compelling insight into how different cognition tests load to one-another to provide a clearer picture of cognitive decline as it pertains to AD. 
 
 
-In order to better accommodate inter-relatedness between aspects of cognition, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT).
+The multivariate local linear trend model is shown to fit the nueropsychological data provided by the NACC very well. The ability to control for cohort characteristics while estimating underlying congitive constructs in a longitudinal manner make this model very dynamic and effective.
 
 
-
-A number of different studies have used multivariate methods to assess subject level cognition from a battery of neuropsychological tests.
-
-These tests don't offer longitudinal assessment. Longitudinal assessment allows for the ability to control for other covariates. Able to line up where they are on disease progression. Able to bi-pass declaring factors and their relationships.
-
-
-
-The NACC offers a battery of repeated measurement tests, aimed at measuring an overall cognitive ability of those suffering with AD. Much of the research committed to cognitive decline focuses on outcomes modeled independently or summary measurements. A more holistic approach to modeling "cognition" is to account for inter-relatedness between the tests provided by the NACC. For this cause, we propose the use of a Bayesian estimated Multivariate Local Linear Trend Model (MLLT). 
-
-
- Bayesian estimation, utilizing Gibb's sampling, proved to be the most reliable and most efficient of the estimation procedures.

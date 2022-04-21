@@ -1,30 +1,100 @@
----
-output: 
-  bookdown::pdf_document2:
-    keep_tex: true
-    toc: false
-header-includes:
-- \usepackage{booktabs}
-- \usepackage{longtable}
-- \usepackage{array}
-- \usepackage{multirow}
-- \usepackage{wrapfig}
-- \usepackage{float}
-- \usepackage{colortbl}
-- \usepackage{pdflscape}
-- \usepackage{tabu}
-- \usepackage{threeparttable}
-- \usepackage{threeparttablex}
-- \usepackage[normalem]{ulem}
-- \usepackage{makecell}
-- \usepackage{amsmath}
-- \usepackage{algorithm,algorithmic}
----
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{amsmath}
+\usepackage{algorithm,algorithmic}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
 
-## Methods
+\author{}
+\date{\vspace{-2.5em}}
 
-For this project, we fit a joint model using the SSM framework. This allows us to measure similarity in underlying constructs for different cognitive tests and compare the effect of some variable across different tests e.g. does APOE have a significantly different effect on cognitive trajectory for the Trails A and Trails B tests? Let $y_{ijk}$ represent the outcome of cognitive test $k\in \{1, 2, 3, ..., K\}$ at time $j\in \{1, 2, 3, ..., J\}$ for subject $i \in \{1, 2, 3, ..., N\}$. The model can then be formulated as,
+\begin{document}
 
+\hypertarget{methods}{%
+\subsection{Methods}\label{methods}}
+
+For this project, we fit a joint model using the SSM framework. This allows us to measure similarity in underlying constructs for different cognitive tests and compare the effect of some variable across different tests e.g.~does APOE have a significantly different effect on cognitive trajectory for the Trails A and Trails B tests? Let \(y_{ijk}\) represent the outcome of cognitive test \(k\in \{1, 2, 3, ..., K\}\) at time \(j\in \{1, 2, 3, ..., J\}\) for subject \(i \in \{1, 2, 3, ..., N\}\). The model can then be formulated as,
 
 \begin{equation*}
 \begin{aligned}
@@ -88,9 +158,7 @@ y_{ijK}
 \end{aligned}
 \end{equation*}
 
-
-In this model representation, $\Sigma_\varepsilon \in R^{KxK}$ and $\Sigma_\eta \in R^{KxK}$. Utilizing $\Sigma_\varepsilon$ and $\Sigma_\eta$ allows for estimation of correlation between cognitive tests. However, allowing for non-zero elements in the non-diagonal adds a possibly large number of parameters to estimate. We propose the use of three different models, 
-
+In this model representation, \(\Sigma_\varepsilon \in R^{KxK}\) and \(\Sigma_\eta \in R^{KxK}\). Utilizing \(\Sigma_\varepsilon\) and \(\Sigma_\eta\) allows for estimation of correlation between cognitive tests. However, allowing for non-zero elements in the non-diagonal adds a possibly large number of parameters to estimate. We propose the use of three different models,
 
 Model 1: Correlation is in Measurement eq.
 
@@ -114,9 +182,7 @@ Model 1: Correlation is in Measurement eq.
 \end{aligned}
 \end{equation*}
 
-
 Model 2: Correlation is in State eq.
-
 
 \begin{equation*}
 \begin{aligned}
@@ -138,7 +204,7 @@ Model 2: Correlation is in State eq.
 \end{aligned}
 \end{equation*}
 
-Model 3: Correlation is in both Measurement & State eq.
+Model 3: Correlation is in both Measurement \& State eq.
 
 \begin{equation*}
 \begin{aligned}
@@ -159,15 +225,13 @@ Model 3: Correlation is in both Measurement & State eq.
 \end{aligned}
 \end{equation*}
 
-
 The correlation allowed between the models makes different assumptions regarding the underlying nature of the test. Model 1 assumes that any similarity we see in the cognitive scores for a given observation time is due to a correlated random effect on the day of the test. Model 2 makes the assumption that the underlying cognitive process is correlated between the tests across time. Model 3 allows for both types of correlation.
 
 For all models we propose the use of Bayesian estimation to estimate all parameters of interest.
 
+Posterior of \(\alpha\)
 
-Posterior of $\alpha$
-
-Largely the same from before [Paper1], we are able to run the Kalman Filter independently for each subject $i \in \{1, 2, ..., N\}$.
+Largely the same from before {[}Paper1{]}, we are able to run the Kalman Filter independently for each subject \(i \in \{1, 2, ..., N\}\).
 
 \begin{algorithm}
 \caption{Kalman Filter and Smoother for Bayesian Estimation}\label{alg:bkfks}
@@ -190,13 +254,7 @@ Where $\boldsymbol{L_{i(j^*-1)} = P_{{i(j^*-1)}|{i(j^*-1)}}  P^{-1}_{ij^*|i(j^*-
 NOTE: The algorithm is run independently for each $i \in \{1, 2, ..., N\}$.
 \end{algorithm}
 
-
-
-
-
-Let $\psi = \{\Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta}\}$, the vector of the other unknown parameters. Also note, the $k$ index is dropped and all $k$-length parameters are now denoted as vectors. For the posterior of $\boldsymbol{\alpha}$ we seek to find the distribution defined by,
-
-
+Let \(\psi = \{\Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta}\}\), the vector of the other unknown parameters. Also note, the \(k\) index is dropped and all \(k\)-length parameters are now denoted as vectors. For the posterior of \(\boldsymbol{\alpha}\) we seek to find the distribution defined by,
 
 \begin{equation*}
 \begin{aligned}
@@ -204,9 +262,7 @@ P_\psi(\boldsymbol{\alpha}_{i(0:J)}|\boldsymbol{y}_{i(1:J)}) &=  P_\psi(\boldsym
 \end{aligned}
 \end{equation*}
 
-
-Therefore we need the following densities for $j$ in $1, 2, ..., J-1$ and $i$ in $1, 2, ..., N$:
-
+Therefore we need the following densities for \(j\) in \(1, 2, ..., J-1\) and \(i\) in \(1, 2, ..., N\):
 
 \begin{equation*}
 \begin{aligned}
@@ -214,14 +270,11 @@ P_\psi(\boldsymbol{\alpha}_{ij}|\boldsymbol{\alpha}_{i(j+1)}, \boldsymbol{y}_{i(
 \end{aligned}
 \end{equation*}
 
+From the Kalman Filter we calculate \(\boldsymbol{\alpha}_{ij}|\boldsymbol{y}_{i(1:j)} \sim N_\psi(\boldsymbol{\alpha}_{ij|ij}, \boldsymbol{P}_{ij|ij})\) and \(\boldsymbol{\alpha}_{i(j+1)}|\boldsymbol{\alpha}_{ij} \sim N_\psi(\boldsymbol{\alpha}_{ij}, \Sigma_\eta)\). After combining the two densities \(\boldsymbol{m}_{ij} = E_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)}) = \boldsymbol{\alpha}_{ij|ij} + \boldsymbol{L}_{ij} (\boldsymbol{\alpha}_{i(j+1)} - \boldsymbol{\alpha}_{i(j+1)|ij})\) and \(\boldsymbol{R}_{ij} = \text{Var}_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)})= \boldsymbol{P}_{ij|ij} - \boldsymbol{L}_{ij}^2 \boldsymbol{P}_{i(j+1)|ij}\) {[}@shumway\_stoffer\_2017{]}. Because of normality, the posterior distribution for \(\boldsymbol{\alpha}_{ij}\) is \(N(\boldsymbol{m}_{ij}, \boldsymbol{R}_{ij})\).
 
+For the backward sampling procedure we start by sampling a \(\boldsymbol{\alpha}_{iJ^*}\) from a \(N_\psi(m_{iJ}, \boldsymbol{R}_{iJ})\), then setting \(\boldsymbol{\alpha}_{iJ^*} = \boldsymbol{\alpha}_{iJ}\) for the calculation of \(\boldsymbol{m}_{i(J-1)}\) to then sample \(\boldsymbol{\alpha}_{i(J-1)}^*\) from a \(N_\psi(\boldsymbol{m}_{i(J-1)}, \boldsymbol{R}_{i(J-1)})\). This process continues until a whole chain \(\boldsymbol{\alpha}_{i(0:J)}^*\) has been sampled.
 
-From the Kalman Filter we calculate $\boldsymbol{\alpha}_{ij}|\boldsymbol{y}_{i(1:j)} \sim N_\psi(\boldsymbol{\alpha}_{ij|ij}, \boldsymbol{P}_{ij|ij})$ and $\boldsymbol{\alpha}_{i(j+1)}|\boldsymbol{\alpha}_{ij} \sim N_\psi(\boldsymbol{\alpha}_{ij}, \Sigma_\eta)$. After combining the two densities $\boldsymbol{m}_{ij} = E_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)}) = \boldsymbol{\alpha}_{ij|ij} + \boldsymbol{L}_{ij} (\boldsymbol{\alpha}_{i(j+1)} - \boldsymbol{\alpha}_{i(j+1)|ij})$ and $\boldsymbol{R}_{ij} = \text{Var}_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)})= \boldsymbol{P}_{ij|ij} - \boldsymbol{L}_{ij}^2 \boldsymbol{P}_{i(j+1)|ij}$ [@shumway_stoffer_2017]. Because of normality, the posterior distribution for $\boldsymbol{\alpha}_{ij}$ is $N(\boldsymbol{m}_{ij}, \boldsymbol{R}_{ij})$.
-
-For the backward sampling procedure we start by sampling a $\boldsymbol{\alpha}_{iJ^*}$ from a $N_\psi(m_{iJ}, \boldsymbol{R}_{iJ})$, then setting $\boldsymbol{\alpha}_{iJ^*} = \boldsymbol{\alpha}_{iJ}$ for the calculation of $\boldsymbol{m}_{i(J-1)}$ to then sample $\boldsymbol{\alpha}_{i(J-1)}^*$ from a $N_\psi(\boldsymbol{m}_{i(J-1)}, \boldsymbol{R}_{i(J-1)})$. This process continues until a whole chain $\boldsymbol{\alpha}_{i(0:J)}^*$ has been sampled.
-
-Using Bayes rule, the $\beta$ posterior can be written as follows,
-
+Using Bayes rule, the \(\beta\) posterior can be written as follows,
 
 \begin{equation*}
 \begin{aligned}
@@ -229,9 +282,7 @@ P(\boldsymbol{\beta}|Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon) = 
 \end{aligned}
 \end{equation*}
 
-
-Next, we focus our attention on $P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta})$,
-
+Next, we focus our attention on \(P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta})\),
 
 \begin{equation*}
 \begin{aligned}
@@ -247,9 +298,7 @@ P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) = 
 \end{aligned}
 \end{equation*}
 
-
 Due to independence from subject to subject we can write the -2 log likelihood as,
-
 
 \begin{equation*}
 \begin{aligned}
@@ -263,10 +312,7 @@ Due to independence from subject to subject we can write the -2 log likelihood a
 \end{aligned}
 \end{equation*}
 
-Next, we write the -2 log likelihood in terms of $\beta$,
-
-
-
+Next, we write the -2 log likelihood in terms of \(\beta\),
 
 \begin{equation*}
 \begin{aligned}
@@ -277,7 +323,6 @@ Next, we write the -2 log likelihood in terms of $\beta$,
 
 Similarly, the prior can be written in a similar format,
 
-
 \begin{equation*}
 \begin{aligned}
 -2logP(\boldsymbol{\beta}) &\propto 
@@ -286,9 +331,7 @@ Similarly, the prior can be written in a similar format,
 \end{aligned}
 \end{equation*}
 
-
 Combining the two we are able to get the proportionality of the posterior,
-
 
 \begin{equation*}
 \begin{aligned}
@@ -297,10 +340,7 @@ Combining the two we are able to get the proportionality of the posterior,
 \end{aligned}
 \end{equation*}
 
-
-
 Which, after completing the square, has the form
-
 
 \begin{equation*}
 \begin{aligned}
@@ -310,24 +350,15 @@ Which, after completing the square, has the form
 \end{aligned}
 \end{equation*}
 
+Where, \(B = \sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}\) and \(\boldsymbol{\Sigma} = \sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1}\).
 
-
-Where, $B = \sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}$ and $\boldsymbol{\Sigma} = \sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1}$.
-
-Thus, the posterior for $\beta$ has the following distribution,
-
+Thus, the posterior for \(\beta\) has the following distribution,
 
 \begin{equation*}
 \boldsymbol{\beta}\sim N(\Sigma^{-1}B, \Sigma^{-1})
 \end{equation*}
 
-
-
-
-
-
-For the posterior of $\Sigma_\varepsilon$, if we assume the matrix is non-diagonal as in Model 1 and 3, then we give $\Sigma_\varepsilon$ an inverse-Wishart distribution.
-
+For the posterior of \(\Sigma_\varepsilon\), if we assume the matrix is non-diagonal as in Model 1 and 3, then we give \(\Sigma_\varepsilon\) an inverse-Wishart distribution.
 
 \begin{equation*}
 \begin{aligned}
@@ -339,12 +370,9 @@ P(\Sigma_\varepsilon|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & 
 \end{aligned}
 \end{equation*}
 
-The posterior for the diagnol matrix $\Sigma_\eta$ can be calculated independently for each test as was previously shown [Paper1] using the inverse-gamma for each test.
+The posterior for the diagnol matrix \(\Sigma_\eta\) can be calculated independently for each test as was previously shown {[}Paper1{]} using the inverse-gamma for each test.
 
-
-
-On the other hand, if $\Sigma_\eta$ is non-diagonal as was shown in Model 2 and 3,
-
+On the other hand, if \(\Sigma_\eta\) is non-diagonal as was shown in Model 2 and 3,
 
 \begin{equation*}
 \begin{aligned}
@@ -356,15 +384,13 @@ P(\Sigma_\eta|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, 
 \end{aligned}
 \end{equation*}
 
+The posterior for the diagnol matrix \(\Sigma_\varepsilon\) can again be calculated independently for each test as was previously shown {[}Paper1{]}.
 
-The posterior for the diagnol matrix $\Sigma_\varepsilon$ can again be calculated independently for each test as was previously shown [Paper1].
+The covariance matrix \(\Sigma_\varepsilon\) and \(\Sigma_\eta\), both offer meaningful insight into underlying constructs of cognition. Additionally, these models allow for comparison of linear effects across different tests.
 
-The covariance matrix $\Sigma_\varepsilon$ and $\Sigma_\eta$, both offer meaningful insight into underlying constructs of cognition. Additionally, these models allow for comparison of linear effects across different tests.
+In order to compare effects across cognition test, the test must be standardized. However, ad-hoc outcome standardization and joint-modeling using the SSM models does not allow for direct comparison of effects across tests. This is because it would not take into account what amount of variance is coming from the observation equation and what amount of variance is coming from the underlying temporal cognition process. To standardize the outcome we instead rely on estimating \(\Sigma_\varepsilon^{(m)}\) at each iteration \(m \in \{1, 2, ..., M\}\), then multiplying \(\tilde{\boldsymbol{\beta}}^{(m)} = \begin{bmatrix}\boldsymbol{\beta}_1^{(m)} & ... & \boldsymbol{\beta}_K^{(m)}\end{bmatrix}\) with \((\Sigma_\varepsilon^{(m)})^{-1}\). This will yield a standardized effect estimate for each test that can then be compared to on another.
 
-In order to compare effects across cognition test, the test must be standardized. However, ad-hoc outcome standardization and joint-modeling using the SSM models does not allow for direct comparison of effects across tests. This is because it would not take into account what amount of variance is coming from the observation equation and what amount of variance is coming from the underlying temporal cognition process. To standardize the outcome we instead rely on estimating $\Sigma_\varepsilon^{(m)}$ at each iteration $m \in \{1, 2, ..., M\}$, then multiplying $\tilde{\boldsymbol{\beta}}^{(m)} = \begin{bmatrix}\boldsymbol{\beta}_1^{(m)} & ... & \boldsymbol{\beta}_K^{(m)}\end{bmatrix}$ with $(\Sigma_\varepsilon^{(m)})^{-1}$. This will yield a standardized effect estimate for each test that can then be compared to on another.
-
-At iteration $m$ our model is as follows,  
-
+At iteration \(m\) our model is as follows,
 
 \begin{equation*}
 \begin{aligned}
@@ -375,7 +401,6 @@ At iteration $m$ our model is as follows,
 \end{aligned}
 \end{equation*}
 
+Where \(\boldsymbol{y}_{ij}^{(m)*}\sim N(0, I)\), meaning each test has the same observed variance 1 and each tend has had the trend compenent removed. We then let \(\beta^{(m)*} = \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1}\) which is a standardized linear effect estimate and the respective components can be used for hypothesis testing across tests.
 
-
-Where $\boldsymbol{y}_{ij}^{(m)*}\sim N(0, I)$, meaning each test has the same observed variance 1 and each tend has had the trend compenent removed. We then let $\beta^{(m)*} = \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1}$ which is a standardized linear effect estimate and the respective components can be used for hypothesis testing across tests.
-
+\end{document}
