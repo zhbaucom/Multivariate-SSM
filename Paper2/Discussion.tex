@@ -1,0 +1,92 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\hypertarget{discussion}{%
+\subsection{Discussion}\label{discussion}}
+
+The multivariate local linear trend state space model was developed to assess inter-relationships between cognitive tests spanning different cognition domains. It achieves this by modelling the correlation between tests in both the observation equation and the underlying cognition process equation, after accounting for linear effects. By controlling for linear effects we are able to control for possible cohort difference when estimating the inter-relatedness.
+
+The fully simulated data simulation shows the MLLT where, correlation is assumed in the observation and state equations, is the most robust model for the varying correlation assumpions. This MLLT was able to accurately estimate the inter-relatedness of the simulated cognitive tests in both the observation and state equations. In addition, the MLLT also as proficient as the LLT in estimating linear effects on the outcome.
+
+The real data simulation provided insight into how the MLLT performs on real data provided by the NACC. The OS and S MLLT models were able to accurately estimate the added linear effect on the real ouctomes and were as accurate as the proven LLT model. The O MLLT suffered in terms of proper 95\% confidence interval coverage. Reasoning was made apparent by the correlation structure estimated by the OS model, which put very low covariance in the observation equation and high covariance in the state equation. These results help confirm the true underlying data generation process is more likely that of an S or OS model. The findings also support the importance in estimating the underlying cognition process unaccounted for by the linear effects of interest.
+
+Similar to the LLT, the dynamic MLLT is able to estimate linear effects of interest well, but, unlike the LLT, the MLLT can also provide accurate inference of linear effects across different cognitive outcomes. To test if an independent variable has a significantly different effect between tests, we rely on outcome standardization, which relies on accurate estimation of the observation error correlation matrix. Pre-standardizing the data is ineffective as, according to our model, variation in the outcome can come from the measurement error or from the latent cognition process. For this reason we propose standardizing the outcome during each step of the Bayesian Gibb's sampler.
+
+Depending on statistical power and the objectives of an analysis, different assumptions of the underlying model can be assumed. First, it can be assumed that correlation in the observations exists only in the observation errors. This assumption can be made when linear effects and cross test linear effect comparisons are of primary interest. Next, it can be assumed that the correlation exists only in the underlying latent cognition process. This can be used when the primary focus of the analysis is understanding latent constucts of cognition. However, for an ample sample size we can assume that there is correlation in the observation error and in the latent cognition process. This is the preffered model and provides the most accurate results regardless of analysis aims.
+
+\end{document}
