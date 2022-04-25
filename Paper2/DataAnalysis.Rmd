@@ -1,0 +1,83 @@
+---
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+    toc: false
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+library(igraph)
+```
+
+## Data Analysis
+
+Using the MLLT model which allows correlation in the observation errors and underlying cognitive process (OS), we carry out an analysis on the NACC data with the outcomes and predictors of interest as described in (section__________). The Gibb's sampling was repeated 5,000 times with a burn-in of 2,000 samples. Non-informative priors are used for both the linear effects and covariance matrices.
+
+### Data Analysis Results
+
+
+
+```{r}
+SIG <- "Paper2/JPrezTab/NACC_SIG.RDS" %>%
+  readRDS() %>%
+  data.frame() %>%
+  mutate_all(.funs = list(function(x)ifelse( x== 'blue', 'green', x)))
+
+ptab <- "Paper2/JPrezTab/NACC_effects.RDS" %>%
+  readRDS()%>%
+  t() %>%
+  data.frame()
+
+for(i in 1:10){
+  ptab[i] <- cell_spec(ptab[[i]], background = SIG[[i]])
+}
+
+
+ptab[,1:5] %>%
+  kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
+  kable_styling()
+  
+
+ptab[,6:10] %>%
+  kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
+    kable_styling()
+```
+
+
+![](img/NACCObsHeat.png)
+
+
+![](img/NACCStateHeat.png)
+
+
+
+```{r, eval = FALSE}
+ds <- "Paper2/JPrezTab/NACC_stateCor.RDS" %>%
+  readRDS()
+
+```
+
+
+```{r, eval = FALSE}
+pds <- ds
+# pds <- pds[!(row.names(pds) %in% c("ANIMALS")), !(row.names(pds) %in% c("ANIMALS"))]
+pds[pds < .5] <- 0
+graph <- pds %>%
+  graph.adjacency(weighted = TRUE, mode = "lower", diag = F)
+
+
+par(bg="grey13", mar=c(0,0,0,0))
+tkplot(graph, 
+    edge.width = edge.betweenness(graph),   
+    vertex.size=12,
+    vertex.size = 'red',
+    vertex.label.cex=0.7,
+    vertex.label.color="black")
+
+```
+
+
