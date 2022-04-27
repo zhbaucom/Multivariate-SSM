@@ -25,7 +25,7 @@ Using the MLLT model which allows correlation in the observation errors and unde
 SIG <- "Paper2/JPrezTab/NACC_SIG.RDS" %>%
   readRDS() %>%
   data.frame() %>%
-  mutate_all(.funs = list(function(x)ifelse( x== 'blue', 'green', x)))
+  mutate_all(.funs = list(function(x)ifelse( x== 'red', 'green', ifelse(x == 'blue', 'red', x))))
 
 ptab <- "Paper2/JPrezTab/NACC_effects.RDS" %>%
   readRDS()%>%
@@ -39,12 +39,12 @@ for(i in 1:10){
 
 ptab[,1:5] %>%
   kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
-  kable_styling()
+  kable_styling(font_size = 7)
   
 
 ptab[,6:10] %>%
   kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
-    kable_styling()
+    kable_styling(font_size = 7)
 ```
 
 
@@ -58,14 +58,78 @@ ptab[,6:10] %>%
 ```{r, eval = FALSE}
 ds <- "Paper2/JPrezTab/NACC_stateCor.RDS" %>%
   readRDS()
+```
 
+
+```{r, eval = FALSE}
+
+
+dseig <- eigen(ds)
+
+facLoading <- t(t(dseig$vectors) * sqrt(dseig$values))
+rownames(facLoading) <- row.names(ds)
+colnames(facLoading) <- paste("PC_", 1:10, sep = "")
+
+plot(dseig$values)
+facLoading <- facLoading %>%
+  data.frame() 
+facLoading %>%
+  rownames_to_column('outcome' )%>%
+  ggplot(aes(x = PC_1, y = PC_2, label = outcome)) +
+  geom_label()
+facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x))))
+facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
+  mutate_all(.funs = list(function(x)ifelse(x < 0.1, '-', x)))
+
+facLoading
+
+prop <- dseig$values / sum(dseig$values)
+round(prop, 3)
+round(cumsum(prop), 3)
+```
+
+
+```{r, eval = FALSE}
+library(ggtext)
+
+facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
+  rownames_to_column("Outcome") %>%
+  gather("PC", "COR", PC_1:PC_10) %>%
+  mutate(print_values = round(COR, 2), PC = factor(PC, levels = paste("PC_", 1:10, sep = ""))) %>%
+  na.omit() %>%
+  ggplot(aes(x = PC, y = Outcome, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .125,limits = c(0,.25), na.value = "lightblue",
+    name="Loading")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    )
 ```
 
 
 ```{r, eval = FALSE}
 pds <- ds
 # pds <- pds[!(row.names(pds) %in% c("ANIMALS")), !(row.names(pds) %in% c("ANIMALS"))]
-pds[pds < .5] <- 0
+pds[pds < .7] <- 0
 graph <- pds %>%
   graph.adjacency(weighted = TRUE, mode = "lower", diag = F)
 
@@ -74,9 +138,8 @@ par(bg="grey13", mar=c(0,0,0,0))
 tkplot(graph, 
     edge.width = edge.betweenness(graph),   
     vertex.size=12,
-    vertex.size = 'red',
     vertex.label.cex=0.7,
-    vertex.label.color="black")
+    vertex.label.color="red")
 
 ```
 
