@@ -1,0 +1,178 @@
+
+```{r, fig.height=6}
+fse <- readRDS(paste("Paper2/paperData/",path, "_Fake_Effects.RDS", sep = "")) %>%
+  map2(names(.), ~cbind(.x, method = .y) %>% mutate(beta = c(4, 2, 1, -3, 0, 1, 0, 0, 0))) %>%
+  do.call("rbind", .) %>%
+  mutate(
+    Variable = case_when(
+      Beta %in% paste("B", c(1, 4, 7), sep = "") ~ "X1",
+      Beta %in% paste("B", c(1, 4, 7)+1, sep = "") ~ "X2",
+      Beta %in% paste("B", c(1, 4, 7)+2, sep = "") ~ "X3"
+    ), 
+    Test = case_when(
+      Beta %in% paste("B", 1:3, sep = "") ~ "Y1",
+      Beta %in% paste("B", (1:3) + 3, sep = "") ~ "Y2",
+      Beta %in% paste("B", (1:3) + 6, sep = "") ~ "Y3"
+    ),
+    BLCL = LCL - (AvgMean - avgBias),
+    BUCL = UCL - (AvgMean - avgBias),
+    Method = case_when(
+      method == "Dub" ~ "OS",
+      method == "St" ~ "S",
+      method == "Obs" ~ "O",
+      method == "Ind" ~ "LLT",
+    ) %>%
+      factor(levels = c("LLT", "O", "S", "OS")),
+    Coverage = round(Coverage, 3)
+  )
+
+fse %>%
+  select(Test, Variable, Beta = beta, Coverage, Method) %>%
+  spread(Method, Coverage) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+```
+
+
+
+```{r}
+fse %>%
+  ggplot(aes(x = Method, y = avgBias, color = Method, shape = Method)) +
+  geom_hline(yintercept = 0) + 
+  geom_point(size = 5) +
+  geom_errorbar(aes(ymin = BLCL, ymax = BUCL)) +
+  facet_grid(Test ~ Variable) +
+  scale_color_manual(values = c("#405E92",   "#DF3116",     "#DFB916", "#409247"))  +
+  scale_shape_manual(values = c(15,10,  9, 8))  +
+  ylab("Avg Bias")  +
+  theme_bw()
+```
+
+
+
+
+
+```{r}
+## Fully Simulated Correlated Measurement Error
+EpsL <- readRDS(paste("Paper2/paperData/",path, "_Fake_Eps.RDS", sep = ""))
+
+EpsLdf <- EpsL %>%
+  map("avg") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = SIGeps[!lower.tri(SIGeps)]) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+EpsClose <- EpsLdf
+
+EpsLdf$st[c(2, 4, 5)] <- EpsLdf$ind[c(2, 4, 5)] <- '-'
+
+
+EpsLdf %>%
+  select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+```{r, caption = "squared closeness"}
+EpsClose <- EpsClose %>%
+  mutate(across(dub:ind, .fns = list(~ round((.x-true)^2, 3))))
+
+# EpsClose$st_1[c(2, 4, 5)] <- EpsClose$ind_1[c(2, 4, 5)] <- '-'
+
+EpsClose %>%
+  select(param, true, `LLT sq diff`  = ind_1, `O sq diff`= obs_1, `S sq diff` = st_1, `OS sq diff` = dub_1) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+
+```{r}
+## Fully Simulated Correlated Measurement Error Coverage
+EpsLdfcov <- EpsL %>%
+  map("coverage") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EpsLdfcov$st[c(2, 4, 5)] <- EpsLdfcov$ind[c(2, 4, 5)] <- '-'
+
+EpsLdfcov %>%
+  select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+
+
+```{r}
+## Fully Simulated Correlated Latent Variables
+
+
+EtaL <- readRDS(paste("Paper2/paperData/",path, "_Fake_Eta.RDS", sep = ""))
+
+
+
+EtaLdf <- EtaL %>%
+  map("avg") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = Sigma[!lower.tri(Sigma)]) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(Sigma)])
+
+EtaClose = EtaLdf
+
+EtaLdf$obs[c(2, 4, 5)] <- EtaLdf$ind[c(2, 4, 5)] <- '-'
+
+EtaLdf %>%
+  select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+```{r, caption = "squared closeness"}
+EtaClose <- EtaClose %>%
+  mutate(across(dub:ind, .fns = list(~ round((.x-true)^2, 3))))
+
+# EtaClose$obs_1[c(2, 4, 5)] <- EtaClose$ind_1[c(2, 4, 5)] <- '-'
+
+EtaClose %>%
+  select(param, true, `LLT sq diff`  = ind_1, `O sq diff`= obs_1, `S sq diff` = st_1, `OS sq diff` = dub_1) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+
+
+```{r}
+## Fully Simulated State Variance Coverage
+EtaLdfcov <- EtaL %>%
+  map("coverage") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EtaLdfcov$obs[c(2, 4, 5)] <- EtaLdfcov$ind[c(2, 4, 5)] <- '-'
+
+EtaLdfcov %>%
+  select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+

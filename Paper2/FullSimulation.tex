@@ -93,11 +93,11 @@
 \hypertarget{simulation-controlling-underlying-data-generation-process}{%
 \subsection{Simulation Controlling Underlying Data Generation Process}\label{simulation-controlling-underlying-data-generation-process}}
 
-The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. We use three different MLLT models when generating and fitting the data. The three MLLT models are: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS).
+The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. The data is simulated under three scenarios: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS). The independent LLT, the O MLLT, S MLLT, and OS MLLT are all fit to each of the three data generation processes.
 
 The covariates are randomly generated to mirror the predictors of interest (section\_\_\_\_\_\_\_). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with between 2-12 observations. The ``true'' linear effects \(\boldsymbol{\beta}\), observation error covariance (\(\Sigma_\varepsilon\)), and underlying state process covariance (\(\Sigma_\eta\)) are denoted in equation (\_\_\_\_\_\_\_\_\_\_\_).
 
-The underlying data generation is as follows,
+The underlying data generation for each of the three simulation scenarios are as follows,
 
 \begin{equation*}
 \begin{aligned}
@@ -127,12 +127,7 @@ y_{ij3}
 \varepsilon_{ij2}\\
 \varepsilon_{ij3}
 \end{bmatrix} 
-\sim N(0, \Sigma_\varepsilon = 
-\begin{bmatrix}
-15 & 2.4 & 1\\
-2.4 & 15 & 1\\
-1 & 1 & 10
-\end{bmatrix}
+\sim N(0, \Sigma_\varepsilon
 )\\
 \begin{bmatrix}
 \alpha_{ij1}\\
@@ -153,12 +148,7 @@ y_{ij3}
 \eta_{ij1}\\
 \eta_{ij2}\\
 \eta_{ij3}
-\end{bmatrix} \sim N(0, \delta_{ij} (\Sigma_\eta =
-\begin{bmatrix}
-5 & 3.7 & 0\\
-3.7 & 5 & 0\\
-0 & 0 & 2
-\end{bmatrix})
+\end{bmatrix} \sim N(0, \delta_{ij} \Sigma_\eta 
 )\\
 \boldsymbol{\beta} &= \begin{bmatrix} \boldsymbol{\beta_1} & \boldsymbol{\beta_2} &  \boldsymbol{\beta_3} \end{bmatrix} = 
 \begin{bmatrix}
@@ -169,9 +159,65 @@ y_{ij3}
 \end{aligned}
 \end{equation*}
 
-for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters in \(\boldsymbol{\beta}\) were chosen to have no, small, medium, large, and negative effects. The covariance matrices \(\boldsymbol{\Sigma_\varepsilon}\) and \(\boldsymbol{\Sigma_\eta}\) were chosen to approximate values observed when the MLLT models were fit to real data.
+for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters in \(\boldsymbol{\beta}\) were chosen to have no, small, medium, large, and negative effects. For the three different data generation scenarios we utilize differing values of \(\Sigma_\varepsilon\) and \(\Sigma_\eta\).
 
-Each simulation is carried out 1000 times. The most effective model is one that is unbiased, maintains 95\% coverage, and small parameter variance (indicated by small confidence interval length) for the parameters in \(\boldsymbol{\beta}\), \(\boldsymbol{\Sigma_\varepsilon}\), and \(\boldsymbol{\Sigma_\eta}\). Maintaining proper 95\% coverage indicates proper type I error at the level of 0.05. If we can fix type I error, the next step is to minimize type II error which then leads to greater power to detect significant differences. Minimizing type II error will occurs by minimizing the parameter variance if the estimates are unbiased and have proper 95\% coverage. As we are using a Bayesian Gibb's sampling approach, the confidence interval is used to judge parameter variance.
+\hypertarget{o-model}{%
+\paragraph{O Model}\label{o-model}}
+
+\begin{equation*}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+15 & 2.4 & 1\\
+2.4 & 15 & 1\\
+1 & 1 & 10
+\end{bmatrix}, \ \ \ 
+\Sigma_\eta =
+\begin{bmatrix}
+5 & 0 & 0\\
+0 & 5 & 0\\
+0 & 0 & 2
+\end{bmatrix}
+\end{equation*}
+
+\hypertarget{s-model}{%
+\paragraph{S Model}\label{s-model}}
+
+\begin{equation*}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+15 & 0 & 0\\
+0 & 15 & 0\\
+0 & 0 & 10
+\end{bmatrix}, \ \ \ 
+\Sigma_\eta =
+\begin{bmatrix}
+5 & 3.7 & 0\\
+3.7 & 5 & 0\\
+0 & 0 & 2
+\end{bmatrix}
+\end{equation*}
+
+\hypertarget{os-model}{%
+\paragraph{OS Model}\label{os-model}}
+
+\begin{equation*}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+15 & 2.4 & 1\\
+2.4 & 15 & 1\\
+1 & 1 & 10
+\end{bmatrix}, \ \ \ 
+\Sigma_\eta =
+\begin{bmatrix}
+5 & 3.7 & 0\\
+3.7 & 5 & 0\\
+0 & 0 & 2
+\end{bmatrix}
+\end{equation*}
+
+The covariance matrices \(\boldsymbol{\Sigma_\varepsilon}\) and \(\boldsymbol{\Sigma_\eta}\) were chosen to approximate values observed when the MLLT models were fit to real data.
+
+For each scenario, the simulations are carried out 1000 times. The most effective model is one that is unbiased, maintains 95\% coverage, and small parameter variance (indicated by small confidence interval length) for the parameters in \(\boldsymbol{\beta}\), \(\boldsymbol{\Sigma_\varepsilon}\), and \(\boldsymbol{\Sigma_\eta}\). Maintaining proper 95\% coverage indicates proper type I error at the level of 0.05. If we can fix type I error, the next step is to minimize type II error which then leads to greater power to detect significant differences. Minimizing type II error will occurs by minimizing the parameter variance if the estimates are unbiased and have proper 95\% coverage. As we are using a Bayesian Gibb's sampling approach, the confidence interval is used to judge parameter variance.
 
 The Bayesian Gibb's sampler is repeated 5000 times with a burn-in of 2000 for each model. This means samples 2001-5000 are used for parameter inference.
 
@@ -186,101 +232,414 @@ The OS model, which is correctly specified, unsurprisingly accurately estimates 
 
 Shortcomings are also blatantly evident as the LLT provides no observation error or cognitive process correlation estimation. The O and S models do provide some insight into the inter-relatedness between cognition tests, but the OS provides the most descriptive form of the correlations. Even with the added benefits of the MLLT, it perform just as well as the LLT in modeling linear effects.
 
+\hypertarget{o-model-1}{%
+\paragraph{O Model}\label{o-model-1}}
+
 \begin{longtable}[t]{l|l|r|r|r|r|r}
 \hline
 Test & Variable & Beta & LLT & O & S & OS\\
 \hline
-Y1 & X1 & 4 & 0.955 & 0.940 & 0.956 & 0.945\\
+Y1 & X1 & 4 & 0.948 & 0.943 & 0.956 & 0.947\\
 \hline
-Y1 & X2 & 2 & 0.949 & 0.930 & 0.963 & 0.952\\
+Y1 & X2 & 2 & 0.943 & 0.943 & 0.946 & 0.949\\
 \hline
-Y1 & X3 & 1 & 0.965 & 0.949 & 0.972 & 0.963\\
+Y1 & X3 & 1 & 0.954 & 0.953 & 0.955 & 0.956\\
 \hline
-Y2 & X1 & -3 & 0.946 & 0.935 & 0.961 & 0.950\\
+Y2 & X1 & -3 & 0.963 & 0.956 & 0.961 & 0.956\\
 \hline
-Y2 & X2 & 0 & 0.949 & 0.934 & 0.965 & 0.949\\
+Y2 & X2 & 0 & 0.944 & 0.945 & 0.951 & 0.949\\
 \hline
-Y2 & X3 & 1 & 0.950 & 0.938 & 0.963 & 0.962\\
+Y2 & X3 & 1 & 0.960 & 0.953 & 0.960 & 0.956\\
 \hline
-Y3 & X1 & 0 & 0.945 & 0.942 & 0.945 & 0.944\\
+Y3 & X1 & 0 & 0.966 & 0.960 & 0.956 & 0.959\\
 \hline
-Y3 & X2 & 0 & 0.944 & 0.953 & 0.953 & 0.952\\
+Y3 & X2 & 0 & 0.937 & 0.936 & 0.933 & 0.935\\
 \hline
-Y3 & X3 & 0 & 0.942 & 0.947 & 0.946 & 0.944\\
+Y3 & X3 & 0 & 0.949 & 0.944 & 0.944 & 0.949\\
 \hline
 \end{longtable}
 
-\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-9-1.pdf}
 
-\begin{longtable}[t]{l|r|r|r|r|r}
+\begin{longtable}[t]{l|r|l|r|l|r}
 \hline
 param & true & LLT & O & S & OS\\
 \hline
-1,1 & 15.0 & 14.914 & 15.677 & 14.053 & 14.977\\
+1,1 & 15.0 & 14.894 & 14.918 & 14.676 & 14.936\\
 \hline
-1,2 & 2.4 & 0.000 & 5.024 & 0.000 & 2.280\\
+1,2 & 2.4 & - & 2.380 & - & 2.416\\
 \hline
-2,2 & 15.0 & 14.949 & 15.715 & 14.096 & 15.009\\
+2,2 & 15.0 & 14.881 & 14.903 & 14.666 & 14.926\\
 \hline
-1,3 & 1.0 & 0.000 & 0.994 & 0.000 & 0.990\\
+1,3 & 1.0 & - & 0.997 & - & 1.019\\
 \hline
-2,3 & 1.0 & 0.000 & 1.018 & 0.000 & 1.010\\
+2,3 & 1.0 & - & 1.013 & - & 1.038\\
 \hline
-3,3 & 10.0 & 10.029 & 10.046 & 9.995 & 10.061\\
-\hline
-\end{longtable}
-
-\begin{longtable}[t]{l|r|r|r|r}
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.945 & 0.885 & 0.804 & 0.936\\
-\hline
-1,2 & 0.000 & 0.007 & 0.000 & 0.940\\
-\hline
-2,2 & 0.946 & 0.890 & 0.819 & 0.949\\
-\hline
-1,3 & 0.000 & 0.924 & 0.000 & 0.941\\
-\hline
-2,3 & 0.000 & 0.956 & 0.000 & 0.960\\
-\hline
-3,3 & 0.956 & 0.955 & 0.958 & 0.955\\
+3,3 & 10.0 & 10.013 & 10.030 & 9.987 & 10.068\\
 \hline
 \end{longtable}
 
 \begin{longtable}[t]{l|r|r|r|r|r}
 \hline
-param & true & LLT & O & S & OS\\
+param & true & LLT sq diff & O sq diff & S sq diff & OS sq diff\\
 \hline
-1,1 & 5.000 & 4.908 & 4.234 & 5.910 & 4.971\\
+1,1 & 15.0 & 0.011 & 0.007 & 0.105 & 0.004\\
 \hline
-1,2 & 3.714 & 0.000 & 0.000 & 4.981 & 3.821\\
+1,2 & 2.4 & 5.760 & 0.000 & 5.760 & 0.000\\
 \hline
-2,2 & 5.000 & 4.909 & 4.232 & 5.902 & 4.975\\
+2,2 & 15.0 & 0.014 & 0.009 & 0.112 & 0.005\\
 \hline
-1,3 & 0.000 & 0.000 & 0.000 & 0.431 & -0.030\\
+1,3 & 1.0 & 1.000 & 0.000 & 1.000 & 0.000\\
 \hline
-2,3 & 0.000 & 0.000 & 0.000 & 0.436 & -0.024\\
+2,3 & 1.0 & 1.000 & 0.000 & 1.000 & 0.001\\
 \hline
-3,3 & 2.000 & 1.912 & 1.919 & 1.963 & 1.924\\
+3,3 & 10.0 & 0.000 & 0.001 & 0.000 & 0.005\\
 \hline
 \end{longtable}
 
-\begin{longtable}[t]{l|r|r|r|r}
+\begin{longtable}[t]{l|l|r|l|r}
 \hline
 param & LLT & O & S & OS\\
 \hline
-1,1 & 0.944 & 0.775 & 0.759 & 0.946\\
+1,1 & 0.959 & 0.958 & 0.941 & 0.957\\
 \hline
-1,2 & 0.000 & 0.000 & 0.367 & 0.940\\
+1,2 & - & 0.944 & - & 0.946\\
 \hline
-2,2 & 0.947 & 0.732 & 0.756 & 0.949\\
+2,2 & 0.94 & 0.940 & 0.921 & 0.938\\
 \hline
-1,3 & 1.000 & 1.000 & 0.722 & 0.925\\
+1,3 & - & 0.961 & - & 0.956\\
 \hline
-2,3 & 1.000 & 1.000 & 0.711 & 0.924\\
+2,3 & - & 0.941 & - & 0.933\\
 \hline
-3,3 & 0.944 & 0.949 & 0.956 & 0.946\\
+3,3 & 0.945 & 0.949 & 0.947 & 0.951\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|l|l|r|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 5 & 4.91 & 4.932 & 5.181 & 4.960\\
+\hline
+1,2 & 0 & - & - & 1.012 & -0.043\\
+\hline
+2,2 & 5 & 4.887 & 4.909 & 5.153 & 4.934\\
+\hline
+1,3 & 0 & - & - & 0.391 & -0.022\\
+\hline
+2,3 & 0 & - & - & 0.391 & -0.027\\
+\hline
+3,3 & 2 & 1.887 & 1.895 & 1.936 & 1.889\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT sq diff & O sq diff & S sq diff & OS sq diff\\
+\hline
+1,1 & 5 & 0.008 & 0.005 & 0.033 & 0.002\\
+\hline
+1,2 & 0 & 0.000 & 0.000 & 1.024 & 0.002\\
+\hline
+2,2 & 5 & 0.013 & 0.008 & 0.023 & 0.004\\
+\hline
+1,3 & 0 & 0.000 & 0.000 & 0.153 & 0.000\\
+\hline
+2,3 & 0 & 0.000 & 0.000 & 0.153 & 0.001\\
+\hline
+3,3 & 2 & 0.013 & 0.011 & 0.004 & 0.012\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|l|l|r|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.949 & 0.945 & 0.938 & 0.949\\
+\hline
+1,2 & - & - & 0.479 & 0.939\\
+\hline
+2,2 & 0.928 & 0.931 & 0.927 & 0.929\\
+\hline
+1,3 & - & - & 0.794 & 0.955\\
+\hline
+2,3 & - & - & 0.791 & 0.936\\
+\hline
+3,3 & 0.921 & 0.923 & 0.927 & 0.922\\
+\hline
+\end{longtable}
+
+\hypertarget{s-model-1}{%
+\paragraph{S Model}\label{s-model-1}}
+
+\begin{longtable}[t]{l|l|r|r|r|r|r}
+\hline
+Test & Variable & Beta & LLT & O & S & OS\\
+\hline
+Y1 & X1 & 4 & 0.949 & 0.947 & 0.948 & 0.941\\
+\hline
+Y1 & X2 & 2 & 0.948 & 0.941 & 0.945 & 0.944\\
+\hline
+Y1 & X3 & 1 & 0.958 & 0.955 & 0.954 & 0.960\\
+\hline
+Y2 & X1 & -3 & 0.954 & 0.950 & 0.955 & 0.949\\
+\hline
+Y2 & X2 & 0 & 0.938 & 0.938 & 0.936 & 0.941\\
+\hline
+Y2 & X3 & 1 & 0.952 & 0.949 & 0.948 & 0.950\\
+\hline
+Y3 & X1 & 0 & 0.955 & 0.962 & 0.951 & 0.957\\
+\hline
+Y3 & X2 & 0 & 0.942 & 0.943 & 0.940 & 0.948\\
+\hline
+Y3 & X3 & 0 & 0.966 & 0.961 & 0.962 & 0.966\\
+\hline
+\end{longtable}
+
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\begin{longtable}[t]{l|r|l|r|l|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 15 & 14.88 & 15.277 & 15.24 & 15.170\\
+\hline
+1,2 & 0 & - & 2.466 & - & -0.402\\
+\hline
+2,2 & 15 & 14.921 & 15.315 & 15.271 & 15.191\\
+\hline
+1,3 & 0 & - & 0.007 & - & -0.007\\
+\hline
+2,3 & 0 & - & 0.000 & - & -0.005\\
+\hline
+3,3 & 10 & 10.047 & 10.069 & 10.098 & 10.115\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT sq diff & O sq diff & S sq diff & OS sq diff\\
+\hline
+1,1 & 15 & 0.014 & 0.077 & 0.058 & 0.029\\
+\hline
+1,2 & 0 & 0.000 & 6.081 & 0.000 & 0.162\\
+\hline
+2,2 & 15 & 0.006 & 0.099 & 0.073 & 0.036\\
+\hline
+1,3 & 0 & 0.000 & 0.000 & 0.000 & 0.000\\
+\hline
+2,3 & 0 & 0.000 & 0.000 & 0.000 & 0.000\\
+\hline
+3,3 & 10 & 0.002 & 0.005 & 0.010 & 0.013\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|l|r|l|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.929 & 0.931 & 0.911 & 0.916\\
+\hline
+1,2 & - & 0.024 & - & 0.893\\
+\hline
+2,2 & 0.951 & 0.933 & 0.901 & 0.923\\
+\hline
+1,3 & - & 0.937 & - & 0.931\\
+\hline
+2,3 & - & 0.959 & - & 0.931\\
+\hline
+3,3 & 0.958 & 0.959 & 0.959 & 0.951\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|l|l|r|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 5.000 & 4.866 & 4.521 & 4.702 & 4.839\\
+\hline
+1,2 & 3.714 & - & - & 3.758 & 3.956\\
+\hline
+2,2 & 5.000 & 4.869 & 4.528 & 4.712 & 4.857\\
+\hline
+1,3 & 0.000 & - & - & 0.012 & 0.019\\
+\hline
+2,3 & 0.000 & - & - & 0.004 & 0.008\\
+\hline
+3,3 & 2.000 & 1.876 & 1.878 & 1.858 & 1.877\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT sq diff & O sq diff & S sq diff & OS sq diff\\
+\hline
+1,1 & 5.000 & 0.018 & 0.229 & 0.089 & 0.026\\
+\hline
+1,2 & 3.714 & 13.794 & 13.794 & 0.002 & 0.059\\
+\hline
+2,2 & 5.000 & 0.017 & 0.223 & 0.083 & 0.020\\
+\hline
+1,3 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000\\
+\hline
+2,3 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000\\
+\hline
+3,3 & 2.000 & 0.015 & 0.015 & 0.020 & 0.015\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|l|l|r|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.932 & 0.884 & 0.888 & 0.898\\
+\hline
+1,2 & - & - & 0.933 & 0.908\\
+\hline
+2,2 & 0.945 & 0.9 & 0.879 & 0.901\\
+\hline
+1,3 & - & - & 0.930 & 0.931\\
+\hline
+2,3 & - & - & 0.934 & 0.941\\
+\hline
+3,3 & 0.924 & 0.924 & 0.920 & 0.913\\
+\hline
+\end{longtable}
+
+\hypertarget{os-model-1}{%
+\paragraph{OS Model}\label{os-model-1}}
+
+\begin{longtable}[t]{l|l|r|r|r|r|r}
+\hline
+Test & Variable & Beta & LLT & O & S & OS\\
+\hline
+Y1 & X1 & 4 & 0.957 & 0.939 & 0.960 & 0.953\\
+\hline
+Y1 & X2 & 2 & 0.943 & 0.922 & 0.951 & 0.944\\
+\hline
+Y1 & X3 & 1 & 0.957 & 0.948 & 0.968 & 0.962\\
+\hline
+Y2 & X1 & -3 & 0.961 & 0.948 & 0.968 & 0.963\\
+\hline
+Y2 & X2 & 0 & 0.943 & 0.923 & 0.953 & 0.944\\
+\hline
+Y2 & X3 & 1 & 0.949 & 0.944 & 0.963 & 0.955\\
+\hline
+Y3 & X1 & 0 & 0.952 & 0.952 & 0.951 & 0.958\\
+\hline
+Y3 & X2 & 0 & 0.948 & 0.946 & 0.944 & 0.942\\
+\hline
+Y3 & X3 & 0 & 0.944 & 0.948 & 0.950 & 0.949\\
+\hline
+\end{longtable}
+
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\begin{longtable}[t]{l|r|l|r|l|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 15.0 & 14.924 & 15.728 & 14.32 & 15.095\\
+\hline
+1,2 & 2.4 & - & 5.022 & - & 2.174\\
+\hline
+2,2 & 15.0 & 14.913 & 15.709 & 14.304 & 15.065\\
+\hline
+1,3 & 1.0 & - & 1.022 & - & 1.016\\
+\hline
+2,3 & 1.0 & - & 1.009 & - & 1.002\\
+\hline
+3,3 & 10.0 & 9.985 & 10.001 & 9.974 & 10.042\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT sq diff & O sq diff & S sq diff & OS sq diff\\
+\hline
+1,1 & 15.0 & 0.006 & 0.530 & 0.462 & 0.009\\
+\hline
+1,2 & 2.4 & 5.760 & 6.875 & 5.760 & 0.051\\
+\hline
+2,2 & 15.0 & 0.008 & 0.503 & 0.484 & 0.004\\
+\hline
+1,3 & 1.0 & 1.000 & 0.000 & 1.000 & 0.000\\
+\hline
+2,3 & 1.0 & 1.000 & 0.000 & 1.000 & 0.000\\
+\hline
+3,3 & 10.0 & 0.000 & 0.000 & 0.001 & 0.002\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|l|r|l|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.936 & 0.890 & 0.85 & 0.923\\
+\hline
+1,2 & - & 0.015 & - & 0.934\\
+\hline
+2,2 & 0.95 & 0.891 & 0.846 & 0.933\\
+\hline
+1,3 & - & 0.956 & - & 0.945\\
+\hline
+2,3 & - & 0.953 & - & 0.951\\
+\hline
+3,3 & 0.945 & 0.948 & 0.947 & 0.940\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|l|l|r|r}
+\hline
+param & true & LLT & O & S & OS\\
+\hline
+1,1 & 5.000 & 4.87 & 4.146 & 5.715 & 4.892\\
+\hline
+1,2 & 3.714 & - & - & 4.984 & 3.855\\
+\hline
+2,2 & 5.000 & 4.852 & 4.137 & 5.713 & 4.896\\
+\hline
+1,3 & 0.000 & - & - & 0.465 & -0.023\\
+\hline
+2,3 & 0.000 & - & - & 0.464 & -0.027\\
+\hline
+3,3 & 2.000 & 1.922 & 1.934 & 1.961 & 1.928\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|r|r|r|r|r}
+\hline
+param & true & LLT sq diff & O sq diff & S sq diff & OS sq diff\\
+\hline
+1,1 & 5.000 & 0.017 & 0.729 & 0.511 & 0.012\\
+\hline
+1,2 & 3.714 & 13.794 & 13.794 & 1.613 & 0.020\\
+\hline
+2,2 & 5.000 & 0.022 & 0.745 & 0.508 & 0.011\\
+\hline
+1,3 & 0.000 & 0.000 & 0.000 & 0.216 & 0.001\\
+\hline
+2,3 & 0.000 & 0.000 & 0.000 & 0.215 & 0.001\\
+\hline
+3,3 & 2.000 & 0.006 & 0.004 & 0.002 & 0.005\\
+\hline
+\end{longtable}
+
+\begin{longtable}[t]{l|l|l|r|r}
+\hline
+param & LLT & O & S & OS\\
+\hline
+1,1 & 0.931 & 0.769 & 0.823 & 0.927\\
+\hline
+1,2 & - & - & 0.435 & 0.929\\
+\hline
+2,2 & 0.931 & 0.758 & 0.809 & 0.915\\
+\hline
+1,3 & - & - & 0.730 & 0.934\\
+\hline
+2,3 & - & - & 0.736 & 0.929\\
+\hline
+3,3 & 0.943 & 0.943 & 0.939 & 0.935\\
 \hline
 \end{longtable}
 
