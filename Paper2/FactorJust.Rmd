@@ -8,9 +8,11 @@ output: html_document
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(ggtext)
 knitr::opts_chunk$set(echo = FALSE)
-ds <- "Paper2/JPrezTab/NACC_stateCor.RDS" %>%
+ds <- "Paper2/paperData/NACC_stateCor.RDS" %>%
   readRDS()
+varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS', 'VEG')
 ```
 
 
@@ -30,10 +32,70 @@ prop <- dseig$values / sum(dseig$values)
 
 ## Correlation Matrices from Real Analysis
 
-![](img/NACCObsHeat.png)
 
 
-![](img/NACCStateHeat.png)
+```{r}
+readRDS("Paper2/paperData/NACC_Eps.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  )  +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("Observation Correlation")
+```
+
+
+```{r}
+readRDS("Paper2/paperData/NACC_Eta.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("State Correlation")
+```
 
 
 ## Computing Principal Components from State Correlation Matrix to Infer Factor Design
@@ -45,7 +107,6 @@ First, I take the eigenvalue decomposition from the correlation matrix.
 To decide the number of factors, I take into account how many of the principle components it takes to reach 95% of the variance of the outcomes, which happens at about 4 factors.
 
 ```{r}
-
 data.frame(
   pc = paste("PC_", 1:10, sep = ""),
   prop = round(prop, 3),

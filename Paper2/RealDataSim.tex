@@ -67,6 +67,20 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -92,10 +106,10 @@ Reasoning for the ill-fitting model O can be observed in the estimated observati
 
 If the primary concern of analysis is to estimate the underlying state process correlation, both the S and OS models can be seen as valid. For the NACC data, if power is of concern, one may decide to use the S model as there are 45 fewer covariance parameters to estimate and there is generally very low correlation in the observation equation. In our analysis, eliminating the covariance in the observation does not seem to increase power a significant amount and by eliminating the observation covariance could add bias to the state covariance estimate.
 
-\includegraphics{img/RealParamEst.png}
+\includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-2-1.pdf}
 
-\includegraphics{img/RealObsHeat.png}
+\includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-3-1.pdf}
 
-\includegraphics{img/RealStateHeat.png}
+\includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-4-1.pdf}
 
 \end{document}

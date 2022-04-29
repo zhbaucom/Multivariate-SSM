@@ -5,6 +5,17 @@ output:
     toc: false
 ---
 
+```{r, include = FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+library(igraph)
+library(ggtext)
+varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS', 'VEG')
+```
+
+
 ## Real Data Simulation
 
 
@@ -22,9 +33,78 @@ Reasoning for the ill-fitting model O can be observed in the estimated observati
 If the primary concern of analysis is to estimate the underlying state process correlation, both the S and OS models can be seen as valid. For the NACC data, if power is of concern, one may decide to use the S model as there are 45 fewer covariance parameters to estimate and there is generally very low correlation in the observation equation. In our analysis, eliminating the covariance in the observation does not seem to increase power a significant amount and by eliminating the observation covariance could add bias to the state covariance estimate. 
 
 
-![](img/RealParamEst.png)
 
-![](img/RealObsHeat.png)
+```{r}
+readRDS("Paper2/paperData/Real_Effects.RDS")  %>%
+  ggplot(aes(x = Method, y = Estimate, color = Method)) +
+  geom_point(size=5) +
+  geom_errorbar(aes(ymin = LCL, ymax = UCL), size = 1) +
+  facet_wrap(~Outcome) +
+  geom_hline(yintercept = 1, col = "red")
+```
 
 
-![](img/RealStateHeat.png)
+
+```{r}
+readRDS("Paper2/paperData/Real_Eps.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  )  +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("Observation Correlation")
+```
+
+
+
+```{r}
+readRDS("Paper2/paperData/Real_Eta.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("State Correlation")
+```
