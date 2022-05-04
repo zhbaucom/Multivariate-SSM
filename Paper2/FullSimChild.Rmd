@@ -1,3 +1,9 @@
+---
+output: 
+  bookdown::pdf_document2:
+header-includes:
+- \usepackage{booktabs}
+---
 
 ```{r, fig.height=6}
 fse <- readRDS(paste("Paper2/paperData/",path, "_Fake_Effects.RDS", sep = "")) %>%
@@ -29,13 +35,13 @@ fse <- readRDS(paste("Paper2/paperData/",path, "_Fake_Effects.RDS", sep = "")) %
 fse %>%
   select(Test, Variable, Beta = beta, Coverage, Method) %>%
   spread(Method, Coverage) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
+  kbl(row.names = FALSE,  longtable = TRUE, caption = "Linear Effect Coverage")
 
 ```
 
 
 
-```{r}
+```{r, fig.cap = "Parameter Bias and Variablilty"}
 fse %>%
   ggplot(aes(x = Method, y = avgBias, color = Method, shape = Method)) +
   geom_hline(yintercept = 0) + 
@@ -72,21 +78,11 @@ EpsLdf$st[c(2, 4, 5)] <- EpsLdf$ind[c(2, 4, 5)] <- '-'
 
 EpsLdf %>%
   select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
+  kbl(row.names = FALSE,  longtable = TRUE, caption = "Observation Covariance Estimates")
 
 
 ```
 
-```{r, caption = "squared closeness"}
-EpsClose <- EpsClose %>%
-  mutate(across(dub:ind, .fns = list(~ round((.x-true)^2, 3))))
-
-# EpsClose$st_1[c(2, 4, 5)] <- EpsClose$ind_1[c(2, 4, 5)] <- '-'
-
-EpsClose %>%
-  select(param, true, `LLT sq diff`  = ind_1, `O sq diff`= obs_1, `S sq diff` = st_1, `OS sq diff` = dub_1) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
-```
 
 
 ```{r}
@@ -104,7 +100,7 @@ EpsLdfcov$st[c(2, 4, 5)] <- EpsLdfcov$ind[c(2, 4, 5)] <- '-'
 
 EpsLdfcov %>%
   select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
+  kbl(row.names = FALSE,  longtable = TRUE, caption = "Observation Covariance Coverage")
 
 
 ```
@@ -137,22 +133,11 @@ EtaLdf$obs[c(2, 4, 5)] <- EtaLdf$ind[c(2, 4, 5)] <- '-'
 
 EtaLdf %>%
   select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
+  kbl(row.names = FALSE,  longtable = TRUE, caption = "State Covariance Estimates")
 
 
 ```
 
-
-```{r, caption = "squared closeness"}
-EtaClose <- EtaClose %>%
-  mutate(across(dub:ind, .fns = list(~ round((.x-true)^2, 3))))
-
-# EtaClose$obs_1[c(2, 4, 5)] <- EtaClose$ind_1[c(2, 4, 5)] <- '-'
-
-EtaClose %>%
-  select(param, true, `LLT sq diff`  = ind_1, `O sq diff`= obs_1, `S sq diff` = st_1, `OS sq diff` = dub_1) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
-```
 
 
 
@@ -171,8 +156,14 @@ EtaLdfcov$obs[c(2, 4, 5)] <- EtaLdfcov$ind[c(2, 4, 5)] <- '-'
 
 EtaLdfcov %>%
   select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE)
+  kbl(row.names = FALSE,  longtable = TRUE, caption = "State Covariance Coverage")
 
 
 ```
+
+
+
+
+
+
 

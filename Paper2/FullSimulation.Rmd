@@ -3,6 +3,8 @@ output:
   bookdown::pdf_document2:
     keep_tex: true
     toc: false
+header-includes:
+- \usepackage{booktabs}
 ---
 
 ```{r, include = FALSE}

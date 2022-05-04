@@ -4,15 +4,17 @@ output: html_document
 ---
 
 
+# Dementia {.tabset}
+
 ```{r, eval = TRUE, include = FALSE}
 library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(ggtext)
-knitr::opts_chunk$set(echo = FALSE)
-ds <- "Paper2/paperData/NACC_stateCor.RDS" %>%
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+ds <- "Paper2/paperData/NACC_stateCor_demen.RDS" %>%
   readRDS()
-varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS', 'VEG')
+varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS')
 ```
 
 
@@ -21,7 +23,7 @@ dseig <- eigen(ds)
 
 facLoading <- t(t(dseig$vectors) * sqrt(dseig$values))
 rownames(facLoading) <- row.names(ds)
-colnames(facLoading) <- paste("PC_", 1:10, sep = "")
+colnames(facLoading) <- paste("PC_", 1:9, sep = "")
 
 facLoading <- facLoading %>%
   data.frame() 
@@ -30,12 +32,12 @@ prop <- dseig$values / sum(dseig$values)
 
 ```
 
-## Correlation Matrices from Real Analysis
+## Correlation Matrices
 
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eps.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -67,7 +69,7 @@ readRDS("Paper2/paperData/NACC_Eps.RDS") %>%
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eta.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eta_demen.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -98,7 +100,7 @@ readRDS("Paper2/paperData/NACC_Eta.RDS") %>%
 ```
 
 
-## Computing Principal Components from State Correlation Matrix to Infer Factor Design
+## State Cor PCs
 
 First, I take the eigenvalue decomposition from the correlation matrix. 
 
@@ -108,7 +110,7 @@ To decide the number of factors, I take into account how many of the principle c
 
 ```{r}
 data.frame(
-  pc = paste("PC_", 1:10, sep = ""),
+  pc = paste("PC_", 1:9, sep = ""),
   prop = round(prop, 3),
   cumprop = round(cumsum(prop), 3)
 ) %>%
@@ -117,7 +119,7 @@ data.frame(
 ```
 
 
-### Factor Loadings
+## Factor Loadings 
 
 To get the factor loadings I use eigen vectors * sqrt(eigen values).
 
@@ -129,6 +131,10 @@ facLoading %>%
   kable_paper("hover", full_width = F)
 ```
 
+
+
+
+
 I then do abs(loading)/sum(loading) for each column to see the relative loading of each test. This gets at which tests are most highly loaded onto the factor.
 
 ```{r}
@@ -139,6 +145,69 @@ facLoading %>%
   kbl() %>%
   kable_paper("hover", full_width = F)
 ```
+
+## Factor loading plots {.tabset .tabeset-pills}
+
+```{r}
+facLong <- facLoading %>%
+  select(PC_1:PC_4) %>%
+  rownames_to_column("Variable") %>%
+  gather("PC", "Loading", PC_1:PC_4) %>%
+  mutate(highLoad = FALSE, tp = 't')
+
+facPerc <- facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
+  select(PC_1:PC_4) %>%
+  rownames_to_column("Variable") %>%
+  gather("PC", "Loading", PC_1:PC_4) %>%
+  mutate(highLoad = ifelse(Loading > 0.1, TRUE, FALSE), tp = 'p')
+
+facTot <- rbind(facLong, facPerc) %>%
+  group_by(Variable, PC) %>%
+  mutate(highLoad = any(highLoad))
+
+```
+
+```{r, results='asis'}
+x = "PC_1"
+for(x in paste("PC_", 1:4, sep = "")){
+  cat("\n\n")
+  cat("### ", x, "\n\n")
+  
+  
+  
+  
+  p1 <- facTot %>%
+    filter(PC == x, tp == 't') %>%
+    mutate(Variable = factor(Variable, levels = varorder)) %>%
+    ggplot(aes(x = Variable, y = Loading, fill = highLoad)) +
+    geom_bar(stat = 'identity') +
+    ggtitle(paste("Total Load:", x))+
+  theme(
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    ) 
+    
+  p2 <- facTot %>%
+    filter(PC == x, tp == 'p') %>%
+    mutate(Variable = factor(Variable, levels = varorder)) %>%
+    ggplot(aes(x = Variable, y = Loading, fill = highLoad)) +
+    geom_bar(stat = 'identity') +
+    geom_hline(yintercept = 0.1, color = 'red', size = 2) +
+    ggtitle(paste("Absolute Percentage Load:", x))+
+  theme(
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+
+    ) 
+  
+  print(p1)
+  cat("\n")
+  print(p2)
+}
+```
+
+
+
+
 
 
 ## Choosing form of G
@@ -162,6 +231,238 @@ rbind(facMat, TOTAL = colSums(facMat)) %>%
 
 Every factor has 4 or 5 tests loaded onto it and each test loads on to 1-3 factors. This seems to be identifiable enough for our purposes.
 
-## Next step
 
-Compare this form of G to the form of G that each test is supposed to load as you showed me in that paper. 
+
+
+
+# Non-Dementia {.tabset}
+
+```{r, eval = TRUE, include = FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(ggtext)
+knitr::opts_chunk$set(echo = FALSE)
+ds <- "Paper2/paperData/NACC_stateCor_non_demen.RDS" %>%
+  readRDS()
+varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS')
+```
+
+
+```{r}
+dseig <- eigen(ds)
+
+facLoading <- t(t(dseig$vectors) * sqrt(dseig$values))
+rownames(facLoading) <- row.names(ds)
+colnames(facLoading) <- paste("PC_", 1:9, sep = "")
+
+facLoading <- facLoading %>%
+  data.frame() 
+prop <- dseig$values / sum(dseig$values)
+
+
+```
+
+## Correlation Matrices
+
+
+
+```{r}
+readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  )  +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("Observation Correlation")
+```
+
+
+```{r}
+readRDS("Paper2/paperData/NACC_Eta_non_demen.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("State Correlation")
+```
+
+
+## State Cor PCs
+
+First, I take the eigenvalue decomposition from the correlation matrix. 
+
+### How many factors should I choose?
+
+To decide the number of factors, I take into account how many of the principle components it takes to reach 95% of the variance of the outcomes, which happens at about 4 factors.
+
+```{r}
+data.frame(
+  pc = paste("PC_", 1:9, sep = ""),
+  prop = round(prop, 3),
+  cumprop = round(cumsum(prop), 3)
+) %>%
+  kbl() %>%
+  kable_paper("hover", full_width = F)
+```
+
+
+## Factor Loadings  {.tabset .tabeset-pills}
+
+To get the factor loadings I use eigen vectors * sqrt(eigen values).
+
+```{r}
+facLoading %>%
+  round(3) %>%
+  select(PC_1:PC_6) %>%
+  kbl() %>%
+  kable_paper("hover", full_width = F)
+```
+
+
+
+
+
+I then do abs(loading)/sum(loading) for each column to see the relative loading of each test. This gets at which tests are most highly loaded onto the factor.
+
+```{r}
+facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
+  round(3)%>%
+  select(PC_1:PC_6) %>%
+  kbl() %>%
+  kable_paper("hover", full_width = F)
+```
+
+## Factor loading plots {.tabset .tabeset-pills}
+
+```{r}
+facLong <- facLoading %>%
+  select(PC_1:PC_6) %>%
+  rownames_to_column("Variable") %>%
+  gather("PC", "Loading", PC_1:PC_6) %>%
+  mutate(highLoad = FALSE, tp = 't')
+
+facPerc <- facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
+  select(PC_1:PC_6) %>%
+  rownames_to_column("Variable") %>%
+  gather("PC", "Loading", PC_1:PC_6) %>%
+  mutate(highLoad = ifelse(Loading > 0.1, TRUE, FALSE), tp = 'p')
+
+facTot <- rbind(facLong, facPerc) %>%
+  group_by(Variable, PC) %>%
+  mutate(highLoad = any(highLoad))
+
+```
+
+```{r, results='asis'}
+x = "PC_1"
+for(x in paste("PC_", 1:6, sep = "")){
+  cat("\n\n")
+  cat("### ", x, "\n\n")
+  
+  
+  
+  
+  p1 <- facTot %>%
+    filter(PC == x, tp == 't') %>%
+    mutate(Variable = factor(Variable, levels = varorder)) %>%
+    ggplot(aes(x = Variable, y = Loading, fill = highLoad)) +
+    geom_bar(stat = 'identity') +
+    ggtitle(paste("Total Load:", x))+
+  theme(
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    ) 
+    
+  p2 <- facTot %>%
+    filter(PC == x, tp == 'p') %>%
+    mutate(Variable = factor(Variable, levels = varorder)) %>%
+    ggplot(aes(x = Variable, y = Loading, fill = highLoad)) +
+    geom_bar(stat = 'identity') +
+    geom_hline(yintercept = 0.1, color = 'red', size = 2) +
+    ggtitle(paste("Absolute Percentage Load:", x))+
+  theme(
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+
+    ) 
+  
+  print(p1)
+  cat("\n")
+  print(p2)
+}
+```
+
+
+
+
+
+
+## Choosing form of G
+
+To get the form of G, I look at the proportion of loading above some threshold. If it is above that threshold, we will call it a part of the given factor. A seemingly natural cut-off would be a loading of greater than 1/#outcomes = 1/10. This leads to the following form:
+
+
+```{r}
+facMat <- facLoading %>%
+  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
+  mutate_all(.funs = list(function(x)ifelse(x < 0.1, 0, 1))) %>%
+  select(PC_1:PC_6) %>%
+  as.matrix()
+
+rbind(facMat, TOTAL = colSums(facMat)) %>%
+  cbind(., TOTAL = rowSums(.))%>%
+  kbl() %>%
+  kable_paper("hover", full_width = F)
+
+```
+
+Every factor has 4 or 5 tests loaded onto it and each test loads on to 1-3 factors. This seems to be identifiable enough for our purposes.
+
+
+
+
+
