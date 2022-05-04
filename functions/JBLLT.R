@@ -71,7 +71,7 @@ BayesJointInitializer <- function(data, outcomes, predictors, timevar, id, numit
   )
   init
   
-
+  
 }
 
 
@@ -86,7 +86,7 @@ BayesJointOnly <- function(init, method = "s"){
   # PreSpecify
   
   cs <- length(outcomes)
-
+  
   
   # DataFormat ------------------------------------------------------------
   #Nest data for each id
@@ -217,7 +217,7 @@ BayesJointOnly <- function(init, method = "s"){
       
       
       # W <- cIRT::riwishart(prior.nu.eta + Neta, fp + prior.Gamma.eta)
-      W <- cIRT::riwishart(Neta, fp)
+      W <- cIRT::riwishart(Neta -1, fp)
       wcovWish[,,It] <- W
       
       ###### Sigma eps
@@ -230,7 +230,7 @@ BayesJointOnly <- function(init, method = "s"){
       
       
       # V <- vcovWish[,,It] <- cIRT::riwishart(prior.nu.eta + Ntotal, or + prior.Gamma.eta)
-      V <- vcovWish[,,It] <- cIRT::riwishart(Ntotal, or)
+      V <- vcovWish[,,It] <- cIRT::riwishart(Ntotal - 1, or)
       
       
       
@@ -298,7 +298,7 @@ BayesJointOnly <- function(init, method = "s"){
         colSums()
       
       W <- diag(sapply(fp, function(x){
-        1/rgamma(1, (Neta/ 2 + a0), (b0 + x/ 2))
+        1/rgamma(1, ((Neta - 1)/ 2), (x/ 2))
       }))
       
       wcovWish[,,It] <- W
@@ -313,7 +313,7 @@ BayesJointOnly <- function(init, method = "s"){
       
       
       # V <- vcovWish[,,It] <- cIRT::riwishart(prior.nu.eta + Ntotal, or + prior.Gamma.eta)
-      V <- vcovWish[,,It] <- cIRT::riwishart(Ntotal, or)
+      V <- vcovWish[,,It] <- cIRT::riwishart(Ntotal - 1, or)
       
       
       
@@ -378,7 +378,7 @@ BayesJointOnly <- function(init, method = "s"){
       
       
       # W <- cIRT::riwishart(prior.nu.eta + Neta, fp + prior.Gamma.eta)
-      W <- cIRT::riwishart(Neta, fp)
+      W <- cIRT::riwishart(Neta - 1, fp)
       wcovWish[,,It] <- W
       
       ###### Sigma eps
@@ -390,7 +390,7 @@ BayesJointOnly <- function(init, method = "s"){
         apply(1, function(x)sum((x)))
       
       
-      sigma2.eps.star <- sapply(or, function(x)1/rgamma(1, ((Ntotal)/2 +c0), d0+x/2))
+      sigma2.eps.star <- sapply(or, function(x)1/rgamma(1, ((Ntotal -1 )/2), x/2))
       V <- vcovWish[,,It] <-sigma2.eps.star * diag(cs)
       
       
