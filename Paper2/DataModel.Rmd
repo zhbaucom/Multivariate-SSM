@@ -10,6 +10,35 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(rlang)
+knitr::opts_chunk$set(echo = FALSE)
+num_mut <- function(df, varName, places = 3){
+  varMean <- paste("mean(", varName, ")", sep = "")
+  varSd <- paste("sd(", varName, ")", sep = "")
+  df2 <- data.frame(
+    paste(round(df[varMean], places), " (", round(df[varSd], places), ")", sep = "")
+  )
+  colnames(df2) <- varName
+  df2
+}
+
+num_mut_all <- function(df, varNames, places = 3){
+  map(varNames, ~num_mut(df, .x, places)) %>%
+    do.call("cbind", .)
+}
+
+perc_mut <- function(df, varName, places = 3){
+  varMean <- paste("mean(", varName, ")", sep = "")
+  df2 <- data.frame(
+    paste(round(100 * df[varMean], places), "%", sep = "")
+  )
+  colnames(df2) <- varName
+  df2
+}
+
+perc_mut_all <- function(df, varNames, places = 3 ){
+  map(varNames, ~perc_mut(df, .x, places)) %>%
+    do.call("cbind", .)
+}
 ```
 
 
@@ -52,30 +81,76 @@ rt1 <- c("n" = "n participants", "Count" = "Return visits", "APOE" = "APOE e4 al
 
 rownames(t1) <- rt1[rownames(t1)]
 
-t1[c("n participants", "Return visits",  "Follow-up Yrs", "Sex (Female)", "Race (White)", "APOE e4 allele", "Age", "Education Yrs","Time of Decline\n(Years since baseline)"), ]
+t1_non_match <- t1[c("n participants", "Return visits",  "Follow-up Yrs", "Sex (Female)", "Race (White)", "APOE e4 allele", "Age", "Education Yrs","Time of Decline\n(Years since baseline)"), ]
 ```
-
-
-
 ```{r}
-readRDS("Paper2/paperData/t1_match.RDS")
+places <- 2
+t1_demen <- readRDS("Paper2/paperData/Table1_demen_match.RDS")
+t1_non_demen <- readRDS("Paper2/paperData/Table1_non_demen_match.RDS")
+
+
+df_demen = data.frame(
+  Dementia = cbind(
+    n = t1_demen$n,
+    t1_demen %>%
+      perc_mut_all(c("APOE", "SEX", "RACEWHITE"), places),
+    t1_demen %>%
+      num_mut_all(c("Count", "Age", "Ed", "maxTime", "decline"), places)
+  ) %>%
+    t()
+) %>%
+  rownames_to_column("Var")
+
+
+
+df_non_demen = data.frame(
+  `Non-Dementa` = cbind(
+    n = t1_non_demen$n,
+    t1_non_demen %>%
+      perc_mut_all(c("APOE", "SEX", "RACEWHITE"), places),
+    t1_non_demen %>%
+      num_mut_all(c("Count","Age", "Ed", "maxTime"), places)
+  ) %>%
+    t()
+) %>%
+  rownames_to_column("Var")
+
+t1 <- left_join(df_demen, df_non_demen, "Var") %>%
+  column_to_rownames("Var")
+
+rt1 <- c("n" = "n participants", "Count" = "Return visits", "APOE" = "APOE e4 allele", "SEX" = "Sex (Female)", "RACEWHITE" = "Race (White)", "Age" = "Age", "Ed" = "Education Yrs", "maxTime" = "Follow-up Yrs", "decline" = "Time of Decline\n(Years since baseline)")
+
+rownames(t1) <- rt1[rownames(t1)]
+
+t1_match <- t1[c("n participants", "Return visits",  "Follow-up Yrs", "Sex (Female)", "Race (White)", "APOE e4 allele", "Age", "Education Yrs","Time of Decline\n(Years since baseline)"), ]
 ```
 
 
 
 
-## Data and Model of Interest
-
-### Data
-
-Data collected by the National Alzheimer's Coordinating Center (NACC) Uniform Data Set Version 2.0 (UDS, September 2014) was used to test the proposed MLLT model validity. The data analysis utilized two different groups in the NACC. Criteria for entry into the the first group requires Alzheimer's disease participants to have transitioned from cognitively normal to mild cognitive impairment (MCI) or Dementia during the NACC follow-up period. The second group are those who remained cognitevly normal throughout the follow-up period. For the multivariate modeling of different cognition domains, we used the following neuropsychological outcomes: logic memory, memory units, digit forward, digit backward, trails A, trails B, WAIS, boston naming, animals naming, and vegetables naming. Predictors of interest include: time, race white, sex, apoe e4 status, education, time of transition from cognitively normal to mild cognitive impairment (MCI) or dementia, and age.
 
 
-Inclusion into the analysis requires non-missingness for covariates and each test at a given time point, as well as each participant needing 1 or more complete observation. The Non-Dementia group has a larger sample size that average fewer visits (6,136 participants, 4.46 return visits) compared to the dementia group (973 participants, 6.26). There are fewer dementia participants who are female, more whose race is white, and more with an APOE e4 allele (61.46%, 86.23%, 37.31% respectively)  than non-dementia (67.42%, 83.34%, 26.99% respectively). Those in the dementia cohort are older at first visit and have slightly less education (78.21 years old, 15.94 years) compared to non-dementia (70.83 years old, 16.13 years). For those who experience MCI or dementia, decline occurs 3.82 years after the first visit.
 
-The group experiencing cognitive decline results in 973 participants with an average of 5.13 return visits (SD = 2.06) seen over a period of 5.01 years (SD = 2.17). The average transition from cognitively normal to MCI or Dementia occurs after 3.82 years (SD = 1.88) from baseline. In this sample 37.3% of the subjects carry at least 1 APOE e4 allele. The average study participants are predominantly female (61.5%) and of white ethnicity (86.2%). Participants are primarily older with an average age of 78.2 years old (SD = 7.60) and have an average of 15.94 years of education (SD = 6.09).
+
+
+## Model of Interest and Data
 
 ### Model of Interest
 
 
-After controlling for dementia status (1 = diagnosed with MCI or dementia, 0 = otherwise), sex (1 = female, 0 = male), race (1 = white, 0 = other), age (mean centered), and education (mean centered), we wish to accurately estimate the effect of having an APOE e4 allele (1 = has at least 1 APOE e4 allele, 0 = otherwise) on each test trajectory. Previous research suggests that the effect of APOE e4 status differs between males and females, therefore an interaction between e4 status and sex is included in the model. To measure the effect of the dependent variables on the cognition tests trajectory, all dependent variables are put into the model as an interaction with time. To assure participants are in a similar progression of AD, we also include a linear spline for when the participant transitions from cognitively normal to MCI or dementia.
+After controlling for the linear effects of dementia status (1 = diagnosed with MCI or dementia, 0 = otherwise), sex (1 = female, 0 = male), race (1 = white, 0 = other), age (mean centered), education (mean centered), and APOE e4 allele status (1 = has at least 1 APOE e4 allele, 0 = otherwise), we wish to compare latent cognition processes between those who have transitioned to MCI or dementia during follow-up (transitioners) and those who have not (non-transitioners). Previous research suggests that the effect of APOE e4 status differs between males and females, therefore an interaction between e4 status and sex is included in the model. To measure the linear effect of the dependent variables on the cognition tests trajectory, all dependent variables are put into the model as an interaction with time. In the group that have transitioned to MCI or dementia, we  include a linear spline for when the participant transitions from cognitively normal to MCI or dementia.
+
+### Data
+
+Data collected by the National Alzheimer's Coordinating Center (NACC) Uniform Data Set Version 2.0 (UDS, September 2014) was used to test the proposed MLLT model validity. The data analysis utilized two different groups in the NACC. Criteria for entry into the the first group requires Alzheimer's disease participants to have transitioned from cognitively normal to mild cognitive impairment (MCI) or Dementia during the NACC follow-up period. The second group are those who remained cognitively normal throughout the follow-up period. For the multivariate modeling of different cognition domains, we used the following neuropsychological outcomes: logic memory, memory units, digit forward, digit backward, trails A, trails B, WAIS, boston naming, animals naming, and vegetables naming. Predictors of interest include: time, race white, sex, apoe e4 status, education, time of transition from cognitively normal to mild cognitive impairment (MCI) or dementia, and age. Inclusion into the analysis requires non-missingness for covariates and cognitive outcome at a given time point, as well as each participant needing 1 or more complete observation. 
+
+That are several cohort demographic differences in those who transitioned to MCI or dementia and those with no dementia diagnosis. As expected, transitioners are typically older at enrollment (78.45 years vs. 70.83 years), have more return visits into their older age (5.13 visits vs. 4.46 visits), and have higher rates of having an APOE e4 allele (38.26% vs. 26.99%). To assure latent cognition process correlations between dementia transitioners and non-dementia transitioners only differ due to dementia status, we conduct a sensitivity analysis with a more homogenous comparison group. To do this, we carry out 1-to-1 propensity matching with a caliper of 0.1 using all described linear predictors. Of the 737 transitioners, 734 matched to non-transitioners. In the transitioner and non-transitioner groups there is more similarity in enrollment age (78.40 years vs 78.44), return visits (5.13 visits vs. 5.25 visits), and e4 allele status (38.15% vs. 38.15%).
+
+
+```{r}
+t1_non_match %>%
+  kbl(row.names = TRUE,  longtable = TRUE, caption = "Non-Matched")
+  
+t1_match %>%
+  kbl(row.names = TRUE,  longtable = TRUE, caption = "Matched")
+```
