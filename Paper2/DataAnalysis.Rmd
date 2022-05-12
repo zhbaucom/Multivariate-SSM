@@ -12,7 +12,7 @@ library(knitr)
 library(kableExtra)
 library(igraph)
 library(ggtext)
-varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS', 'VEG')
+varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS')
 ```
 
 ## Data Analysis
@@ -21,15 +21,15 @@ Using the MLLT model which allows correlation in the observation errors and unde
 
 ### Data Analysis Results
 
-
+#### Dementia
 
 ```{r}
-SIG <- "Paper2/paperData/NACC_SIG.RDS" %>%
+SIG <- "Paper2/paperData/NACC_SIG_demen.RDS" %>%
   readRDS() %>%
   data.frame() %>%
   mutate_all(.funs = list(function(x)ifelse( x== 'red', 'green', ifelse(x == 'blue', 'red', x))))
 
-ptab <- "Paper2/paperData/NACC_Effects.RDS" %>%
+ptab <- "Paper2/paperData/NACC_Effects_demen.RDS" %>%
   readRDS()%>%
   t() %>%
   data.frame()
@@ -38,7 +38,7 @@ ptab <- "Paper2/paperData/NACC_Effects.RDS" %>%
 
 ptab <- ptab[varorder]
 
-for(i in 1:10){
+for(i in 1:length(varorder)){
   ptab[i] <- cell_spec(ptab[[i]], background = SIG[[i]])
 }
 
@@ -48,14 +48,14 @@ ptab[,1:5] %>%
   kable_styling(font_size = 7)
   
 
-ptab[,6:10] %>%
+ptab[,6:9] %>%
   kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
     kable_styling(font_size = 7)
 ```
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eps.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -88,7 +88,7 @@ readRDS("Paper2/paperData/NACC_Eps.RDS") %>%
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eta.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eta_demen.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -123,53 +123,43 @@ readRDS("Paper2/paperData/NACC_Eta.RDS") %>%
 
 
 
+#### Non-Dementia
 
-```{r, eval = FALSE}
-ds <- "Paper2/JPrezTab/NACC_stateCor.RDS" %>%
-  readRDS()
+```{r}
+SIG <- "Paper2/paperData/NACC_SIG_non_demen.RDS" %>%
+  readRDS() %>%
+  data.frame() %>%
+  mutate_all(.funs = list(function(x)ifelse( x== 'red', 'green', ifelse(x == 'blue', 'red', x))))
+
+ptab <- "Paper2/paperData/NACC_Effects_non_demen.RDS" %>%
+  readRDS()%>%
+  t() %>%
+  data.frame()
+
+
+
+ptab <- ptab[varorder]
+
+for(i in 1:length(varorder)){
+  ptab[i] <- cell_spec(ptab[[i]], background = SIG[[i]])
+}
+
+
+ptab[,1:5] %>%
+  kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
+  kable_styling(font_size = 7)
+  
+
+ptab[,6:9] %>%
+  kbl(row.names = TRUE,  longtable = TRUE, escape = FALSE) %>%
+    kable_styling(font_size = 7)
 ```
 
 
-```{r, eval = FALSE}
-
-
-dseig <- eigen(ds)
-
-facLoading <- t(t(dseig$vectors) * sqrt(dseig$values))
-rownames(facLoading) <- row.names(ds)
-colnames(facLoading) <- paste("PC_", 1:10, sep = "")
-
-plot(dseig$values)
-facLoading <- facLoading %>%
-  data.frame() 
-facLoading %>%
-  rownames_to_column('outcome' )%>%
-  ggplot(aes(x = PC_1, y = PC_2, label = outcome)) +
-  geom_label()
-facLoading %>%
-  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x))))
-facLoading %>%
-  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
-  mutate_all(.funs = list(function(x)ifelse(x < 0.1, '-', x)))
-
-facLoading
-
-prop <- dseig$values / sum(dseig$values)
-round(prop, 3)
-round(cumsum(prop), 3)
-```
-
-
-```{r, eval = FALSE}
-library(ggtext)
-
-facLoading %>%
-  mutate_all(.funs = list(function(x)abs(x)/sum(abs(x)))) %>%
-  rownames_to_column("Outcome") %>%
-  gather("PC", "COR", PC_1:PC_10) %>%
-  mutate(print_values = round(COR, 2), PC = factor(PC, levels = paste("PC_", 1:10, sep = ""))) %>%
-  na.omit() %>%
-  ggplot(aes(x = PC, y = Outcome, fill = COR, label = print_values)) +
+```{r}
+readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
   ylab("") +
   theme_minimal()  +
@@ -177,10 +167,10 @@ facLoading %>%
   geom_richtext(
         fill = NA, label.color = NA, # remove background and outline
         label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-  ) +
+  )  +
   scale_fill_gradient2(low = 'lightblue', high = "red", 
-    midpoint = .125,limits = c(0,.25), na.value = "lightblue",
-    name="Loading")+
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
   theme(
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
@@ -191,25 +181,275 @@ facLoading %>%
     # legend.justification = c(1, 0),
     # legend.position = c(0.4, 0.6),
     # legend.direction = "horizontal"
-    )
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("Observation Correlation")
 ```
 
 
-```{r, eval = FALSE}
-pds <- ds
-# pds <- pds[!(row.names(pds) %in% c("ANIMALS")), !(row.names(pds) %in% c("ANIMALS"))]
-pds[pds < .7] <- 0
-graph <- pds %>%
-  graph.adjacency(weighted = TRUE, mode = "lower", diag = F)
+
+```{r}
+readRDS("Paper2/paperData/NACC_Eta_non_demen.RDS") %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("State Correlation")
+```
 
 
-par(bg="grey13", mar=c(0,0,0,0))
-tkplot(graph, 
-    edge.width = edge.betweenness(graph),   
-    vertex.size=12,
-    vertex.label.cex=0.7,
-    vertex.label.color="red")
+```{r}
+fdo_demen <- readRDS("Paper2/paperData/FullDataOutput_demen.RDS")
+
+fdo_non_demen <- readRDS("Paper2/paperData/FullDataOutput_non_demen.RDS")
+
+demen_eps_cor <- map(2000:5000, function(i)cov2cor(fdo_demen$Eps.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+non_demen_eps_cor <- map(2000:5000, function(i)cov2cor(fdo_non_demen$Eps.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+lcl_eps_demen <- demen_eps_cor %>%
+  apply(1:2, quantile, .025)
+
+
+
+ucl_eps_demen <- demen_eps_cor %>%
+  apply(1:2, quantile, .975)
+
+lcl_eps_non_demen <- non_demen_eps_cor %>%
+  apply(1:2, quantile, .025)
+
+ucl_eps_non_demen <- non_demen_eps_cor %>%
+  apply(1:2, quantile, .975)
+
+ci_overlap <- (ucl_eps_demen > lcl_eps_non_demen & ucl_eps_demen < ucl_eps_non_demen)|(lcl_eps_demen > lcl_eps_non_demen & lcl_eps_demen < ucl_eps_non_demen)|(lcl_eps_demen < lcl_eps_non_demen & ucl_eps_demen > ucl_eps_non_demen)
+
+colnames(ci_overlap) <- row.names(ci_overlap) <- colnames(lcl_eps_demen) <- row.names(lcl_eps_demen) <- colnames(ucl_eps_demen) <- row.names(ucl_eps_demen)  <- colnames(lcl_eps_non_demen) <- row.names(lcl_eps_non_demen) <- colnames(ucl_eps_non_demen) <- row.names(ucl_eps_non_demen) <- varorder
+
+ci_overlap
+```
+
+
+```{r}
+demen_eps_cor <- map(2000:5000, function(i)cov2cor(fdo_demen$Eps.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+non_demen_eps_cor <- map(2000:5000, function(i)cov2cor(fdo_non_demen$Eps.Track[,,i] )) %>%
+  abind::abind(along = 3)
+```
+
+```{r}
+all_eps_cor <- rbind(
+  map(1:dim(demen_eps_cor)[3], function(i){
+    x <- demen_eps_cor[,,i]
+    row.names(x) <- colnames(x) <- varorder
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2)
+  }) %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "demen"),
+  map(1:dim(non_demen_eps_cor)[3], function(i){
+    x <- non_demen_eps_cor[,,i]
+    row.names(x) <- colnames(x) <- varorder
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2)
+  }) %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "non_demen")
+)
+
+for(i in varorder){
+  for(j in varorder){
+    if(i != j){
+      p <- all_eps_cor %>%
+        filter(V1 == i, V2 == j) %>%
+        ggplot(aes(x = COR, fill = dstatus)) +
+        geom_density(alpha = .5) +
+        ggtitle(paste(i, j, sep = " || "))
+      print(p)
+    }
+    
+  }
+}
+```
+
+
+```{r}
+eps_cor_ci_demen <- list(lcl_eps_demen, ucl_eps_demen, lcl_eps_non_demen, ucl_eps_non_demen) %>%
+  map2(rep(c("LCL", "UCL"), 2), function(x, param){
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2) %>%
+      mutate(param = param)
+  })
+
+names(eps_cor_ci_demen) <- c("lcl_demen", "ucl_demen", "lcl_non_demen", "ucl_non_demen")
+corbig_eps <- rbind(
+  eps_cor_ci_demen[grepl("non_demen", names(eps_cor_ci_demen))] %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "non_demen"),
+  eps_cor_ci_demen[!grepl("non_demen", names(eps_cor_ci_demen))] %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "demen")
+) 
+for(i in varorder){
+  for(j in varorder){
+    if(i != j){
+      p <- corbig_eps %>%
+        filter(V1 == i, V2 == j) %>%
+        ggplot(aes(y = dstatus, x = COR, color = dstatus)) +
+        geom_line(size = 4) + 
+        geom_point(size = 6) +
+        ggtitle(paste(i, j, sep = " || "))
+      print(p)
+    }
+    
+  }
+}
+
 
 ```
 
 
+
+```{r}
+demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_demen$Eta.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+non_demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_non_demen$Eta.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+lcl_eta_demen <- demen_eta_cor %>%
+  apply(1:2, quantile, .025)
+
+
+
+ucl_eta_demen <- demen_eta_cor %>%
+  apply(1:2, quantile, .975)
+
+lcl_eta_non_demen <- non_demen_eta_cor %>%
+  apply(1:2, quantile, .025)
+
+ucl_eta_non_demen <- non_demen_eta_cor %>%
+  apply(1:2, quantile, .975)
+
+ci_overlap <- (ucl_eta_demen > lcl_eta_non_demen & ucl_eta_demen < ucl_eta_non_demen)|(lcl_eta_demen > lcl_eta_non_demen & lcl_eta_demen < ucl_eta_non_demen)|(lcl_eta_demen < lcl_eta_non_demen & ucl_eta_demen > ucl_eta_non_demen)
+
+colnames(ci_overlap) <- row.names(ci_overlap) <- colnames(lcl_eta_demen) <- row.names(lcl_eta_demen) <- colnames(ucl_eta_demen) <- row.names(ucl_eta_demen)  <- colnames(lcl_eta_non_demen) <- row.names(lcl_eta_non_demen) <- colnames(ucl_eta_non_demen) <- row.names(ucl_eta_non_demen) <- varorder
+
+ci_overlap
+```
+
+
+
+```{r}
+all_eta_cor <- rbind(
+  map(1:dim(demen_eta_cor)[3], function(i){
+    x <- demen_eta_cor[,,i]
+    row.names(x) <- colnames(x) <- varorder
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2)
+  }) %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "demen"),
+  map(1:dim(non_demen_eta_cor)[3], function(i){
+    x <- non_demen_eta_cor[,,i]
+    row.names(x) <- colnames(x) <- varorder
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2)
+  }) %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "non_demen")
+)
+
+for(i in varorder){
+  for(j in varorder){
+    if(i != j){
+      p <- all_eta_cor %>%
+        filter(V1 == i, V2 == j) %>%
+        ggplot(aes(x = COR, fill = dstatus)) +
+        geom_density(alpha = .5) +
+        ggtitle(paste(i, j, sep = " || "))
+      print(p)
+    }
+    
+  }
+}
+```
+
+
+```{r}
+eps_cor_ci_demen <- list(lcl_eta_demen, ucl_eta_demen, lcl_eta_non_demen, ucl_eta_non_demen) %>%
+  map2(rep(c("LCL", "UCL"), 2), function(x, param){
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2) %>%
+      mutate(param = param)
+  })
+
+names(eps_cor_ci_demen) <- c("lcl_demen", "ucl_demen", "lcl_non_demen", "ucl_non_demen")
+corbig_eps <- rbind(
+  eps_cor_ci_demen[grepl("non_demen", names(eps_cor_ci_demen))] %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "non_demen"),
+  eps_cor_ci_demen[!grepl("non_demen", names(eps_cor_ci_demen))] %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "demen")
+) 
+for(i in varorder){
+  for(j in varorder){
+    if(i != j){
+      p <- corbig_eps %>%
+        filter(V1 == i, V2 == j) %>%
+        ggplot(aes(y = dstatus, x = COR, color = dstatus)) +
+        geom_line(size = 4) + 
+        geom_point(size = 6) +
+        ggtitle(paste(i, j, sep = " || "))
+      print(p)
+    }
+    
+  }
+}
+
+
+```

@@ -33,21 +33,44 @@ Reasoning for the ill-fitting model O can be observed in the estimated observati
 If the primary concern of analysis is to estimate the underlying state process correlation, both the S and OS models can be seen as valid. For the NACC data, if power is of concern, one may decide to use the S model as there are 45 fewer covariance parameters to estimate and there is generally very low correlation in the observation equation. In our analysis, eliminating the covariance in the observation does not seem to increase power a significant amount and by eliminating the observation covariance could add bias to the state covariance estimate. 
 
 
+```{r}
+readRDS("Paper2/paperData/Real_Effect_Coverage.RDS") %>%
+  map(function(x){
+    out <- x$Coverage
+    names(out) <- x$Outcome
+    out
+  }) %>%
+  data.frame() %>%
+  select(LLT = Independent, O = Observation, S = State, OS = Both) %>%
+  mutate_all(~round(.x, 3)) %>%
+  kbl(row.names = TRUE,  longtable = TRUE, caption = "Linear Effect Coverage")
+```
+
+
 
 ```{r}
-readRDS("Paper2/paperData/Real_Effects.RDS")  %>%
-  ggplot(aes(x = Method, y = Estimate, color = Method)) +
+readRDS("Paper2/paperData/Real_effects.RDS")  %>%
+  mutate(Method = case_when(
+    Method == "Independent" ~ "LLT",
+    Method == "Observation" ~ "O",
+    Method == "State" ~ "S",
+    Method == "Both" ~ "OS"
+  ) %>% factor(levels = c("LLT", "O", "S", "OS"))) %>%
+  ggplot(aes(x = Method, y = Estimate, color = Method, shape = Method)) +
   geom_point(size=5) +
   geom_errorbar(aes(ymin = LCL, ymax = UCL), size = 1) +
   facet_wrap(~Outcome) +
-  geom_hline(yintercept = 1, col = "red")
+  geom_hline(yintercept = 1, col = "red") +
+  scale_color_manual(values = c("#405E92",   "#DF3116",     "#DFB916", "#409247"))  +
+  scale_shape_manual(values = c(15,10,  9, 8))  +
+  ylab("Avg Bias")  +
+  theme_bw()
 ```
 
 
 
 ```{r}
 readRDS("Paper2/paperData/Real_Eps.RDS") %>%
-  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
   ylab("") +

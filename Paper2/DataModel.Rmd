@@ -5,14 +5,75 @@ output:
     toc: false
 ---
 
+```{r, include = FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(rlang)
+```
+
+
+```{r}
+places <- 2
+t1_demen <- readRDS("Paper2/paperData/Table1_demen.RDS")
+t1_non_demen <- readRDS("Paper2/paperData/Table1_non_demen.RDS")
+
+
+df_demen = data.frame(
+  Dementia = cbind(
+    n = t1_demen$n,
+    t1_demen %>%
+      perc_mut_all(c("APOE", "SEX", "RACEWHITE"), places),
+    t1_demen %>%
+      num_mut_all(c("Count", "Age", "Ed", "maxTime", "decline"), places)
+  ) %>%
+    t()
+) %>%
+  rownames_to_column("Var")
+
+
+
+df_non_demen = data.frame(
+  `Non-Dementa` = cbind(
+    n = t1_non_demen$n,
+    t1_non_demen %>%
+      perc_mut_all(c("APOE", "SEX", "RACEWHITE"), places),
+    t1_non_demen %>%
+      num_mut_all(c("Count","Age", "Ed", "maxTime"), places)
+  ) %>%
+    t()
+) %>%
+  rownames_to_column("Var")
+
+t1 <- left_join(df_demen, df_non_demen, "Var") %>%
+  column_to_rownames("Var")
+
+rt1 <- c("n" = "n participants", "Count" = "Return visits", "APOE" = "APOE e4 allele", "SEX" = "Sex (Female)", "RACEWHITE" = "Race (White)", "Age" = "Age", "Ed" = "Education Yrs", "maxTime" = "Follow-up Yrs", "decline" = "Time of Decline\n(Years since baseline)")
+
+rownames(t1) <- rt1[rownames(t1)]
+
+t1[c("n participants", "Return visits",  "Follow-up Yrs", "Sex (Female)", "Race (White)", "APOE e4 allele", "Age", "Education Yrs","Time of Decline\n(Years since baseline)"), ]
+```
+
+
+
+```{r}
+readRDS("Paper2/paperData/t1_match.RDS")
+```
+
+
+
+
 ## Data and Model of Interest
 
 ### Data
 
-Data collected by the National Alzheimer's Coordinating Center (NACC) Uniform Data Set Version 2.0 (UDS, September 2014) was used to test the proposed MLLT model validity. Criteria for entry into the analysis requires Alzheimer's disease participants to have transitioned from cognitively normal to mild cognitive impairment (MCI) or Dementia during the NACC follow-up period. For the multivariate modeling of different cognition domains, we used the following neuropsychological outcomes: logic memory, memory units, digit forward, digit backward, trails A, trails B, WAIS, boston naming, animals naming, and vegetables naming. Predictors of interest include: time, race white, sex, apoe e4 status, education, time of transition from cognitively normal to mild cognitive impairment (MCI) or dementia, and age.
+Data collected by the National Alzheimer's Coordinating Center (NACC) Uniform Data Set Version 2.0 (UDS, September 2014) was used to test the proposed MLLT model validity. The data analysis utilized two different groups in the NACC. Criteria for entry into the the first group requires Alzheimer's disease participants to have transitioned from cognitively normal to mild cognitive impairment (MCI) or Dementia during the NACC follow-up period. The second group are those who remained cognitevly normal throughout the follow-up period. For the multivariate modeling of different cognition domains, we used the following neuropsychological outcomes: logic memory, memory units, digit forward, digit backward, trails A, trails B, WAIS, boston naming, animals naming, and vegetables naming. Predictors of interest include: time, race white, sex, apoe e4 status, education, time of transition from cognitively normal to mild cognitive impairment (MCI) or dementia, and age.
 
 
-Inclusion into the analysis requires non-missingness for covariates and each test at a given time point, as well as each participant needing 1 or more complete observation. This results in 738 participants with an average of 5.13 return visits (SD = 2.06) seen over a period of 5.01 years (SD = 2.17). The average transition from cognitively normal to MCI or Dementia occurs after 3.82 years (SD = 1.88). In this sample 37.3% of the subjects carry at least 1 APOE e4 allele. The average study participants are predominantly female (61.5%) and of white ethnicity (86.2%). Participants are primarily older with an average age of 78.2 years old (SD = 7.60) and have an average of 15.9 years of education (SD = 6.09).
+Inclusion into the analysis requires non-missingness for covariates and each test at a given time point, as well as each participant needing 1 or more complete observation. The Non-Dementia group has a larger sample size that average fewer visits (6,136 participants, 4.46 return visits) compared to the dementia group (973 participants, 6.26). There are fewer dementia participants who are female, more whose race is white, and more with an APOE e4 allele (61.46%, 86.23%, 37.31% respectively)  than non-dementia (67.42%, 83.34%, 26.99% respectively). Those in the dementia cohort are older at first visit and have slightly less education (78.21 years old, 15.94 years) compared to non-dementia (70.83 years old, 16.13 years). For those who experience MCI or dementia, decline occurs 3.82 years after the first visit.
+
+The group experiencing cognitive decline results in 973 participants with an average of 5.13 return visits (SD = 2.06) seen over a period of 5.01 years (SD = 2.17). The average transition from cognitively normal to MCI or Dementia occurs after 3.82 years (SD = 1.88) from baseline. In this sample 37.3% of the subjects carry at least 1 APOE e4 allele. The average study participants are predominantly female (61.5%) and of white ethnicity (86.2%). Participants are primarily older with an average age of 78.2 years old (SD = 7.60) and have an average of 15.94 years of education (SD = 6.09).
 
 ### Model of Interest
 

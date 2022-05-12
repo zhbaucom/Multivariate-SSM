@@ -106,10 +106,35 @@ Reasoning for the ill-fitting model O can be observed in the estimated observati
 
 If the primary concern of analysis is to estimate the underlying state process correlation, both the S and OS models can be seen as valid. For the NACC data, if power is of concern, one may decide to use the S model as there are 45 fewer covariance parameters to estimate and there is generally very low correlation in the observation equation. In our analysis, eliminating the covariance in the observation does not seem to increase power a significant amount and by eliminating the observation covariance could add bias to the state covariance estimate.
 
-\includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-2-1.pdf}
+\begin{longtable}[t]{l|r|r|r|r}
+\caption{\label{tab:unnamed-chunk-2}Linear Effect Coverage}\\
+\hline
+  & LLT & O & S & OS\\
+\hline
+ANIMALS & 0.941 & 0.909 & 0.939 & 0.949\\
+\hline
+BOSTON & 0.935 & 0.918 & 0.921 & 0.929\\
+\hline
+DIGIB & 0.941 & 0.929 & 0.939 & 0.941\\
+\hline
+DIGIF & 0.943 & 0.938 & 0.955 & 0.942\\
+\hline
+LOGIMEM & 0.961 & 0.862 & 0.971 & 0.970\\
+\hline
+MEMUNITS & 0.965 & 0.877 & 0.979 & 0.966\\
+\hline
+TRAILA & 0.939 & 0.898 & 0.938 & 0.929\\
+\hline
+TRAILB & 0.952 & 0.886 & 0.932 & 0.944\\
+\hline
+WAIS & 0.949 & 0.903 & 0.942 & 0.951\\
+\hline
+\end{longtable}
 
 \includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-3-1.pdf}
 
 \includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\includegraphics{RealDataSim_files/figure-latex/unnamed-chunk-5-1.pdf}
 
 \end{document}

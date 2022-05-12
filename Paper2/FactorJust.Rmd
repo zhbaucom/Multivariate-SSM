@@ -12,21 +12,25 @@ library(knitr)
 library(kableExtra)
 library(ggtext)
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
-ds <- "Paper2/paperData/NACC_stateCor_demen.RDS" %>%
+ds <- "Paper2/paperData/NACC_stateCor_demen_match.RDS" %>%
   readRDS()
 varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS')
+
 ```
 
 
 ```{r}
 dseig <- eigen(ds)
 
-facLoading <- t(t(dseig$vectors) * sqrt(dseig$values))
+facLoading <- t(t(dseig$vectors) * sqrt(ifelse(dseig$values > 0 , dseig$values, 0)))
 rownames(facLoading) <- row.names(ds)
 colnames(facLoading) <- paste("PC_", 1:9, sep = "")
 
-facLoading <- facLoading %>%
-  data.frame() 
+facLoading.v <- facLoading %>%
+  stats::varimax()
+
+facLoading <- facLoading.v$loadings[,] %>%
+  data.frame()
 prop <- dseig$values / sum(dseig$values)
 
 
@@ -37,7 +41,7 @@ prop <- dseig$values / sum(dseig$values)
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eps_demen_match.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -69,7 +73,7 @@ readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eta_demen.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eta_demen_match.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -243,13 +247,13 @@ library(knitr)
 library(kableExtra)
 library(ggtext)
 knitr::opts_chunk$set(echo = FALSE)
-ds <- "Paper2/paperData/NACC_stateCor_non_demen.RDS" %>%
+ds <- "Paper2/paperData/NACC_stateCor_non_demen_match.RDS" %>%
   readRDS()
 varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS')
 ```
 
 
-```{r}
+```{r,eval = FALSE}
 dseig <- eigen(ds)
 
 facLoading <- t(t(dseig$vectors) * sqrt(dseig$values))
@@ -263,12 +267,29 @@ prop <- dseig$values / sum(dseig$values)
 
 ```
 
+```{r}
+dseig <- eigen(ds)
+
+facLoading <- t(t(dseig$vectors) * sqrt(ifelse(dseig$values > 0 , dseig$values, 0)))
+rownames(facLoading) <- row.names(ds)
+colnames(facLoading) <- paste("PC_", 1:9, sep = "")
+
+facLoading.v <- facLoading %>%
+  stats::varimax()
+
+facLoading <- facLoading.v$loadings[,] %>%
+  data.frame()
+prop <- dseig$values / sum(dseig$values)
+
+
+```
+
 ## Correlation Matrices
 
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eps_non_demen_match.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -300,7 +321,7 @@ readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
 
 
 ```{r}
-readRDS("Paper2/paperData/NACC_Eta_non_demen.RDS") %>%
+readRDS("Paper2/paperData/NACC_Eta_non_demen_match.RDS") %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
