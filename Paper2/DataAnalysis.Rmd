@@ -7,7 +7,7 @@ output:
 
 ```{r, include = FALSE}
 library(tidyverse)
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(knitr)
 library(kableExtra)
 library(igraph)
@@ -17,13 +17,18 @@ varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB
 
 ## Data Analysis
 
-Using the MLLT model which allows correlation in the observation errors and underlying cognitive process (OS), we carry out an analysis on the NACC data with the outcomes and predictors of interest as described in (section__________). The Gibb's sampling was repeated 5,000 times with a burn-in of 2,000 samples. Non-informative priors are used for both the linear effects and covariance matrices.
+To compare latent process correlation between those who transitioned to MCI or dementia during follow-up and those who did not, we fit the MLLT model which allows correlation in the observation errors and underlying cognitive process (OS) using the model of interest described in section __________. The model is fit on the full data and sensitivity analysis matched data described in section ___________. The Gibb's sampling was repeated 5,000 times with a burn-in of 2,000 samples, resulting in 3,000 samples for parameter interest. Non-informative priors are used for both the linear effects and covariance matrices.
 
 ### Data Analysis Results
 
-#### Dementia
+In both the dementia and non-dementia groups, there is very little estimated observation correlation. Instead, the correlation is primarily placed in the state equation. For the state correlation, in the non-dementia population there are much distinct correlation clusters in memory (LOGIMEM, MEMUNITS), digit (DIGIB, DIGIF), and executive function (TRAILA, TRAILB, WAIS). The dementia population generally has much higher correlation in the state equation. The digit and executive function blocks share much higher cross correlation than the non-dementia group. The Animals test generally has low correlation for the non-dementia population and very high correlation with all tests the other tests in the population that transitioned to MCI or dementia.
 
-```{r}
+As expected by the correlation estimates, 23 of the 36 correlation coefficients share less than 5% overlap in posterior draw distributions. 
+
+
+
+```{r, eval = FALSE}
+#### Dementia
 SIG <- "Paper2/paperData/NACC_SIG_demen.RDS" %>%
   readRDS() %>%
   data.frame() %>%
@@ -54,8 +59,13 @@ ptab[,6:9] %>%
 ```
 
 
-```{r}
-readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
+```{r, fig.width=8}
+rbind(
+  readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
+    mutate(Status = "Observation"),
+  readRDS("Paper2/paperData/NACC_Eta_demen.RDS") %>%
+    mutate(Status = "State")
+) %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -69,53 +79,23 @@ readRDS("Paper2/paperData/NACC_Eps_demen.RDS") %>%
   scale_fill_gradient2(low = 'lightblue', high = "red", 
     midpoint = .5,limits = c(0,1), na.value = "lightblue",
     name="Correlation")+
+  facet_wrap("Status") +
   theme(
+    legend.position = "bottom",
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
     axis.ticks = element_blank(),
-    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.05)
     # legend.justification = c(1, 0),
     # legend.position = c(0.4, 0.6),
     # legend.direction = "horizontal"
     ) +
   # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
   #               title.position = "top", title.hjust = 0.5)) +
-  ggtitle("Observation Correlation")
-```
+  ggtitle("Dementia")
 
-
-
-```{r}
-readRDS("Paper2/paperData/NACC_Eta_demen.RDS") %>%
-  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
-  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
-  xlab("") +
-  ylab("") +
-  theme_minimal()  +
-  geom_tile( color = 'white')+
-  geom_richtext(
-        fill = NA, label.color = NA, # remove background and outline
-        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-  ) +
-  scale_fill_gradient2(low = 'lightblue', high = "red", 
-    midpoint = .5,limits = c(0,1), na.value = "lightblue",
-    name="Correlation")+
-  theme(
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
-    # legend.justification = c(1, 0),
-    # legend.position = c(0.4, 0.6),
-    # legend.direction = "horizontal"
-    ) +
-  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-  #               title.position = "top", title.hjust = 0.5)) +
-  ggtitle("State Correlation")
 ```
 
 
@@ -123,9 +103,10 @@ readRDS("Paper2/paperData/NACC_Eta_demen.RDS") %>%
 
 
 
+
+
+```{r, eval = FALSE}
 #### Non-Dementia
-
-```{r}
 SIG <- "Paper2/paperData/NACC_SIG_non_demen.RDS" %>%
   readRDS() %>%
   data.frame() %>%
@@ -156,8 +137,14 @@ ptab[,6:9] %>%
 ```
 
 
-```{r}
-readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
+
+```{r, fig.width=8}
+rbind(
+  readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
+    mutate(Status = "Observation"),
+  readRDS("Paper2/paperData/NACC_Eta_non_demen.RDS") %>%
+    mutate(Status = "State")
+) %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -171,6 +158,81 @@ readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
   scale_fill_gradient2(low = 'lightblue', high = "red", 
     midpoint = .5,limits = c(0,1), na.value = "lightblue",
     name="Correlation")+
+  facet_wrap("Status") +
+  theme(
+    legend.position = "bottom",
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.05)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("Non-Dementia")
+
+```
+
+
+#### State Correlation Posterior Differences
+
+
+h
+
+
+```{r}
+fdo_demen <- readRDS("Paper2/paperData/FullDataOutput_demen.RDS")
+
+fdo_non_demen <- readRDS("Paper2/paperData/FullDataOutput_non_demen.RDS")
+
+demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_demen$Eta.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+non_demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_non_demen$Eta.Track[,,i] )) %>%
+  abind::abind(along = 3)
+
+lcl_eta_demen <- demen_eta_cor %>%
+  apply(1:2, quantile, .025)
+
+
+
+ucl_eta_demen <- demen_eta_cor %>%
+  apply(1:2, quantile, .975)
+
+lcl_eta_non_demen <- non_demen_eta_cor %>%
+  apply(1:2, quantile, .025)
+
+ucl_eta_non_demen <- non_demen_eta_cor %>%
+  apply(1:2, quantile, .975)
+
+ci_overlap <- (ucl_eta_demen > lcl_eta_non_demen & ucl_eta_demen < ucl_eta_non_demen)|(lcl_eta_demen > lcl_eta_non_demen & lcl_eta_demen < ucl_eta_non_demen)|(lcl_eta_demen < lcl_eta_non_demen & ucl_eta_demen > ucl_eta_non_demen)
+
+colnames(ci_overlap) <- row.names(ci_overlap) <- colnames(lcl_eta_demen) <- row.names(lcl_eta_demen) <- colnames(ucl_eta_demen) <- row.names(ucl_eta_demen)  <- colnames(lcl_eta_non_demen) <- row.names(lcl_eta_non_demen) <- colnames(ucl_eta_non_demen) <- row.names(ucl_eta_non_demen) <- varorder
+```
+
+
+
+
+```{r}
+(!ci_overlap) %>%
+  data.frame() %>%
+  rownames_to_column("V1") %>%
+  gather("V2", "sigdiff", - V1) %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  filter(V1 != V2) %>%
+  ggplot(aes(x = V2, y = V1, fill = sigdiff, label = sigdiff)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  ) +
   theme(
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
@@ -184,13 +246,91 @@ readRDS("Paper2/paperData/NACC_Eps_non_demen.RDS") %>%
     ) +
   # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
   #               title.position = "top", title.hjust = 0.5)) +
-  ggtitle("Observation Correlation")
+  ggtitle("Significant Difference in State Correlation")
 ```
 
 
 
-```{r}
-readRDS("Paper2/paperData/NACC_Eta_non_demen.RDS") %>%
+* **BLUE** is **Non-Dementia**
+* **RED** is **Dementia**
+
+
+
+
+```{r, fig.height=2.5, fig.width= 3}
+all_eta_cor <- rbind(
+  map(1:dim(demen_eta_cor)[3], function(i){
+    x <- demen_eta_cor[,,i]
+    row.names(x) <- colnames(x) <- varorder
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2)
+  }) %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "demen"),
+  map(1:dim(non_demen_eta_cor)[3], function(i){
+    x <- non_demen_eta_cor[,,i]
+    row.names(x) <- colnames(x) <- varorder
+    x %>%
+      data.frame() %>%
+      rownames_to_column("V1") %>%
+      gather("V2", "COR", -V1) %>%
+      filter(V1 != V2)
+  }) %>%
+    do.call("rbind", .) %>%
+    mutate(dstatus = "non_demen")
+) %>%
+  mutate(dstatus = factor(dstatus, levels = c("demen", "non_demen")))
+
+for(x in 1:length(varorder)){
+  for(y in 1:length(varorder)){
+    i <- varorder[x]
+    j <- varorder[y]
+    if(x > y & !ci_overlap[i, j]){
+      
+      p <- all_eta_cor %>%
+        filter(V1 == i, V2 == j) %>%
+        ggplot(aes(x = COR, fill = dstatus, linetype = dstatus)) +
+        geom_density(alpha = .5, size = 1.5) +
+        ggtitle(paste(i, j, sep = " || ")) +
+        theme(
+          legend.position = "none",
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+          # legend.justification = c(1, 0),
+          # legend.position = c(0.4, 0.6),
+          # legend.direction = "horizontal"
+        )
+      print(p)
+    }
+    
+  }
+}
+
+
+
+```
+
+
+
+### Sensitivity
+
+
+
+
+```{r, fig.width=8}
+rbind(
+  readRDS("Paper2/paperData/NACC_Eps_demen_match.RDS") %>%
+    mutate(Status = "Observation"),
+  readRDS("Paper2/paperData/NACC_Eta_demen_match.RDS") %>%
+    mutate(Status = "State")
+) %>%
   mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
@@ -200,25 +340,99 @@ readRDS("Paper2/paperData/NACC_Eta_non_demen.RDS") %>%
   geom_richtext(
         fill = NA, label.color = NA, # remove background and outline
         label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-  ) +
+  )  +
   scale_fill_gradient2(low = 'lightblue', high = "red", 
     midpoint = .5,limits = c(0,1), na.value = "lightblue",
     name="Correlation")+
+  facet_wrap("Status") +
   theme(
+    legend.position = "bottom",
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
     axis.ticks = element_blank(),
-    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.05)
     # legend.justification = c(1, 0),
     # legend.position = c(0.4, 0.6),
     # legend.direction = "horizontal"
     ) +
   # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
   #               title.position = "top", title.hjust = 0.5)) +
-  ggtitle("State Correlation")
+  ggtitle("Dementia")
+
 ```
+
+
+
+
+
+
+
+
+```{r, fig.width=8}
+rbind(
+  readRDS("Paper2/paperData/NACC_Eps_non_demen_match.RDS") %>%
+    mutate(Status = "Observation"),
+  readRDS("Paper2/paperData/NACC_Eta_non_demen_match.RDS") %>%
+    mutate(Status = "State")
+) %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
+  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
+  xlab("") +
+  ylab("") +
+  theme_minimal()  +
+  geom_tile( color = 'white')+
+  geom_richtext(
+        fill = NA, label.color = NA, # remove background and outline
+        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
+  )  +
+  scale_fill_gradient2(low = 'lightblue', high = "red", 
+    midpoint = .5,limits = c(0,1), na.value = "lightblue",
+    name="Correlation")+
+  facet_wrap("Status") +
+  theme(
+    legend.position = "bottom",
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.05)
+    # legend.justification = c(1, 0),
+    # legend.position = c(0.4, 0.6),
+    # legend.direction = "horizontal"
+    ) +
+  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+  #               title.position = "top", title.hjust = 0.5)) +
+  ggtitle("Non-Dementia")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
 
 
 ```{r}
@@ -344,76 +558,6 @@ for(i in varorder){
 
 
 
-```{r}
-demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_demen$Eta.Track[,,i] )) %>%
-  abind::abind(along = 3)
-
-non_demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_non_demen$Eta.Track[,,i] )) %>%
-  abind::abind(along = 3)
-
-lcl_eta_demen <- demen_eta_cor %>%
-  apply(1:2, quantile, .025)
-
-
-
-ucl_eta_demen <- demen_eta_cor %>%
-  apply(1:2, quantile, .975)
-
-lcl_eta_non_demen <- non_demen_eta_cor %>%
-  apply(1:2, quantile, .025)
-
-ucl_eta_non_demen <- non_demen_eta_cor %>%
-  apply(1:2, quantile, .975)
-
-ci_overlap <- (ucl_eta_demen > lcl_eta_non_demen & ucl_eta_demen < ucl_eta_non_demen)|(lcl_eta_demen > lcl_eta_non_demen & lcl_eta_demen < ucl_eta_non_demen)|(lcl_eta_demen < lcl_eta_non_demen & ucl_eta_demen > ucl_eta_non_demen)
-
-colnames(ci_overlap) <- row.names(ci_overlap) <- colnames(lcl_eta_demen) <- row.names(lcl_eta_demen) <- colnames(ucl_eta_demen) <- row.names(ucl_eta_demen)  <- colnames(lcl_eta_non_demen) <- row.names(lcl_eta_non_demen) <- colnames(ucl_eta_non_demen) <- row.names(ucl_eta_non_demen) <- varorder
-
-ci_overlap
-```
-
-
-
-```{r}
-all_eta_cor <- rbind(
-  map(1:dim(demen_eta_cor)[3], function(i){
-    x <- demen_eta_cor[,,i]
-    row.names(x) <- colnames(x) <- varorder
-    x %>%
-      data.frame() %>%
-      rownames_to_column("V1") %>%
-      gather("V2", "COR", -V1) %>%
-      filter(V1 != V2)
-  }) %>%
-    do.call("rbind", .) %>%
-    mutate(dstatus = "demen"),
-  map(1:dim(non_demen_eta_cor)[3], function(i){
-    x <- non_demen_eta_cor[,,i]
-    row.names(x) <- colnames(x) <- varorder
-    x %>%
-      data.frame() %>%
-      rownames_to_column("V1") %>%
-      gather("V2", "COR", -V1) %>%
-      filter(V1 != V2)
-  }) %>%
-    do.call("rbind", .) %>%
-    mutate(dstatus = "non_demen")
-)
-
-for(i in varorder){
-  for(j in varorder){
-    if(i != j){
-      p <- all_eta_cor %>%
-        filter(V1 == i, V2 == j) %>%
-        ggplot(aes(x = COR, fill = dstatus)) +
-        geom_density(alpha = .5) +
-        ggtitle(paste(i, j, sep = " || "))
-      print(p)
-    }
-    
-  }
-}
-```
 
 
 ```{r}
@@ -453,3 +597,8 @@ for(i in varorder){
 
 
 ```
+
+
+
+
+

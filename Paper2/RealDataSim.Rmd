@@ -69,8 +69,20 @@ readRDS("Paper2/paperData/Real_effects.RDS")  %>%
 
 
 
-```{r}
-readRDS("Paper2/paperData/Real_Eps.RDS") %>%
+
+
+
+
+```{r, fig.width=8}
+
+
+rbind(
+  readRDS("Paper2/paperData/Real_Eps.RDS") %>%
+    mutate(Status = "Observation"),
+  readRDS("Paper2/paperData/Real_Eta.RDS") %>%
+    mutate(Status = "State")
+) %>%
+  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
   ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
   xlab("") +
   ylab("") +
@@ -83,51 +95,17 @@ readRDS("Paper2/paperData/Real_Eps.RDS") %>%
   scale_fill_gradient2(low = 'lightblue', high = "red", 
     midpoint = .5,limits = c(0,1), na.value = "lightblue",
     name="Correlation")+
+  facet_wrap("Status") +
   theme(
+    legend.position = "bottom",
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
     axis.ticks = element_blank(),
-    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
+    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.05)
     # legend.justification = c(1, 0),
     # legend.position = c(0.4, 0.6),
     # legend.direction = "horizontal"
-    ) +
-  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-  #               title.position = "top", title.hjust = 0.5)) +
-  ggtitle("Observation Correlation")
-```
-
-
-
-```{r}
-readRDS("Paper2/paperData/Real_Eta.RDS") %>%
-  mutate(V1 = factor(V1, levels = varorder), V2 = factor(V2, levels = varorder)) %>%
-  ggplot(aes(x = V2, y = V1, fill = COR, label = print_values)) +
-  xlab("") +
-  ylab("") +
-  theme_minimal()  +
-  geom_tile( color = 'white')+
-  geom_richtext(
-        fill = NA, label.color = NA, # remove background and outline
-        label.padding = grid::unit(rep(0, 4), "pt") # remove padding
-  ) +
-  scale_fill_gradient2(low = 'lightblue', high = "red", 
-    midpoint = .5,limits = c(0,1), na.value = "lightblue",
-    name="Correlation")+
-  theme(
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    axis.text.x = element_text(angle = -30, vjust = 0, hjust=.35)
-    # legend.justification = c(1, 0),
-    # legend.position = c(0.4, 0.6),
-    # legend.direction = "horizontal"
-    ) +
-  # guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-  #               title.position = "top", title.hjust = 0.5)) +
-  ggtitle("State Correlation")
+    )
 ```
