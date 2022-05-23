@@ -69,6 +69,29 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -109,26 +132,6 @@
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
-  \setlength{\parindent}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set entry spacing
-  \ifnum #2 > 0
-  \setlength{\parskip}{#2\baselineskip}
-  \fi
- }%
- {}
-\usepackage{calc}
-\newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 \title{Multivariate State Space Models for Neuropsychological Cognitive Scores}
 \author{Zach Baucom, BS, \href{mailto:zhbaucom@bu.edu}{\nolinkurl{zhbaucom@bu.edu}} \and Yorghos Tripodis, PhD, \href{mailto:yorghos@bu.edu}{\nolinkurl{yorghos@bu.edu}} \and Michael Alosco, PhD, \href{mailto:malsoco@bu.edu}{\nolinkurl{malsoco@bu.edu}} \and Evan Johnson, PhD, \href{mailto:wej@bu.edu}{\nolinkurl{wej@bu.edu}}}
@@ -234,7 +237,7 @@ y_{ijK}
 \varepsilon_{ij2}\\
 \vdots\\
 \varepsilon_{ijK}
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},  
 \begin{bmatrix}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
@@ -260,7 +263,7 @@ y_{ijK}
 \eta_{ij2}\\
 \vdots\\
 \eta_{ijK}
-\end{bmatrix}, \ \ \
+\end{bmatrix}, 
 \begin{bmatrix}
 \eta_{ij1}\\
 \eta_{ij2}\\
@@ -283,7 +286,6 @@ Model O: Correlation is in Measurement eq.
 \vdots & & \ddots\\
 \sigma^{2(1, K)}_\varepsilon & & &\sigma^{2(K)}_\varepsilon
 \end{bmatrix},
-\ \ \ 
 \Sigma_\eta = 
 \begin{bmatrix}
 \sigma^{2(1)}_\eta & 0 & \cdots & 0\\
@@ -305,7 +307,6 @@ Model S: Correlation is in State eq.
 \vdots & & \ddots\\
 0 & & &\sigma^{2(K)}_\varepsilon
 \end{bmatrix},
-\ \ \ 
 \Sigma_\eta =
 \begin{bmatrix}
 \sigma^{2(1)}_\eta & \sigma^{2(1,2)} & \cdots & \sigma^{2(1, K)}_\eta\\
@@ -416,10 +417,10 @@ Due to independence from subject to subject we can write the -2 log likelihood a
 \begin{aligned}
 -2logP(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) \propto & \sum^N_{i=1}\sum^T_{j=1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})' \Sigma_\varepsilon(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{\beta})\\
 \text{where,}\\
-\boldsymbol{y_{ij}} = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, \ \ \
-\boldsymbol{\alpha_{ij}} = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix}, \ \ \ &
+\boldsymbol{y_{ij}} = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, 
+\boldsymbol{\alpha_{ij}} = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix},  &
 \boldsymbol{ \mathbb{X}}_{ij} = \begin{bmatrix}\boldsymbol{x}_{ij} & 0 & \dots & 0 \\ 0 & \boldsymbol{x}_{ij} \\ \vdots & & \ddots \\
-0 & & & \boldsymbol{x}_{ij}\end{bmatrix} \ \ \
+0 & & & \boldsymbol{x}_{ij}\end{bmatrix} 
 \beta = \begin{bmatrix}\boldsymbol{\beta}_1\\ \boldsymbol{\beta}_2 \\ \vdots \\ \boldsymbol{\beta}_K\end{bmatrix}
 \end{aligned}
 \end{equation*}
@@ -549,7 +550,7 @@ y_{ij3}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
 \varepsilon_{ij3}
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},  
 \begin{bmatrix}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
@@ -571,7 +572,7 @@ y_{ij3}
 \eta_{ij1}\\
 \eta_{ij2}\\
 \eta_{ij3}
-\end{bmatrix}, \ \ \
+\end{bmatrix},
 \begin{bmatrix}
 \eta_{ij1}\\
 \eta_{ij2}\\
@@ -598,7 +599,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 15 & 2.4 & 1\\
 2.4 & 15 & 1\\
 1 & 1 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 0 & 0\\
@@ -616,7 +617,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 15 & 0 & 0\\
 0 & 15 & 0\\
 0 & 0 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix}, 
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 3.7 & 0\\
@@ -634,7 +635,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 15 & 2.4 & 1\\
 2.4 & 15 & 1\\
 1 & 1 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix}, 
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 3.7 & 0\\

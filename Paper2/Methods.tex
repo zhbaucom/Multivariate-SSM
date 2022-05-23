@@ -122,7 +122,7 @@ y_{ijK}
 \varepsilon_{ij2}\\
 \vdots\\
 \varepsilon_{ijK}
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},  
 \begin{bmatrix}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
@@ -148,7 +148,7 @@ y_{ijK}
 \eta_{ij2}\\
 \vdots\\
 \eta_{ijK}
-\end{bmatrix}, \ \ \
+\end{bmatrix}, 
 \begin{bmatrix}
 \eta_{ij1}\\
 \eta_{ij2}\\
@@ -171,7 +171,6 @@ Model O: Correlation is in Measurement eq.
 \vdots & & \ddots\\
 \sigma^{2(1, K)}_\varepsilon & & &\sigma^{2(K)}_\varepsilon
 \end{bmatrix},
-\ \ \ 
 \Sigma_\eta = 
 \begin{bmatrix}
 \sigma^{2(1)}_\eta & 0 & \cdots & 0\\
@@ -193,7 +192,6 @@ Model S: Correlation is in State eq.
 \vdots & & \ddots\\
 0 & & &\sigma^{2(K)}_\varepsilon
 \end{bmatrix},
-\ \ \ 
 \Sigma_\eta =
 \begin{bmatrix}
 \sigma^{2(1)}_\eta & \sigma^{2(1,2)} & \cdots & \sigma^{2(1, K)}_\eta\\
@@ -304,10 +302,10 @@ Due to independence from subject to subject we can write the -2 log likelihood a
 \begin{aligned}
 -2logP(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) \propto & \sum^N_{i=1}\sum^T_{j=1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})' \Sigma_\varepsilon(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{\beta})\\
 \text{where,}\\
-\boldsymbol{y_{ij}} = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, \ \ \
-\boldsymbol{\alpha_{ij}} = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix}, \ \ \ &
+\boldsymbol{y_{ij}} = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, 
+\boldsymbol{\alpha_{ij}} = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix},  &
 \boldsymbol{ \mathbb{X}}_{ij} = \begin{bmatrix}\boldsymbol{x}_{ij} & 0 & \dots & 0 \\ 0 & \boldsymbol{x}_{ij} \\ \vdots & & \ddots \\
-0 & & & \boldsymbol{x}_{ij}\end{bmatrix} \ \ \
+0 & & & \boldsymbol{x}_{ij}\end{bmatrix} 
 \beta = \begin{bmatrix}\boldsymbol{\beta}_1\\ \boldsymbol{\beta}_2 \\ \vdots \\ \boldsymbol{\beta}_K\end{bmatrix}
 \end{aligned}
 \end{equation*}

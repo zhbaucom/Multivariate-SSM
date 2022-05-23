@@ -68,22 +68,22 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
 \newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
  {% don't indent paragraphs
   \setlength{\parindent}{0pt}
   % turn on hanging indent if param 1 is 1
-  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set entry spacing
-  \ifnum #2 > 0
-  \setlength{\parskip}{#2\baselineskip}
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
   \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
  }%
  {}
 \usepackage{calc}
@@ -91,6 +91,9 @@
 \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
 
 \title{MLLT}
 \author{}
@@ -98,6 +101,9 @@
 
 \begin{document}
 \maketitle
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
 
 Alzheimer's Disease (AD) is a neurodegenerative disease that affects tens of millions of people world-wide and the prevalence is expected to increase with the aging of the baby boomer population. AD is related to a protein build-up in the brain, leading to brain matter deterioration. Brain deterioration often presents itself outwardly in the form of a decreased ability to perform simple tasks and provide for oneself. The impact of AD is costly. The ({``2022 Alzheimer's Disease Facts and Figures''} 2022) estimates that \$271 billion in unpaid care was accumulated for those living with AD in 2021. This does not take into account the emotional toll of caring for a loved one suffering from AD. Although testing for biomarkers or providing brain scans can be effective in diagnosing AD, understanding the overall cognition process for those suffering with Alzheimer's Disease (AD) has been an emerging line of statistical research. Defining this process can lead to early diagnosis and the implementation of possible interventions to create positive impacts for those suffering with AD and their caretakers. Cognition, however, is complex, multifaceted, and is measured indirectly.
 

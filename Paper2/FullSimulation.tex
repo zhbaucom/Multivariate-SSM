@@ -96,7 +96,7 @@
 
 The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. The data is simulated under three scenarios: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS). The independent LLT, the O MLLT, S MLLT, and OS MLLT are all fit to each of the three data generation processes.
 
-The covariates are randomly generated to mirror the predictors of interest (section \ref{MOI}). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with 10 repeated measurements. The ``true'' linear effects \(\boldsymbol{\beta}\), observation error covariance (\(\Sigma_\varepsilon\)), and underlying state process covariance (\(\Sigma_\eta\)) are denoted below (equations \ref{eq:mod}, \ref{eq:O}, \ref{eq:S}, and \ref{eq:OS}).
+The covariates are randomly generated to mirror the predictors of interest (section \ref{MOI}). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with 10 repeated measurements. The ``true'' linear effects \(\boldsymbol{\beta}\), observation error covariances (\(\Sigma_\varepsilon\)), and underlying state process covariances (\(\Sigma_\eta\)) are denoted below (equations \ref{eq:mod}, \ref{eq:O}, \ref{eq:S}, and \ref{eq:OS}).
 
 The underlying data generation for each of the three simulation scenarios are as follows,
 
@@ -122,7 +122,7 @@ y_{ij3}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
 \varepsilon_{ij3}
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},  
 \begin{bmatrix}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
@@ -144,7 +144,7 @@ y_{ij3}
 \eta_{ij1}\\
 \eta_{ij2}\\
 \eta_{ij3}
-\end{bmatrix}, \ \ \
+\end{bmatrix},
 \begin{bmatrix}
 \eta_{ij1}\\
 \eta_{ij2}\\
@@ -171,7 +171,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 15 & 2.4 & 1\\
 2.4 & 15 & 1\\
 1 & 1 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 0 & 0\\
@@ -189,7 +189,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 15 & 0 & 0\\
 0 & 15 & 0\\
 0 & 0 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix}, 
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 3.7 & 0\\
@@ -207,7 +207,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 15 & 2.4 & 1\\
 2.4 & 15 & 1\\
 1 & 1 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix}, 
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 3.7 & 0\\

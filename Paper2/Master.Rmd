@@ -44,17 +44,17 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 
-```{r child = "Introduction.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/Introduction.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
 # Methods
 
-```{r child = "DataModel.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/DataModel.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
-```{r child = "Methods.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/Methods.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
@@ -62,25 +62,25 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 # Model Validation
 
 
-```{r child = "FullSimulation.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/FullSimulation.Rmd", cache = FALSE, eval = TRUE}
 
 
 ```
 
 
-```{r child = "RealDataSim.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/RealDataSim.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
 
 
 
-```{r child = "DataAnalysis.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/DataAnalysis.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
 
-```{r child = "Discussion.Rmd", cache = FALSE, eval = TRUE}
+```{r child = "Paper2/Discussion.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 

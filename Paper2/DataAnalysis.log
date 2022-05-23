@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.23)  23 MAY 2022 10:52
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.23)  23 MAY 2022 10:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**FullSimulation.tex
-(./FullSimulation.tex
+**DataAnalysis.tex
+(./DataAnalysis.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-05-04> (/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
@@ -448,37 +448,37 @@ Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
 File: l3backend-pdftex.def 2022-04-20 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count310
 \l__pdf_internal_box=\box72
-) (./FullSimulation.aux)
-\openout1 = `FullSimulation.aux'.
+) (./DataAnalysis.aux)
+\openout1 = `DataAnalysis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 92.
-LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
 (/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
 (/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 92.
-(./FullSimulation.out) (./FullSimulation.out)
+Package hyperref Info: Link coloring OFF on input line 91.
+(./DataAnalysis.out) (./DataAnalysis.out)
 \@outlinefile=\write3
-\openout3 = `FullSimulation.out'.
+\openout3 = `DataAnalysis.out'.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -515,107 +515,235 @@ Package hyperref Info: Link coloring OFF on input line 92.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 
-LaTeX Warning: Reference `MOI' on page 1 undefined on input line 99.
+LaTeX Warning: Reference `MOI' on page 1 undefined on input line 96.
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 99.
-(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
-File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 99.
-(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
-File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 99.
-(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
-File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 99.
-(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
-File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 99.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 99.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 99.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 99.
-(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 99.
-(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
 
-{/Users/zachbaucom/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<FullSimulation_files/figure-latex/unnamed-chunk-10-1.pdf, id=58, 469.755pt x 325.215pt>
-File: FullSimulation_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
-<use FullSimulation_files/figure-latex/unnamed-chunk-10-1.pdf>
-Package pdftex.def Info: FullSimulation_files/figure-latex/unnamed-chunk-10-1.pdf  used on input line 265.
+LaTeX Warning: Reference `DAT' on page 1 undefined on input line 96.
+
+<DataAnalysis_files/figure-latex/unnamed-chunk-3-1.pdf, id=20, 578.16pt x 325.215pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-3-1.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-3-1.pdf  used on input line 105.
+(pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-5-1.pdf, id=21, 578.16pt x 325.215pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-5-1.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-5-1.pdf  used on input line 107.
+(pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
+[1
+
+{/Users/zachbaucom/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./DataAnalysis_files/figure-latex/unnamed-chunk-3-1.pdf>]
+<DataAnalysis_files/figure-latex/unnamed-chunk-7-1.pdf, id=38, 469.755pt x 325.215pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-7-1.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-7-1.pdf  used on input line 114.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[2] [3
-pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.308 \textbackslash
-                     end\{table\}
-pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.308 \textbackslash
-                     end\{table\} <./FullSimulation_files/figure-latex/unnamed-chunk-10-1.pdf>]
-<FullSimulation_files/figure-latex/unnamed-chunk-14-1.pdf, id=76, 469.755pt x 325.215pt>
-File: FullSimulation_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (type pdf)
-<use FullSimulation_files/figure-latex/unnamed-chunk-14-1.pdf>
-Package pdftex.def Info: FullSimulation_files/figure-latex/unnamed-chunk-14-1.pdf  used on input line 337.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[4
-pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.380 \textbackslash
-                     end\{table\}] [5
-pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.380 \textbackslash
-                     end\{table\} <./FullSimulation_files/figure-latex/unnamed-chunk-14-1.pdf>]
-<FullSimulation_files/figure-latex/unnamed-chunk-18-1.pdf, id=93, 469.755pt x 325.215pt>
-File: FullSimulation_files/figure-latex/unnamed-chunk-18-1.pdf Graphic file (type pdf)
-<use FullSimulation_files/figure-latex/unnamed-chunk-18-1.pdf>
-Package pdftex.def Info: FullSimulation_files/figure-latex/unnamed-chunk-18-1.pdf  used on input line 409.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[6
-pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.452 \textbackslash
-                     end\{table\}] [7
-pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.452 \textbackslash
-                     end\{table\} <./FullSimulation_files/figure-latex/unnamed-chunk-18-1.pdf>] [8] (./FullSimulation.aux)
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 119.
+(/Users/zachbaucom/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
+File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [2 <./DataAnalysis_files/figure-latex/unnamed-chunk-5-1.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-7-1.pdf>]
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-1.pdf, id=55, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-1.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-1.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-2.pdf, id=56, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-2.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-2.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-2.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-3.pdf, id=57, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-3.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-3.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-3.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-4.pdf, id=58, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-4.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-4.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-4.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-5.pdf, id=59, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-5.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-5.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-5.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-6.pdf, id=60, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-6.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-6.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-6.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-7.pdf, id=61, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-7.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-7.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-7.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-8.pdf, id=62, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-8.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-8.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-8.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-9.pdf, id=63, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-9.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-9.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-9.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-10.pdf, id=64, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-10.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-10.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-10.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-11.pdf, id=65, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-11.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-11.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-11.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-12.pdf, id=66, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-12.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-12.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-12.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-13.pdf, id=67, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-13.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-13.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-13.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-14.pdf, id=68, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-14.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-14.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-14.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-15.pdf, id=69, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-15.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-15.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-15.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-16.pdf, id=70, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-16.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-16.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-16.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-17.pdf, id=71, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-17.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-17.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-17.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-18.pdf, id=72, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-18.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-18.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-18.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-19.pdf, id=73, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-19.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-19.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-19.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-20.pdf, id=74, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-20.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-20.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-20.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-21.pdf, id=75, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-21.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-21.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-21.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-22.pdf, id=76, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-22.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-22.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-22.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+<DataAnalysis_files/figure-latex/unnamed-chunk-8-23.pdf, id=77, 216.81pt x 180.675pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-8-23.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-8-23.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-8-23.pdf  used on input line 124.
+(pdftex.def)             Requested size: 216.80946pt x 180.67455pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[][] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+[] []
+ []
+
+[3 <./DataAnalysis_files/figure-latex/unnamed-chunk-8-1.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-2.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-3.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-4.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-5.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-6.pdf>] [4 <./DataAnalysis_files/figure-latex/unnamed-chunk-8-7.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-8.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-9.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-10.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-11.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-12.pdf>] [5 <./DataAnalysis_files/figure-latex/unnamed-chunk-8-13.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-14.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-15.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-16.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-17.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-18.pdf>]
+<DataAnalysis_files/figure-latex/unnamed-chunk-9-1.pdf, id=236, 578.16pt x 325.215pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-9-1.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 129.
+(pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
+[6 <./DataAnalysis_files/figure-latex/unnamed-chunk-8-19.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-20.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-21.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-22.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-8-23.pdf>]
+<DataAnalysis_files/figure-latex/unnamed-chunk-10-1.pdf, id=283, 578.16pt x 325.215pt>
+File: DataAnalysis_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use DataAnalysis_files/figure-latex/unnamed-chunk-10-1.pdf>
+Package pdftex.def Info: DataAnalysis_files/figure-latex/unnamed-chunk-10-1.pdf  used on input line 131.
+(pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
+[7 <./DataAnalysis_files/figure-latex/unnamed-chunk-9-1.pdf> <./DataAnalysis_files/figure-latex/unnamed-chunk-10-1.pdf>] (./DataAnalysis.aux)
 
 LaTeX Warning: There were undefined references.
 
-Package rerunfilecheck Info: File `FullSimulation.out' has not changed.
-(rerunfilecheck)             Checksum: D65B27ECA1520CF5A4D66E79CEF454B5;837.
+Package rerunfilecheck Info: File `DataAnalysis.out' has not changed.
+(rerunfilecheck)             Checksum: 638ACE5E48E487D49261DF9312AB4EF4;672.
  ) 
 Here is how much of TeX's memory you used:
- 12676 strings out of 480260
- 200599 string characters out of 5893258
- 520940 words of memory out of 5000000
- 30325 multiletter control sequences out of 15000+600000
- 504391 words of font info for 58 fonts, out of 8000000 for 9000
+ 12725 strings out of 480260
+ 208230 string characters out of 5893258
+ 487140 words of memory out of 5000000
+ 30407 multiletter control sequences out of 15000+600000
+ 487709 words of font info for 36 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 72i,18n,77p,1058b,337s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib7.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on FullSimulation.pdf (8 pages, 197727 bytes).
+ 72i,6n,77p,1758b,391s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/zachbaucom/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb>
+Output written on DataAnalysis.pdf (7 pages, 346941 bytes).
 PDF statistics:
- 185 PDF objects out of 1000 (max. 8388607)
- 141 compressed objects within 2 object streams
- 35 named destinations out of 1000 (max. 500000)
- 56 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 326 PDF objects out of 1000 (max. 8388607)
+ 247 compressed objects within 3 object streams
+ 16 named destinations out of 1000 (max. 500000)
+ 173 words of extra memory for PDF output out of 10000 (max. 10000000)
 

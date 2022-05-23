@@ -46,7 +46,7 @@ y_{ij3}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
 \varepsilon_{ij3}
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},  
 \begin{bmatrix}
 \varepsilon_{ij1}\\
 \varepsilon_{ij2}\\
@@ -68,7 +68,7 @@ y_{ij3}
 \eta_{ij1}\\
 \eta_{ij2}\\
 \eta_{ij3}
-\end{bmatrix}, \ \ \
+\end{bmatrix},
 \begin{bmatrix}
 \eta_{ij1}\\
 \eta_{ij2}\\
@@ -97,7 +97,7 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 15 & 2.4 & 1\\
 2.4 & 15 & 1\\
 1 & 1 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix},
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 0 & 0\\
@@ -116,7 +116,7 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 15 & 0 & 0\\
 0 & 15 & 0\\
 0 & 0 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix}, 
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 3.7 & 0\\
@@ -135,7 +135,7 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 15 & 2.4 & 1\\
 2.4 & 15 & 1\\
 1 & 1 & 10
-\end{bmatrix}, \ \ \ 
+\end{bmatrix}, 
 \Sigma_\eta =
 \begin{bmatrix}
 5 & 3.7 & 0\\
@@ -183,7 +183,7 @@ Sigma <- diag(diag(Sigma))
 ```
 
 
-```{r, child = "FullSimChild.Rmd"}
+```{r, child = "Paper2/FullSimChild.Rmd"}
 
 ```
 
@@ -204,7 +204,7 @@ Sigma <- c(5, 3.714281, 0, 3.714281, 5, 0, 0, 0, 2) %>%
 ```
 
 
-```{r, child = "FullSimChild.Rmd"}
+```{r, child = "Paper2/FullSimChild.Rmd"}
 
 ```
 
@@ -224,7 +224,7 @@ Sigma <- c(5, 3.714281, 0, 3.714281, 5, 0, 0, 0, 2) %>%
 ```
 
 
-```{r, child = "FullSimChild.Rmd"}
+```{r, child = "Paper2/FullSimChild.Rmd"}
 
 ```
 
