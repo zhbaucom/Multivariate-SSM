@@ -96,11 +96,11 @@
 
 The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. The data is simulated under three scenarios: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS). The independent LLT, the O MLLT, S MLLT, and OS MLLT are all fit to each of the three data generation processes.
 
-The covariates are randomly generated to mirror the predictors of interest (section\_\_\_\_\_\_\_). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with between 2-12 observations. The ``true'' linear effects \(\boldsymbol{\beta}\), observation error covariance (\(\Sigma_\varepsilon\)), and underlying state process covariance (\(\Sigma_\eta\)) are denoted in equation (\_\_\_\_\_\_\_\_\_\_\_).
+The covariates are randomly generated to mirror the predictors of interest (section \ref{MOI}). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with 10 repeated measurements. The ``true'' linear effects \(\boldsymbol{\beta}\), observation error covariance (\(\Sigma_\varepsilon\)), and underlying state process covariance (\(\Sigma_\eta\)) are denoted below (equations \ref{eq:mod}, \ref{eq:O}, \ref{eq:S}, and \ref{eq:OS}).
 
 The underlying data generation for each of the three simulation scenarios are as follows,
 
-\begin{equation*}
+\begin{equation}\label{eq:mod}
 \begin{aligned}
 \begin{bmatrix}
 y_{ij1}\\
@@ -158,14 +158,14 @@ y_{ij3}
 1 & 1 & 0
 \end{bmatrix}
 \end{aligned}
-\end{equation*}
+\end{equation}
 
 for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters in \(\boldsymbol{\beta}\) were chosen to have no, small, medium, large, and negative effects. For the three different data generation scenarios we utilize differing values of \(\Sigma_\varepsilon\) and \(\Sigma_\eta\).
 
 \hypertarget{o-model}{%
 \paragraph{O Model}\label{o-model}}
 
-\begin{equation*}
+\begin{equation}\label{eq:O}
 \Sigma_\varepsilon = 
 \begin{bmatrix}
 15 & 2.4 & 1\\
@@ -178,12 +178,12 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 0 & 5 & 0\\
 0 & 0 & 2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 \hypertarget{s-model}{%
 \paragraph{S Model}\label{s-model}}
 
-\begin{equation*}
+\begin{equation}\label{eq:S}
 \Sigma_\varepsilon = 
 \begin{bmatrix}
 15 & 0 & 0\\
@@ -196,12 +196,12 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 3.7 & 5 & 0\\
 0 & 0 & 2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 \hypertarget{os-model}{%
 \paragraph{OS Model}\label{os-model}}
 
-\begin{equation*}
+\begin{equation}\label{eq:OS}
 \Sigma_\varepsilon = 
 \begin{bmatrix}
 15 & 2.4 & 1\\
@@ -214,7 +214,7 @@ for \(i \in \{1, 2, ..., 100\}\) and \(j \in \{2, 3,..., 12\}\). The parameters 
 3.7 & 5 & 0\\
 0 & 0 & 2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 The covariance matrices \(\boldsymbol{\Sigma_\varepsilon}\) and \(\boldsymbol{\Sigma_\eta}\) were chosen to approximate values observed when the MLLT models were fit to real data.
 
@@ -223,7 +223,7 @@ For each scenario, the simulations are carried out 1000 times. The most effectiv
 The Bayesian Gibb's sampler is repeated 5000 times with a burn-in of 2000 for each model. This means samples 2001-5000 are used for parameter inference.
 
 \hypertarget{fully-simulated-results}{%
-\subsubsection{Fully Simulated Results}\label{fully-simulated-results}}
+\subsection{Fully Simulated Results}\label{fully-simulated-results}}
 
 The LLT, O, S, and OS models all show unbiasedness and near 95\% coverage in the linear effect parameters in all three simulation scenarios. This occurs despite the LLT, O, and S models having a level of misspecification in the covariance parameters in the different scenarios. In the linear effects there is not a large difference in confidence interval length between the different methods. The O, S, and OS models maintain performace when compared to the LLT with respect to linear effects. However, the primary motivation of the MLLT models are to gain inference on correlation between cognitive tests.
 
@@ -236,333 +236,219 @@ The OS model estimates \(K(K-1)/2\) more parameters than the O and S models. Eve
 Shortcomings are also blatantly evident as the LLT provides no observation error or cognitive process correlation estimation. The O and S models do provide some insight into the inter-relatedness between cognition tests, but the OS provides the most descriptive form of the correlations. With the added covariance estimation benefits of the OS MLLT, it perform just as well as the LLT in modeling linear effects.
 
 \hypertarget{o-model-1}{%
-\paragraph{O Model}\label{o-model-1}}
+\subsubsection{O Model}\label{o-model-1}}
 
-\begin{longtable}[t]{l|l|r|r|r|r|r}
-\caption{\label{tab:unnamed-chunk-8}Linear Effect Coverage}\\
-\hline
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-9}Linear effect coverage percentage.}
+\centering
+\begin{tabular}[t]{llrllll}
+\toprule
 Test & Variable & Beta & LLT & O & S & OS\\
-\hline
-Y1 & X1 & 4 & 0.964 & 0.965 & 0.969 & 0.963\\
-\hline
-Y1 & X2 & 2 & 0.965 & 0.964 & 0.958 & 0.957\\
-\hline
-Y1 & X3 & 1 & 0.953 & 0.953 & 0.955 & 0.954\\
-\hline
-Y2 & X1 & -3 & 0.940 & 0.948 & 0.945 & 0.943\\
-\hline
-Y2 & X2 & 0 & 0.955 & 0.954 & 0.952 & 0.962\\
-\hline
-Y2 & X3 & 1 & 0.937 & 0.932 & 0.942 & 0.938\\
-\hline
-Y3 & X1 & 0 & 0.957 & 0.950 & 0.954 & 0.952\\
-\hline
-Y3 & X2 & 0 & 0.948 & 0.949 & 0.950 & 0.956\\
-\hline
-Y3 & X3 & 0 & 0.950 & 0.950 & 0.949 & 0.947\\
-\hline
-\end{longtable}
+\midrule
+Y1 & X1 & 4 & 96.4\% & 96.5\% & 96.9\% & 96.3\%\\
+Y1 & X2 & 2 & 96.5\% & 96.4\% & 95.8\% & 95.7\%\\
+Y1 & X3 & 1 & 95.3\% & 95.3\% & 95.5\% & 95.4\%\\
+Y2 & X1 & -3 & 94\% & 94.8\% & 94.5\% & 94.3\%\\
+Y2 & X2 & 0 & 95.5\% & 95.4\% & 95.2\% & 96.2\%\\
+\addlinespace
+Y2 & X3 & 1 & 93.7\% & 93.2\% & 94.2\% & 93.8\%\\
+Y3 & X1 & 0 & 95.7\% & 95\% & 95.4\% & 95.2\%\\
+Y3 & X2 & 0 & 94.8\% & 94.9\% & 95\% & 95.6\%\\
+Y3 & X3 & 0 & 95\% & 95\% & 94.9\% & 94.7\%\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}
 \centering
-\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-9-1.pdf}
-\caption{\label{fig:unnamed-chunk-9}Parameter Bias and Variablilty}
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-10-1.pdf}
+\caption{\label{fig:unnamed-chunk-10}Bias and Estimate Variability}
 \end{figure}
 
-\begin{longtable}[t]{l|r|l|r|l|r}
-\caption{\label{tab:unnamed-chunk-10}Observation Covariance Estimates}\\
-\hline
-param & true & LLT & O & S & OS\\
-\hline
-1,1 & 15.0 & 14.909 & 14.919 & 14.688 & 14.950\\
-\hline
-1,2 & 2.4 & - & 2.371 & - & 2.425\\
-\hline
-2,2 & 15.0 & 14.892 & 14.903 & 14.668 & 14.927\\
-\hline
-1,3 & 1.0 & - & 0.990 & - & 1.027\\
-\hline
-2,3 & 1.0 & - & 0.988 & - & 1.008\\
-\hline
-3,3 & 10.0 & 10.056 & 10.063 & 10.021 & 10.093\\
-\hline
-\end{longtable}
+\textbackslash begin\{table\}
 
-\begin{longtable}[t]{l|l|r|l|r}
-\caption{\label{tab:unnamed-chunk-11}Observation Covariance Coverage}\\
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.95 & 0.951 & 0.928 & 0.948\\
-\hline
-1,2 & - & 0.953 & - & 0.941\\
-\hline
-2,2 & 0.944 & 0.949 & 0.934 & 0.946\\
-\hline
-1,3 & - & 0.956 & - & 0.956\\
-\hline
-2,3 & - & 0.952 & - & 0.947\\
-\hline
-3,3 & 0.951 & 0.945 & 0.947 & 0.951\\
-\hline
-\end{longtable}
+\textbackslash caption\{\label{tab:unnamed-chunk-11}Covariance estimate (coverage \%)\}
+\centering
 
-\begin{longtable}[t]{l|r|l|l|r|r}
-\caption{\label{tab:unnamed-chunk-12}State Covariance Estimates}\\
-\hline
-param & true & LLT & O & S & OS\\
-\hline
-1,1 & 5 & 4.89 & 4.969 & 5.206 & 4.985\\
-\hline
-1,2 & 0 & - & - & 0.987 & -0.071\\
-\hline
-2,2 & 5 & 4.887 & 4.964 & 5.205 & 4.988\\
-\hline
-1,3 & 0 & - & - & 0.373 & -0.042\\
-\hline
-2,3 & 0 & - & - & 0.386 & -0.021\\
-\hline
-3,3 & 2 & 1.893 & 1.932 & 1.973 & 1.932\\
-\hline
-\end{longtable}
+\begin{tabular}[t]{ccccccc}
+\toprule
+ & Parameter & True value & LLT & O & S & OS\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textbf{Observation Error}}\\
+\hspace{1em} & 1,1 & 15 & 14.909 (95\%) & 14.919 (95.1\%) & 14.688 (92.8\%) & 14.95 (94.8\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,2 & 2.4 & - & 2.371 (95.3\%) & - & 2.425 (94.1\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,2 & 15 & 14.892 (94.4\%) & 14.903 (94.9\%) & 14.668 (93.4\%) & 14.927 (94.6\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,3 & 1 & - & 0.99 (95.6\%) & - & 1.027 (95.6\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,3 & 1 & - & 0.988 (95.2\%) & - & 1.008 (94.7\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 3,3 & 10 & 10.056 (95.1\%) & 10.063 (94.5\%) & 10.021 (94.7\%) & 10.093 (95.1\%)\\
+\cmidrule{1-7}
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textbf{State Process}}\\
+\hspace{1em} & 1,1 & 5 & 4.89 (93.5\%) & 4.969 (94.8\%) & 5.206 (93.8\%) & 4.985 (94.5\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,2 & 0 & - & 0 (-) & - & -0.071 (93.9\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,2 & 5 & 4.887 (94.8\%) & 4.964 (95.2\%) & 5.205 (95.5\%) & 4.988 (95.1\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,3 & 0 & - & 0 (-) & - & -0.042 (94.2\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,3 & 0 & - & 0 (-) & - & -0.021 (93.3\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 3,3 & 2 & 1.893 (92\%) & 1.932 (93.6\%) & 1.973 (93\%) & 1.932 (93.4\%)\\
+\bottomrule
+\end{tabular}
 
-\begin{longtable}[t]{l|l|l|r|r}
-\caption{\label{tab:unnamed-chunk-13}State Covariance Coverage}\\
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.935 & 0.948 & 0.938 & 0.945\\
-\hline
-1,2 & - & - & 0.500 & 0.939\\
-\hline
-2,2 & 0.948 & 0.952 & 0.955 & 0.951\\
-\hline
-1,3 & - & - & 0.815 & 0.942\\
-\hline
-2,3 & - & - & 0.783 & 0.933\\
-\hline
-3,3 & 0.92 & 0.936 & 0.930 & 0.934\\
-\hline
-\end{longtable}
+\textbackslash end\{table\}
 
 \hypertarget{s-model-1}{%
-\paragraph{S Model}\label{s-model-1}}
+\subsubsection{S Model}\label{s-model-1}}
 
-\begin{longtable}[t]{l|l|r|r|r|r|r}
-\caption{\label{tab:unnamed-chunk-14}Linear Effect Coverage}\\
-\hline
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-13}Linear effect coverage percentage.}
+\centering
+\begin{tabular}[t]{llrllll}
+\toprule
 Test & Variable & Beta & LLT & O & S & OS\\
-\hline
-Y1 & X1 & 4 & 0.954 & 0.956 & 0.957 & 0.959\\
-\hline
-Y1 & X2 & 2 & 0.946 & 0.951 & 0.950 & 0.956\\
-\hline
-Y1 & X3 & 1 & 0.959 & 0.957 & 0.958 & 0.957\\
-\hline
-Y2 & X1 & -3 & 0.957 & 0.965 & 0.955 & 0.961\\
-\hline
-Y2 & X2 & 0 & 0.941 & 0.943 & 0.948 & 0.951\\
-\hline
-Y2 & X3 & 1 & 0.953 & 0.957 & 0.955 & 0.957\\
-\hline
-Y3 & X1 & 0 & 0.945 & 0.948 & 0.946 & 0.945\\
-\hline
-Y3 & X2 & 0 & 0.950 & 0.954 & 0.949 & 0.958\\
-\hline
-Y3 & X3 & 0 & 0.938 & 0.942 & 0.939 & 0.938\\
-\hline
-\end{longtable}
+\midrule
+Y1 & X1 & 4 & 95.4\% & 95.6\% & 95.7\% & 95.9\%\\
+Y1 & X2 & 2 & 94.6\% & 95.1\% & 95\% & 95.6\%\\
+Y1 & X3 & 1 & 95.9\% & 95.7\% & 95.8\% & 95.7\%\\
+Y2 & X1 & -3 & 95.7\% & 96.5\% & 95.5\% & 96.1\%\\
+Y2 & X2 & 0 & 94.1\% & 94.3\% & 94.8\% & 95.1\%\\
+\addlinespace
+Y2 & X3 & 1 & 95.3\% & 95.7\% & 95.5\% & 95.7\%\\
+Y3 & X1 & 0 & 94.5\% & 94.8\% & 94.6\% & 94.5\%\\
+Y3 & X2 & 0 & 95\% & 95.4\% & 94.9\% & 95.8\%\\
+Y3 & X3 & 0 & 93.8\% & 94.2\% & 93.9\% & 93.8\%\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}
 \centering
-\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-15-1.pdf}
-\caption{\label{fig:unnamed-chunk-15}Parameter Bias and Variablilty}
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-14-1.pdf}
+\caption{\label{fig:unnamed-chunk-14}Bias and Estimate Variability}
 \end{figure}
 
-\begin{longtable}[t]{l|r|l|r|l|r}
-\caption{\label{tab:unnamed-chunk-16}Observation Covariance Estimates}\\
-\hline
-param & true & LLT & O & S & OS\\
-\hline
-1,1 & 15 & 14.866 & 15.248 & 15.147 & 15.065\\
-\hline
-1,2 & 0 & - & 2.436 & - & -0.387\\
-\hline
-2,2 & 15 & 14.908 & 15.293 & 15.18 & 15.092\\
-\hline
-1,3 & 0 & - & 0.012 & - & 0.006\\
-\hline
-2,3 & 0 & - & -0.020 & - & -0.033\\
-\hline
-3,3 & 10 & 10.06 & 10.064 & 10.087 & 10.102\\
-\hline
-\end{longtable}
+\textbackslash begin\{table\}
 
-\begin{longtable}[t]{l|l|r|l|r}
-\caption{\label{tab:unnamed-chunk-17}Observation Covariance Coverage}\\
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.949 & 0.949 & 0.938 & 0.935\\
-\hline
-1,2 & - & 0.029 & - & 0.904\\
-\hline
-2,2 & 0.95 & 0.935 & 0.936 & 0.935\\
-\hline
-1,3 & - & 0.959 & - & 0.955\\
-\hline
-2,3 & - & 0.952 & - & 0.946\\
-\hline
-3,3 & 0.945 & 0.948 & 0.948 & 0.947\\
-\hline
-\end{longtable}
+\textbackslash caption\{\label{tab:unnamed-chunk-15}Covariance estimate (coverage \%)\}
+\centering
 
-\begin{longtable}[t]{l|r|l|l|r|r}
-\caption{\label{tab:unnamed-chunk-18}State Covariance Estimates}\\
-\hline
-param & true & LLT & O & S & OS\\
-\hline
-1,1 & 5.000 & 4.879 & 4.59 & 4.803 & 4.940\\
-\hline
-1,2 & 3.714 & - & - & 3.786 & 3.980\\
-\hline
-2,2 & 5.000 & 4.899 & 4.606 & 4.838 & 4.977\\
-\hline
-1,3 & 0.000 & - & - & 0.017 & 0.015\\
-\hline
-2,3 & 0.000 & - & - & 0.003 & 0.015\\
-\hline
-3,3 & 2.000 & 1.89 & 1.932 & 1.916 & 1.928\\
-\hline
-\end{longtable}
+\begin{tabular}[t]{ccccccc}
+\toprule
+ & Parameter & True value & LLT & O & S & OS\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textbf{Observation Error}}\\
+\hspace{1em} & 1,1 & 15 & 14.866 (94.9\%) & 15.248 (94.9\%) & 15.147 (93.8\%) & 15.065 (93.5\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,2 & 0 & - & 2.436 (2.9\%) & - & -0.387 (90.4\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,2 & 15 & 14.908 (95\%) & 15.293 (93.5\%) & 15.18 (93.6\%) & 15.092 (93.5\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,3 & 0 & - & 0.012 (95.9\%) & - & 0.006 (95.5\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,3 & 0 & - & -0.02 (95.2\%) & - & -0.033 (94.6\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 3,3 & 10 & 10.06 (94.5\%) & 10.064 (94.8\%) & 10.087 (94.8\%) & 10.102 (94.7\%)\\
+\cmidrule{1-7}
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textbf{State Process}}\\
+\hspace{1em} & 1,1 & 5 & 4.879 (93.2\%) & 4.59 (90.8\%) & 4.803 (92.2\%) & 4.94 (93\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,2 & 3.714 & - & 0 (0\%) & - & 3.98 (91.8\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,2 & 5 & 4.899 (93.7\%) & 4.606 (90.2\%) & 4.838 (91.3\%) & 4.977 (91.1\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,3 & 0 & - & 0 (-) & - & 0.015 (93.5\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,3 & 0 & - & 0 (-) & - & 0.015 (93.3\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 3,3 & 2 & 1.89 (92.7\%) & 1.932 (93.7\%) & 1.916 (92.2\%) & 1.928 (92.7\%)\\
+\bottomrule
+\end{tabular}
 
-\begin{longtable}[t]{l|l|l|r|r}
-\caption{\label{tab:unnamed-chunk-19}State Covariance Coverage}\\
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.932 & 0.908 & 0.922 & 0.930\\
-\hline
-1,2 & - & - & 0.946 & 0.918\\
-\hline
-2,2 & 0.937 & 0.902 & 0.913 & 0.911\\
-\hline
-1,3 & - & - & 0.951 & 0.935\\
-\hline
-2,3 & - & - & 0.950 & 0.933\\
-\hline
-3,3 & 0.927 & 0.937 & 0.922 & 0.927\\
-\hline
-\end{longtable}
+\textbackslash end\{table\}
 
 \hypertarget{os-model-1}{%
-\paragraph{OS Model}\label{os-model-1}}
+\subsubsection{OS Model}\label{os-model-1}}
 
-\begin{longtable}[t]{l|l|r|r|r|r|r}
-\caption{\label{tab:unnamed-chunk-20}Linear Effect Coverage}\\
-\hline
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-17}Linear effect coverage percentage.}
+\centering
+\begin{tabular}[t]{llrllll}
+\toprule
 Test & Variable & Beta & LLT & O & S & OS\\
-\hline
-Y1 & X1 & 4 & 0.962 & 0.948 & 0.968 & 0.961\\
-\hline
-Y1 & X2 & 2 & 0.946 & 0.934 & 0.955 & 0.945\\
-\hline
-Y1 & X3 & 1 & 0.952 & 0.941 & 0.958 & 0.950\\
-\hline
-Y2 & X1 & -3 & 0.950 & 0.944 & 0.958 & 0.957\\
-\hline
-Y2 & X2 & 0 & 0.945 & 0.931 & 0.959 & 0.952\\
-\hline
-Y2 & X3 & 1 & 0.949 & 0.940 & 0.968 & 0.964\\
-\hline
-Y3 & X1 & 0 & 0.957 & 0.962 & 0.960 & 0.957\\
-\hline
-Y3 & X2 & 0 & 0.950 & 0.947 & 0.949 & 0.952\\
-\hline
-Y3 & X3 & 0 & 0.945 & 0.948 & 0.949 & 0.949\\
-\hline
-\end{longtable}
+\midrule
+Y1 & X1 & 4 & 96.2\% & 94.8\% & 96.8\% & 96.1\%\\
+Y1 & X2 & 2 & 94.6\% & 93.4\% & 95.5\% & 94.5\%\\
+Y1 & X3 & 1 & 95.2\% & 94.1\% & 95.8\% & 95\%\\
+Y2 & X1 & -3 & 95\% & 94.4\% & 95.8\% & 95.7\%\\
+Y2 & X2 & 0 & 94.5\% & 93.1\% & 95.9\% & 95.2\%\\
+\addlinespace
+Y2 & X3 & 1 & 94.9\% & 94\% & 96.8\% & 96.4\%\\
+Y3 & X1 & 0 & 95.7\% & 96.2\% & 96\% & 95.7\%\\
+Y3 & X2 & 0 & 95\% & 94.7\% & 94.9\% & 95.2\%\\
+Y3 & X3 & 0 & 94.5\% & 94.8\% & 94.9\% & 94.9\%\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}
 \centering
-\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-21-1.pdf}
-\caption{\label{fig:unnamed-chunk-21}Parameter Bias and Variablilty}
+\includegraphics{FullSimulation_files/figure-latex/unnamed-chunk-18-1.pdf}
+\caption{\label{fig:unnamed-chunk-18}Bias and Estimate Variability}
 \end{figure}
 
-\begin{longtable}[t]{l|r|l|r|l|r}
-\caption{\label{tab:unnamed-chunk-22}Observation Covariance Estimates}\\
-\hline
-param & true & LLT & O & S & OS\\
-\hline
-1,1 & 15.0 & 14.964 & 15.752 & 14.273 & 15.075\\
-\hline
-1,2 & 2.4 & - & 4.976 & - & 2.140\\
-\hline
-2,2 & 15.0 & 14.948 & 15.733 & 14.248 & 15.066\\
-\hline
-1,3 & 1.0 & - & 0.997 & - & 0.979\\
-\hline
-2,3 & 1.0 & - & 1.008 & - & 0.997\\
-\hline
-3,3 & 10.0 & 10.021 & 10.021 & 9.988 & 10.056\\
-\hline
-\end{longtable}
+\textbackslash begin\{table\}
 
-\begin{longtable}[t]{l|l|r|l|r}
-\caption{\label{tab:unnamed-chunk-23}Observation Covariance Coverage}\\
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.944 & 0.882 & 0.867 & 0.943\\
-\hline
-1,2 & - & 0.024 & - & 0.917\\
-\hline
-2,2 & 0.941 & 0.879 & 0.851 & 0.938\\
-\hline
-1,3 & - & 0.946 & - & 0.942\\
-\hline
-2,3 & - & 0.948 & - & 0.926\\
-\hline
-3,3 & 0.937 & 0.935 & 0.937 & 0.931\\
-\hline
-\end{longtable}
+\textbackslash caption\{\label{tab:unnamed-chunk-19}Covariance estimate (coverage \%)\}
+\centering
 
-\begin{longtable}[t]{l|r|l|l|r|r}
-\caption{\label{tab:unnamed-chunk-24}State Covariance Estimates}\\
-\hline
-param & true & LLT & O & S & OS\\
-\hline
-1,1 & 5.000 & 4.835 & 4.168 & 5.776 & 4.941\\
-\hline
-1,2 & 3.714 & - & - & 5.007 & 3.891\\
-\hline
-2,2 & 5.000 & 4.849 & 4.183 & 5.800 & 4.952\\
-\hline
-1,3 & 0.000 & - & - & 0.470 & -0.009\\
-\hline
-2,3 & 0.000 & - & - & 0.470 & -0.015\\
-\hline
-3,3 & 2.000 & 1.894 & 1.943 & 1.977 & 1.939\\
-\hline
-\end{longtable}
+\begin{tabular}[t]{ccccccc}
+\toprule
+ & Parameter & True value & LLT & O & S & OS\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textbf{Observation Error}}\\
+\hspace{1em} & 1,1 & 15 & 14.964 (94.4\%) & 15.752 (88.2\%) & 14.273 (86.7\%) & 15.075 (94.3\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,2 & 2.4 & - & 4.976 (2.4\%) & - & 2.14 (91.7\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,2 & 15 & 14.948 (94.1\%) & 15.733 (87.9\%) & 14.248 (85.1\%) & 15.066 (93.8\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,3 & 1 & - & 0.997 (94.6\%) & - & 0.979 (94.2\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,3 & 1 & - & 1.008 (94.8\%) & - & 0.997 (92.6\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 3,3 & 10 & 10.021 (93.7\%) & 10.021 (93.5\%) & 9.988 (93.7\%) & 10.056 (93.1\%)\\
+\cmidrule{1-7}
+\addlinespace[0.3em]
+\multicolumn{7}{l}{\textbf{State Process}}\\
+\hspace{1em} & 1,1 & 5 & 4.835 (94\%) & 4.168 (78\%) & 5.776 (82.8\%) & 4.941 (94.2\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,2 & 3.714 & - & 0 (0\%) & - & 3.891 (93.7\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,2 & 5 & 4.849 (92.4\%) & 4.183 (78.9\%) & 5.8 (82\%) & 4.952 (92.7\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 1,3 & 0 & - & 0 (-) & - & -0.009 (93.8\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 2,3 & 0 & - & 0 (-) & - & -0.015 (93.9\%)\\
+\cmidrule{2-7}
+\hspace{1em} & 3,3 & 2 & 1.894 (92.6\%) & 1.943 (93.8\%) & 1.977 (93\%) & 1.939 (93\%)\\
+\bottomrule
+\end{tabular}
 
-\begin{longtable}[t]{l|l|l|r|r}
-\caption{\label{tab:unnamed-chunk-25}State Covariance Coverage}\\
-\hline
-param & LLT & O & S & OS\\
-\hline
-1,1 & 0.94 & 0.78 & 0.828 & 0.942\\
-\hline
-1,2 & - & - & 0.447 & 0.937\\
-\hline
-2,2 & 0.924 & 0.789 & 0.820 & 0.927\\
-\hline
-1,3 & - & - & 0.719 & 0.938\\
-\hline
-2,3 & - & - & 0.738 & 0.939\\
-\hline
-3,3 & 0.926 & 0.938 & 0.930 & 0.930\\
-\hline
-\end{longtable}
+\textbackslash end\{table\}
 
 \end{document}

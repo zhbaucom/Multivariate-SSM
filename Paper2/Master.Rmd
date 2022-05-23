@@ -11,7 +11,6 @@ author:
   - Evan Johnson, PhD, wej@bu.edu
 abstract: ""
 bibliography: bibliography.bib
-csl: JASA.csl
 header-includes:
 - \usepackage{booktabs}
 - \usepackage{longtable}
@@ -45,17 +44,17 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 
-```{r child = "Introduction.Rmd", cache = TRUE, eval = TRUE}
+```{r child = "Introduction.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
 # Methods
 
-```{r child = "DataModel.Rmd", cache = TRUE, eval = TRUE}
+```{r child = "DataModel.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
-```{r child = "Methods.Rmd", cache = TRUE, eval = TRUE}
+```{r child = "Methods.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
@@ -69,19 +68,19 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 
-```{r child = "RealDataSim.Rmd", cache = TRUE, eval = TRUE}
+```{r child = "RealDataSim.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
 
 
 
-```{r child = "DataAnalysis.Rmd", cache = TRUE, eval = TRUE}
+```{r child = "DataAnalysis.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 
 
-```{r child = "Discussion.Rmd", cache = TRUE, eval = TRUE}
+```{r child = "Discussion.Rmd", cache = FALSE, eval = TRUE}
 
 ```
 

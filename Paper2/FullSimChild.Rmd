@@ -5,6 +5,25 @@ header-includes:
 - \usepackage{booktabs}
 ---
 
+```{r, eval = FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+path = "FJCoTESTfullchain10"
+
+sigeps <- c(15, 15, 10)
+SIGeps <- diag(sigeps)
+SIGeps[1,2] <- SIGeps[2, 1] <- 2.4
+SIGeps[1,3] <- SIGeps[3, 1] <- 1
+SIGeps[2,3] <- SIGeps[3, 2] <- 1
+
+Sigma <- c(5, 3.714281, 0, 3.714281, 5, 0, 0, 0, 2) %>%
+  matrix(3, 3)
+Sigma <- diag(diag(Sigma))
+```
+
+
 ```{r, fig.height=6}
 fse <- readRDS(paste("Paper2/paperData/",path, "_Fake_Effects.RDS", sep = "")) %>%
   map2(names(.), ~cbind(.x, method = .y) %>% mutate(beta = c(4, 2, 1, -3, 0, 1, 0, 0, 0))) %>%
@@ -35,13 +54,16 @@ fse <- readRDS(paste("Paper2/paperData/",path, "_Fake_Effects.RDS", sep = "")) %
 fse %>%
   select(Test, Variable, Beta = beta, Coverage, Method) %>%
   spread(Method, Coverage) %>%
-  kbl(row.names = FALSE,  longtable = TRUE, caption = "Linear Effect Coverage")
+  mutate(across(.cols = LLT:OS, ~paste( round(100 * .x, 1), "%", sep = ""))) %>%
+  kbl(row.names = FALSE,  booktabs = TRUE, caption = "Linear effect coverage percentage.")
 
 ```
 
 
 
-```{r, fig.cap = "Parameter Bias and Variablilty"}
+
+
+```{r, fig.cap = "Bias and Estimate Variability"}
 fse %>%
   ggplot(aes(x = Method, y = avgBias, color = Method, shape = Method)) +
   geom_hline(yintercept = 0) + 
@@ -53,6 +75,7 @@ fse %>%
   ylab("Avg Bias")  +
   theme_bw()
 ```
+
 
 
 
@@ -73,19 +96,8 @@ EpsLdf <- EpsL %>%
 EpsLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
 EpsClose <- EpsLdf
 
-EpsLdf$st[c(2, 4, 5)] <- EpsLdf$ind[c(2, 4, 5)] <- '-'
 
 
-EpsLdf %>%
-  select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE, caption = "Observation Covariance Estimates")
-
-
-```
-
-
-
-```{r}
 ## Fully Simulated Correlated Measurement Error Coverage
 EpsLdfcov <- EpsL %>%
   map("coverage") %>%
@@ -94,28 +106,22 @@ EpsLdfcov <- EpsL %>%
   round(3) %>%
   data.frame
 
-EpsLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
-
-EpsLdfcov$st[c(2, 4, 5)] <- EpsLdfcov$ind[c(2, 4, 5)] <- '-'
-
-EpsLdfcov %>%
-  select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE, caption = "Observation Covariance Coverage")
 
 
-```
 
+for( i in colnames(EpsLdfcov)){
+  EpsLdf[[i]] <- paste(EpsLdf[[i]], " (", round(100 * EpsLdfcov[[i]], 1), "%)", sep = "")
+}
+
+
+EpsLdf$st[c(2, 4, 5)] <- EpsLdf$ind[c(2, 4, 5)] <- '-'
 
 
 
 
-```{r}
-## Fully Simulated Correlated Latent Variables
 
-
+## Fully Simulated Correlated Measurement Error
 EtaL <- readRDS(paste("Paper2/paperData/",path, "_Fake_Eta.RDS", sep = ""))
-
-
 
 EtaLdf <- EtaL %>%
   map("avg") %>%
@@ -126,23 +132,11 @@ EtaLdf <- EtaL %>%
   data.frame
 
 EtaLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(Sigma)])
-
-EtaClose = EtaLdf
-
-EtaLdf$obs[c(2, 4, 5)] <- EtaLdf$ind[c(2, 4, 5)] <- '-'
-
-EtaLdf %>%
-  select(param, true, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE, caption = "State Covariance Estimates")
-
-
-```
+EtaClose <- EtaLdf
 
 
 
-
-```{r}
-## Fully Simulated State Variance Coverage
+## Fully Simulated Correlated Measurement Error Coverage
 EtaLdfcov <- EtaL %>%
   map("coverage") %>%
   map(~.x[!lower.tri(.x)]) %>%
@@ -150,17 +144,26 @@ EtaLdfcov <- EtaL %>%
   round(3) %>%
   data.frame
 
-EtaLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
 
-EtaLdfcov$obs[c(2, 4, 5)] <- EtaLdfcov$ind[c(2, 4, 5)] <- '-'
 
-EtaLdfcov %>%
-  select(param, LLT = ind, O = obs, S = st, OS = dub) %>%
-  kbl(row.names = FALSE,  longtable = TRUE, caption = "State Covariance Coverage")
+
+for( i in colnames(EtaLdfcov)){
+  EtaLdf[[i]] <- paste(EtaLdf[[i]], " (", round(100 * EtaLdfcov[[i]], 1), "%)", sep = "")
+}
+
+
+EtaLdf$st[c(2, 4, 5)] <- EtaLdf$ind[c(2, 4, 5)] <- '-'
+
+rbind(mutate(EpsLdf, Error = "Observation Error"), mutate(EtaLdf, Error = "State Process")) %>%
+  mutate_all(.funs = list(function(x)gsub("100%", "-", x))) %>%
+  select(Error, Parameter = param, `True value` = true,  LLT = ind, O = obs, S = st, OS = dub) %>%
+  mutate(Error = factor(Error)) %>%
+  kbl(row.names = FALSE,  booktabs = TRUE, caption = "Covariance estimate (coverage %)", align = "c") %>%
+collapse_rows(1:2, row_group_label_position = 'stack')
+
 
 
 ```
-
 
 
 

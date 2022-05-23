@@ -105,56 +105,29 @@ Data collected by the National Alzheimer's Coordinating Center (NACC) Uniform Da
 
 That are several cohort demographic differences in those who transitioned to MCI or dementia and those with no dementia diagnosis. As expected, transitioners are typically older at enrollment (78.45 years vs.~70.83 years), have more return visits into their older age (5.13 visits vs.~4.46 visits), and have higher rates of having an APOE e4 allele (38.26\% vs.~26.99\%). To assure latent cognition process correlations between dementia transitioners and non-dementia transitioners only differ due to dementia status, we conduct a sensitivity analysis with a more homogenous comparison group. To do this, we carry out 1-to-1 propensity matching with a caliper of 0.1 using all described linear predictors. Of the 737 transitioners, 734 matched to non-transitioners. In the transitioner and non-transitioner groups there is more similarity in enrollment age (78.40 years vs 78.44), return visits (5.13 visits vs.~5.25 visits), and e4 allele status (38.15\% vs.~38.15\%).
 
-\begin{longtable}[t]{l|l|l}
-\caption{\label{tab:unnamed-chunk-4}Non-Matched}\\
-\hline
-  & Dementia & Non.Dementa\\
-\hline
-n participants & 737 & 6136\\
-\hline
-Return visits & 5.13 (2.06) & 4.46 (2.24)\\
-\hline
-Follow-up Yrs & 5.02 (2.17) & 4.18 (2.48)\\
-\hline
-Sex (Female) & 62.69\% & 67.42\%\\
-\hline
-Race (White) & 87.65\% & 83.34\%\\
-\hline
-APOE e4 allele & 38.26\% & 26.99\%\\
-\hline
-Age & 78.45 (8.25) & 70.83 (10.18)\\
-\hline
-Education Yrs & 16.14 (8.11) & 16.13 (5.95)\\
-\hline
-Time of Decline
-(Years since baseline) & 3.54 (2.11) & NA\\
-\hline
-\end{longtable}
+\begin{table}
 
-\begin{longtable}[t]{l|l|l}
-\caption{\label{tab:unnamed-chunk-4}Matched}\\
-\hline
-  & Dementia & Non.Dementa\\
-\hline
-n participants & 734 & 734\\
-\hline
-Return visits & 5.13 (2.05) & 5.25 (2.33)\\
-\hline
-Follow-up Yrs & 5.01 (2.16) & 5.14 (2.5)\\
-\hline
-Sex (Female) & 62.53\% & 62.13\%\\
-\hline
-Race (White) & 87.6\% & 87.87\%\\
-\hline
-APOE e4 allele & 38.15\% & 35.15\%\\
-\hline
-Age & 78.4 (8.23) & 78.44 (8.45)\\
-\hline
-Education Yrs & 16.02 (7.53) & 15.83 (4.28)\\
-\hline
-Time of Decline
-(Years since baseline) & 3.53 (2.1) & NA\\
-\hline
-\end{longtable}
+\caption{\label{tab:unnamed-chunk-4}Demographic description for matched and unmatched datasets.}
+\centering
+\begin{tabular}[t]{lllll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{Non-Matched} & \multicolumn{2}{c}{Matched} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+  & Dementia & Non-Dementia & Dementia & Non-Dementia\\
+\midrule
+N participants & 737 & 6136 & 734 & 734\\
+Return visits & 5.13 (2.06) & 4.46 (2.24) & 5.13 (2.05) & 5.25 (2.33)\\
+APOE e4 allele & 38.26\% & 26.99\% & 38.15\% & 35.15\%\\
+Sex (female) & 62.69\% & 67.42\% & 62.53\% & 62.13\%\\
+Race (white) & 87.65\% & 83.34\% & 87.6\% & 87.87\%\\
+\addlinespace
+Age & 78.45 (8.25) & 70.83 (10.18) & 78.4 (8.23) & 78.44 (8.45)\\
+Education yrs & 16.14 (8.11) & 16.13 (5.95) & 16.02 (7.53) & 15.83 (4.28)\\
+Follow-up trs & 5.02 (2.17) & 4.18 (2.48) & 5.01 (2.16) & 5.14 (2.5)\\
+Time of decline
+(tears since baseline) & 3.54 (2.11) & - & 3.53 (2.1) & -\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}

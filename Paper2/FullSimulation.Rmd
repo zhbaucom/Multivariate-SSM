@@ -19,12 +19,12 @@ library(kableExtra)
 
 The fully simulated data simulation allows for insight into the behavior of the MLLT under correct and incorrect model specification. This simulation study also highlights shortcomings of independently fit LLT models when correlation exists in the observation or state equations. The data is simulated under three scenarios: 1.) correlation only exists in the observation equation (O), 2.) correlation only exists in the state equation (S), and 3.) correlation exists in both the observation and state equation (OS). The independent LLT, the O MLLT, S MLLT, and OS MLLT are all fit to each of the three data generation processes.
 
-The covariates are randomly generated to mirror the predictors of interest (section_______). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with between 2-12 observations. The "true" linear effects $\boldsymbol{\beta}$, observation error covariance ($\Sigma_\varepsilon$), and underlying state process covariance ($\Sigma_\eta$) are denoted in equation (___________).
+The covariates are randomly generated to mirror the predictors of interest (section \@ref(MOI)). There is a time effect, a binary group effect, and a linear continuity point effect. For each simulation, 100 subjects are generated with 10 repeated measurements. The "true" linear effects $\boldsymbol{\beta}$, observation error covariances ($\Sigma_\varepsilon$), and underlying state process covariances ($\Sigma_\eta$) are denoted below (equations \ref{eq:mod}, \ref{eq:O}, \ref{eq:S}, and \ref{eq:OS}).
 
 The underlying data generation for each of the three simulation scenarios are as follows,
 
 
-\begin{equation*}
+\begin{equation}\label{eq:mod}
 \begin{aligned}
 \begin{bmatrix}
 y_{ij1}\\
@@ -82,7 +82,7 @@ y_{ij3}
 1 & 1 & 0
 \end{bmatrix}
 \end{aligned}
-\end{equation*}
+\end{equation}
 
 
 for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $\boldsymbol{\beta}$ were chosen to have no, small, medium, large, and negative effects. For the three different data generation scenarios we utilize differing values of $\Sigma_\varepsilon$ and $\Sigma_\eta$.
@@ -91,7 +91,7 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 #### O Model
 
 
-\begin{equation*}
+\begin{equation}\label{eq:O}
 \Sigma_\varepsilon = 
 \begin{bmatrix}
 15 & 2.4 & 1\\
@@ -104,13 +104,13 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 0 & 5 & 0\\
 0 & 0 & 2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 
 #### S Model
 
 
-\begin{equation*}
+\begin{equation}\label{eq:S}
 \Sigma_\varepsilon = 
 \begin{bmatrix}
 15 & 0 & 0\\
@@ -123,13 +123,13 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 3.7 & 5 & 0\\
 0 & 0 & 2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 
 #### OS Model
 
 
-\begin{equation*}
+\begin{equation}\label{eq:OS}
 \Sigma_\varepsilon = 
 \begin{bmatrix}
 15 & 2.4 & 1\\
@@ -142,7 +142,7 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 3.7 & 5 & 0\\
 0 & 0 & 2
 \end{bmatrix}
-\end{equation*}
+\end{equation}
 
 
 
@@ -154,7 +154,7 @@ For each scenario, the simulations are carried out 1000 times. The most effectiv
 The Bayesian Gibb's sampler is repeated 5000 times with a burn-in of 2000 for each model. This means samples 2001-5000 are used for parameter inference.
 
 
-### Fully Simulated Results
+## Fully Simulated Results
 
 The LLT, O, S, and OS models all show unbiasedness and near 95% coverage in the linear effect parameters in all three simulation scenarios. This occurs despite the LLT, O, and S models having a level of misspecification in the covariance parameters in the different scenarios. In the linear effects there is not a large difference in confidence interval length between the different methods. The O, S, and OS models maintain performace when compared to the LLT with respect to linear effects. However, the primary motivation of the MLLT models are to gain inference on correlation between cognitive tests.
 
@@ -166,7 +166,7 @@ The OS model estimates  $K(K-1)/2$ more parameters than the O and S models. Even
 
 Shortcomings are also blatantly evident as the LLT provides no observation error or cognitive process correlation estimation. The O and S models do provide some insight into the inter-relatedness between cognition tests, but the OS provides the most descriptive form of the correlations. With the added covariance estimation benefits of the OS MLLT, it perform just as well as the LLT in modeling linear effects.
 
-#### O Model
+### O Model
 
 ```{r}
 path = "FJCoTESTfullchain10"
@@ -188,7 +188,7 @@ Sigma <- diag(diag(Sigma))
 ```
 
 
-#### S Model
+### S Model
 
 ```{r}
 path = "FJCsTESTfullchain10"
@@ -208,7 +208,7 @@ Sigma <- c(5, 3.714281, 0, 3.714281, 5, 0, 0, 0, 2) %>%
 
 ```
 
-#### OS Model
+### OS Model
 
 ```{r}
 path = "FJCosTESTfullchain10"

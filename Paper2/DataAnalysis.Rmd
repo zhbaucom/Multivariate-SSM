@@ -15,11 +15,11 @@ library(ggtext)
 varorder <- c('LOGIMEM', 'MEMUNITS', 'DIGIF', 'DIGIB', 'WAIS', 'TRAILA', 'TRAILB', 'BOSTON', 'ANIMALS')
 ```
 
-## Data Analysis
+# Data Analysis
 
-To compare latent process correlation between those who transitioned to MCI or dementia during follow-up and those who did not, we fit the MLLT model which allows correlation in the observation errors and underlying cognitive process (OS) using the model of interest described in section __________. The model is fit on the full data and sensitivity analysis matched data described in section ___________. The Gibb's sampling was repeated 5,000 times with a burn-in of 2,000 samples, resulting in 3,000 samples for parameter interest. Non-informative priors are used for both the linear effects and covariance matrices.
+To compare latent process correlation between those who transitioned to MCI or dementia during follow-up and those who did not, we fit the MLLT model which allows correlation in the observation errors and underlying cognitive process (OS) using the model of interest described in section \@ref(MOI). The model is fit on the full data and sensitivity analysis matched data described in section \@ref(DAT). The Gibb's sampling was repeated 5,000 times with a burn-in of 2,000 samples, resulting in 3,000 samples for parameter interest. Non-informative priors are used for both the linear effects and covariance matrices.
 
-### Data Analysis Results
+## Data Analysis Results
 
 In both the dementia and non-dementia groups, there is very little estimated observation correlation. Instead, the correlation is primarily placed in the state equation. For the state correlation, in the non-dementia population there are much distinct correlation clusters in memory (LOGIMEM, MEMUNITS), digit (DIGIB, DIGIF), and executive function (TRAILA, TRAILB, WAIS). The dementia population generally has much higher correlation in the state equation. The digit and executive function blocks share much higher cross correlation than the non-dementia group. The Animals test generally has low correlation for the non-dementia population and very high correlation with all tests the other tests in the population that transitioned to MCI or dementia.
 
@@ -178,7 +178,7 @@ rbind(
 ```
 
 
-#### State Correlation Posterior Differences
+### State Correlation Posterior Differences
 
 
 h
@@ -408,6 +408,30 @@ rbind(
   ggtitle("Non-Dementia")
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

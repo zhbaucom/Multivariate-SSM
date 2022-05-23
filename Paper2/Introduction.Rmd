@@ -7,7 +7,7 @@ output:
 bibliography: bibliography.bib
 ---
 
-
+# Introduction
 
 Alzheimer's Disease (AD) is a neurodegenerative disease that affects tens of millions of people world-wide and the prevalence is expected to increase with the aging of the baby boomer population.  AD is related to a protein build-up in the brain, leading to brain matter deterioration. Brain deterioration often presents itself outwardly in the form of a decreased ability to perform simple tasks and provide for oneself. The impact of AD is costly. The [@Alz_assoc] estimates that \$271 billion in unpaid care was accumulated for those living with AD in 2021. This does not take into account the emotional toll of caring for a loved one suffering from AD. Although testing for biomarkers or providing brain scans can be effective in diagnosing AD, understanding the overall cognition process for those suffering with Alzheimer's Disease (AD) has been an emerging line of statistical research. Defining this process can lead to early diagnosis and the implementation of possible interventions to create positive impacts for those suffering with AD and their caretakers. Cognition, however, is complex, multifaceted, and is measured indirectly. 
 

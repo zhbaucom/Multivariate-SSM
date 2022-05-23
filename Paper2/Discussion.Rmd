@@ -5,7 +5,7 @@ output:
     toc: false
 ---
 
-## Discussion
+# Discussion
 
 The multivariate local linear trend state space model was developed to assess inter-relationships between cognitive tests spanning different cognition domains. It achieves this by modeling the correlation between tests in both the observation equation and the underlying cognition process equation, after accounting for linear effects. By controlling for linear effects we are able to control for possible cohort difference when estimating the inter-relatedness.
 
