@@ -94,7 +94,7 @@
 \hypertarget{proposed-multivariate-model}{%
 \subsection{Proposed Multivariate Model}\label{proposed-multivariate-model}}
 
-For this project, we fit a joint model using the SSM framework. This allows us to measure similarity in underlying constructs for different cognitive tests and compare the effect of some variable across different tests e.g.~does APOE have a significantly different effect on cognitive trajectory for the Trails A and Trails B tests? Let \(y_{ijk}\) represent the outcome of cognitive test \(k\in \{1, 2, 3, ..., K\}\) at time \(j\in \{1, 2, 3, ..., J\}\) for subject \(i \in \{1, 2, 3, ..., N\}\). The model can then be formulated as,
+Fitting a multivariate LLT allows for the measurement in similarity of underlying constructs for different cognitive tests and compare the effect of some variable across different tests e.g.~does APOE have a significantly different effect on cognitive trajectory for the Trails A and Trails B tests? Let \(y_{ijk}\) represent the outcome of cognitive test \(k\in \{1, 2, 3, ..., K\}\) at time \(j\in \{1, 2, 3, ..., J\}\) for subject \(i \in \{1, 2, 3, ..., N\}\). The model can then be formulated as,
 
 \begin{equation*}
 \begin{aligned}
@@ -227,9 +227,7 @@ The correlation allowed between the models makes different assumptions regarding
 
 For all models we propose the use of Bayesian estimation to estimate all parameters of interest.
 
-Posterior of \(\alpha\)
-
-Largely the same from before {[}Paper1{]}, we are able to run the Kalman Filter independently for each subject \(i \in \{1, 2, ..., N\}\).
+For the underlying proccess \(\alpha\), estimation remains similar when compared to {[}Paper1{]}. The Kalman Filter independently can be computed for each subject \(i \in \{1, 2, ..., N\}\), except all operations are done in matrix form because there is in-subject correlation.
 
 \begin{algorithm}
 \caption{Kalman Filter and Smoother for Bayesian Estimation}\label{alg:bkfks}
@@ -270,7 +268,7 @@ P_\psi(\boldsymbol{\alpha}_{ij}|\boldsymbol{\alpha}_{i(j+1)}, \boldsymbol{y}_{i(
 
 From the Kalman Filter we calculate \(\boldsymbol{\alpha}_{ij}|\boldsymbol{y}_{i(1:j)} \sim N_\psi(\boldsymbol{\alpha}_{ij|ij}, \boldsymbol{P}_{ij|ij})\) and \(\boldsymbol{\alpha}_{i(j+1)}|\boldsymbol{\alpha}_{ij} \sim N_\psi(\boldsymbol{\alpha}_{ij}, \Sigma_\eta)\). After combining the two densities \(\boldsymbol{m}_{ij} = E_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)}) = \boldsymbol{\alpha}_{ij|ij} + \boldsymbol{L}_{ij} (\boldsymbol{\alpha}_{i(j+1)} - \boldsymbol{\alpha}_{i(j+1)|ij})\) and \(\boldsymbol{R}_{ij} = \text{Var}_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)})= \boldsymbol{P}_{ij|ij} - \boldsymbol{L}_{ij}^2 \boldsymbol{P}_{i(j+1)|ij}\) {[}@shumway\_stoffer\_2017{]}. Because of normality, the posterior distribution for \(\boldsymbol{\alpha}_{ij}\) is \(N(\boldsymbol{m}_{ij}, \boldsymbol{R}_{ij})\).
 
-For the backward sampling procedure we start by sampling a \(\boldsymbol{\alpha}_{iJ^*}\) from a \(N_\psi(m_{iJ}, \boldsymbol{R}_{iJ})\), then setting \(\boldsymbol{\alpha}_{iJ^*} = \boldsymbol{\alpha}_{iJ}\) for the calculation of \(\boldsymbol{m}_{i(J-1)}\) to then sample \(\boldsymbol{\alpha}_{i(J-1)}^*\) from a \(N_\psi(\boldsymbol{m}_{i(J-1)}, \boldsymbol{R}_{i(J-1)})\). This process continues until a whole chain \(\boldsymbol{\alpha}_{i(0:J)}^*\) has been sampled.
+For the backward sampling procedure we start by sampling \(\boldsymbol{\alpha}_{iJ^*}\) from a \(N_\psi(m_{iJ}, \boldsymbol{R}_{iJ})\), then setting \(\boldsymbol{\alpha}_{iJ^*} = \boldsymbol{\alpha}_{iJ}\) for the calculation of \(\boldsymbol{m}_{i(J-1)}\) to then sample \(\boldsymbol{\alpha}_{i(J-1)}^*\) from a \(N_\psi(\boldsymbol{m}_{i(J-1)}, \boldsymbol{R}_{i(J-1)})\). This process continues until a whole chain \(\boldsymbol{\alpha}_{i(0:J)}^*\) has been sampled.
 
 Using Bayes rule, the \(\beta\) posterior can be written as follows,
 
@@ -368,7 +366,7 @@ P(\Sigma_\varepsilon|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & 
 \end{aligned}
 \end{equation*}
 
-The posterior for the diagonal matrix \(\Sigma_\eta\) can be calculated independently for each test as was previously shown {[}Paper1{]} using the inverse-gamma for each test.
+The posterior for an assumed diagonal matrix \(\Sigma_\varepsilon\) can be calculated independently for each test as was previously shown {[}Paper1{]} using the inverse-gamma for each test.
 
 On the other hand, if \(\Sigma_\eta\) is non-diagonal as was shown in Model O and OS,
 
@@ -382,7 +380,7 @@ P(\Sigma_\eta|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}) & = P(Y, 
 \end{aligned}
 \end{equation*}
 
-The posterior for the diagonal matrix \(\Sigma_\varepsilon\) can again be calculated independently for each test as was previously shown {[}Paper1{]}.
+Once again, the posterior for an assumed diagonal matrix \(\Sigma_\eta\) can be calculated independently for each test as was previously shown {[}Paper1{]}.
 
 The covariance matrix \(\Sigma_\varepsilon\) and \(\Sigma_\eta\), both offer meaningful insight into underlying constructs of cognition. Additionally, these models allow for comparison of linear effects across different tests.
 

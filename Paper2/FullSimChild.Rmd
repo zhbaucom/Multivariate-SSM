@@ -165,7 +165,7 @@ collapse_rows(1:2, row_group_label_position = 'stack')
 
 ```
 
-
+\raggedright
 
 
 

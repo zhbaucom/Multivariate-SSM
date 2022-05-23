@@ -85,7 +85,7 @@ y_{ij3}
 \end{equation}
 
 
-for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $\boldsymbol{\beta}$ were chosen to have no, small, medium, large, and negative effects. For the three different data generation scenarios we utilize differing values of $\Sigma_\varepsilon$ and $\Sigma_\eta$.
+for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 10\}$. The parameters in $\boldsymbol{\beta}$ were chosen to have no, small, medium, large, and negative effects. For the three different data generation scenarios we utilize differing values of $\Sigma_\varepsilon$ and $\Sigma_\eta$.
 
 
 #### O Model
@@ -149,14 +149,14 @@ for $i \in \{1, 2, ..., 100\}$ and $j \in \{2, 3,..., 12\}$. The parameters in $
 
 The covariance matrices $\boldsymbol{\Sigma_\varepsilon}$ and $\boldsymbol{\Sigma_\eta}$ were chosen to approximate values observed when the MLLT models were fit to real data.
 
-For each scenario, the simulations are carried out 1000 times. The most effective model is one that is unbiased, maintains 95% coverage, and small parameter variance (indicated by small confidence interval length) for the parameters in $\boldsymbol{\beta}$, $\boldsymbol{\Sigma_\varepsilon}$, and $\boldsymbol{\Sigma_\eta}$. Maintaining proper 95% coverage indicates proper type I error at the level of 0.05. If we can fix type I error, the next step is to minimize type II error which then leads to greater power to detect significant differences. Minimizing type II error will occurs by minimizing the parameter variance if the estimates are unbiased and have proper 95% coverage. As we are using a Bayesian Gibb's sampling approach, the confidence interval is used to judge parameter variance. 
+For each scenario, the simulations are carried out 1000 times. The most effective model is one that is unbiased, maintains 95% coverage, and small parameter variance (indicated by small confidence interval length) for the parameters in $\boldsymbol{\beta}$, $\boldsymbol{\Sigma_\varepsilon}$, and $\boldsymbol{\Sigma_\eta}$. Maintaining proper 95% coverage indicates proper type I error at the level of 0.05. If we can fix type I error, the next step is to minimize type II error which then leads to greater power to detect significant differences. Minimizing type II error occurs by minimizing the parameter variance if the estimates are unbiased and have proper 95% coverage. As we are using a Bayesian Gibb's sampling approach, the confidence interval is used to judge parameter variance. 
 
 The Bayesian Gibb's sampler is repeated 5000 times with a burn-in of 2000 for each model. This means samples 2001-5000 are used for parameter inference.
 
 
 ## Fully Simulated Results
 
-The LLT, O, S, and OS models all show unbiasedness and near 95% coverage in the linear effect parameters in all three simulation scenarios. This occurs despite the LLT, O, and S models having a level of misspecification in the covariance parameters in the different scenarios. In the linear effects there is not a large difference in confidence interval length between the different methods. The O, S, and OS models maintain performace when compared to the LLT with respect to linear effects. However, the primary motivation of the MLLT models are to gain inference on correlation between cognitive tests.
+The LLT, O, S, and OS models all show unbiasedness and near 95% coverage in the linear effect parameters in all three simulation scenarios. This occurs despite the LLT, O, and S models having a level of misspecification in the covariance parameters in the different scenarios. The O, S, and OS models maintain performance when compared to the LLT with respect to variance of the linear effect estimates.  Even with the primary aim of the MLLT being the measurement of latent correlation, the linear effects are just as accurate.
 
 The parameters in $\Sigma_\varepsilon$ and $\Sigma_\eta$ vary much more across the data generation processes. When generating from the O model the O and OS estimation maintains unbiased estimates and 95% coverage. Unsurprisingly, the misspecified S estimation provides erroneous estimates and poor coverage for the covariance matrices. A similar pattern arises when generating from the S model. The correctly specified S and OS models show near unbiasedness and 95% coverage. The coverage does lack in some, most likely due to identifiability issues, but the estimates are still in a close neighborhood of the correct values. As the primary interest is identifying underlying constructs, and not hypothesis testing, these results are promising. 
 
