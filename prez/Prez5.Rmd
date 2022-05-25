@@ -1,0 +1,1020 @@
+---
+title: "State Space Models for Longitudinal Neuropsychological Outcomes"
+author: Zach Baucom
+output:
+  beamer_presentation:
+    theme: "AnnArbor"
+    colortheme: "dolphin"
+    fonttheme: "structurebold"
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{amsmath}
+- \newcommand\mysim{\mathrel{\stackrel{\makebox[0pt]{\mbox{\normalfont\tiny asym}}}{\sim}}}
+- \usepackage{algorithm,algorithmic}
+---
+
+# Recap of Project 1
+
+## The model 
+
+We wish to model the data according to a specific SSM, the Local Linear Trend Model (LLT),
+
+
+
+\begin{align*}
+y_{ij} &= \alpha_{ij} + x_{ij}^T\beta
++ \varepsilon_{ij}\\
+\alpha_{ij}&= \alpha_{i(j-1)} + \eta_{ij} 
+\end{align*}
+
+
+
+Where $\alpha_0 \sim N(a_0, P_0)$, $\varepsilon_{ij} \sim N(0, \sigma^2_\varepsilon)$, and $\eta_{ij} \sim N(0, \delta_{ij}\sigma^2_\eta)$.
+
+* $y_j$ is an $n \times 1$ observation vector where $n$ indicates the number of subjects.
+* $\alpha_j$ is an $n \times 1$ latent state vector.
+  * Variation in $\alpha_j$ over time creates a dynamic moving average auto-correlation between observations $y_j$.
+* $X_j$ is an $n \times p$ matrix of time varying covariates.
+* $\beta$ is the linear effect of the columns in $X_j$.
+
+## Results
+
+* The LLT models did a much better job at measuring linear effects than the commonly used linear mixed effect models.
+* Among the LLTs, the Bayesian Estimation Process yielded the best results in terms of accuracy and computation time.
+* Paper 1 is currently under review at the Annals of Applied Statistics.
+
+
+
+```{r, include = FALSE}
+#https://pubmed.ncbi.nlm.nih.gov/21606904/#&gid=article-figures&pid=figure-1-uid-0
+
+library(gridExtra)
+library(lme4)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(latex2exp)
+library(abind)
+library(nlme)
+### Set working directory to correct location
+# cdir <- stringr::str_split(getwd(), "/")[[1]]
+# udir <- cdir[1:which(cdir == "State-Space-Methods")]
+# knitr::opts_knit$set(root.dir = paste(udir, collapse = "/"))
+
+fct_case_when <- function(...) {
+  args <- as.list(match.call())
+  levels <- sapply(args[-1], function(f) f[[3]])  # extract RHS of formula
+  levels <- levels[!is.na(levels)]
+  factor(dplyr::case_when(...), levels=levels)
+}
+knitr::opts_chunk$set(echo = FALSE, dev = "pdf", message = FALSE, warning = FALSE)
+```
+
+# Project 2 Multivatiate Models
+
+## Aims of Project 2
+
+* Cognitive tests, offered by the NACC, are administered to measure different underlying constructs of cognition.
+  * e.g. memory, attention, executive, and language.
+* Understanding how the tests are related to different constructs is vital for interpreting effects of interest.
+* In order to create a model capable of accounting for inter-relatedness between tests, we propose a Multivariate Bayesian Local Linear Trend Model.
+
+## Aims
+
+* With the Multivariate Bayesian Local Linear Trend Model we wish to:
+  * Gain power by taking advantage of correlations between tests.
+  * Get insight into relatedness of underlying cognition levels from each test.
+  * Be able to compare linear effects across tests (i.e. does APOE have the same effect for test A and test B?)
+
+## The Model
+
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+\vdots\\
+y_{ijK}
+\end{bmatrix}
+&= \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta_1}\\
+\boldsymbol{x_{ij}\beta_2}\\
+\vdots\\
+\boldsymbol{x_{ij}\beta_K} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix} 
+\sim N(0, \Sigma_\varepsilon
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\vdots\\
+\alpha_{i(j-1)K}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix} \sim N(0, \delta_{ij}\Sigma_\eta)
+\end{aligned}
+\end{equation*}
+
+
+## Model 1: Correlation is in Measurement eq.
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon =
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & \sigma^{2(1,2)}_\varepsilon & \cdots & \sigma^{2(1, K)}_\varepsilon\\
+\sigma^{2(1,2)}_\varepsilon & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\varepsilon & & &\sigma^{2(K)}_\varepsilon
+\end{bmatrix},
+\ \ \ 
+\Sigma_\eta = 
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & 0 & \cdots & 0\\
+0 & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+0 & & &\sigma^{2(K)}_\eta
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+## Model 2: Correlation is in State eq.
+
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & 0 & \cdots & 0\\
+0 & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+0 & & &\sigma^{2(K)}_\varepsilon
+\end{bmatrix},
+\ \ \ 
+\Sigma_\eta =
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & \sigma^{2(1,2)} & \cdots & \sigma^{2(1, K)}_\eta\\
+\sigma^{2(1,2)}_\eta & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\eta & & &\sigma^{2(K)}_\eta
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+## Model 3: Correlation is in both Measurement & State eq.
+
+\begin{equation*}
+\begin{aligned}
+\Sigma_\varepsilon = 
+\begin{bmatrix}
+\sigma^{2(1)}_\varepsilon & \sigma^{2(1,2)}_\varepsilon & \cdots & \sigma^{2(1, K)}_\varepsilon\\
+\sigma^{2(1,2)}_\varepsilon & \sigma^{2(2)}_\varepsilon\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\varepsilon & & &\sigma^{2(K)}_\varepsilon
+\end{bmatrix},
+\Sigma_\eta =
+\begin{bmatrix}
+\sigma^{2(1)}_\eta & \sigma^{2(1,2)} & \cdots & \sigma^{2(1, K)}_\eta\\
+\sigma^{2(1,2)}_\eta & \sigma^{2(2)}_\eta\\
+\vdots & & \ddots\\
+\sigma^{2(1, K)}_\eta & & &\sigma^{2(K)}_\eta
+\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+
+## Kalman Filter
+
+For $j$ in $1, 2, ..., J$:
+\begin{enumerate}
+  \item {Predicted state:} $\boldsymbol{\alpha}_{ij|i(j-1)} = \boldsymbol{\alpha}_{i(j-1)|i(j-1)}$
+  \item {Predicted state variance:} $\boldsymbol{P_{ij|i(j-1)} = P_{i(j-1)|i(j-1)}} + \sigma^2_\eta$
+  \item {Kalman Gain:} $\boldsymbol{K_{ij}} = \boldsymbol{\boldsymbol{P}_{ij|i(j-1)}(\boldsymbol{P}_{ij|i(j-1)} + \sigma^2_\varepsilon})^{-1}$
+  \item {Updated state estimate:} $\boldsymbol{\alpha}_{ij|ij} = \boldsymbol{\alpha}_{ij|i(j-1)} + \boldsymbol{K_{ij}} (\boldsymbol{\tilde y_{ij}- \alpha_{ij|i(j-1)}})$
+  \item {Updated state covariance:} $\boldsymbol{P_{ij|ij}} = (1-\boldsymbol{K_{ij}})\boldsymbol{P_{ij|i(j-1)}}$
+\end{enumerate}
+
+
+
+
+
+## Kalman Smoother
+
+For $j^*$ in J, J-1, ..., 1:
+\begin{enumerate}
+  \item Smoothed predicted state:  $\boldsymbol{\alpha}_{iJ|i(j^*-1)} =\boldsymbol{\alpha}_{i(j^*-1)|i(j^*-1)} + \boldsymbol{L}_{i(j^*-1)} (\boldsymbol{\alpha}_{ij^*|iJ} - \boldsymbol{\alpha}_{ij^*|i(j^*-1)})$
+  \item Smoothed predicted state variance:  $\boldsymbol{P_{i(j^*-1)|iJ}} = \boldsymbol{P_{i(j^*-1)|i(j^*-1)}} - \boldsymbol{L_{i(j^*-1)}^2 (P_{ij^*|iJ} -P_{ij^*|i(j^*-1)}})$
+\end{enumerate}
+Where $\boldsymbol{L_{i(j^*-1)} = P_{{i(j^*-1)}|{i(j^*-1)}}  P^{-1}_{ij^*|i(j^*-1)}}$.
+
+## Backward Sampler
+
+Let $\psi = \{\Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta}\}$,
+
+
+
+\begin{equation*}
+\begin{aligned}
+P_\psi(\boldsymbol{\alpha}_{i(0:J)}|\boldsymbol{y}_{i(1:J)}) &=  P_\psi(\boldsymbol{\alpha}_{iJ}|\boldsymbol{y}_{i(1:J)})P_\psi(\boldsymbol{\alpha}_{i(J-1)}|\boldsymbol{\alpha}_{i(J)}, \boldsymbol{y}_{1:(J-1)}) ...  P_\psi(\boldsymbol{\alpha}_{i0}|\boldsymbol{\alpha}_{i1})
+\end{aligned}
+\end{equation*}
+
+
+Therefore we need the following densities for $j$ in $1, 2, ..., J-1$ and $i$ in $1, 2, ..., N$:
+
+
+\begin{equation*}
+\begin{aligned}
+P_\psi(\boldsymbol{\alpha}_{ij}|\boldsymbol{\alpha}_{i(j+1)}, \boldsymbol{y}_{i(1:j)}) \propto P_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{y}_{i(1:j)})P_\psi(\boldsymbol{\alpha}_{i(j+1)}| \boldsymbol{\alpha}_{ij})
+\end{aligned}
+\end{equation*}
+
+
+## Backward Sampler
+
+* From the Kalman Filter we calculate $\boldsymbol{\alpha}_{ij}|\boldsymbol{y}_{i(1:j)} \sim N_\psi(\boldsymbol{\alpha}_{ij|ij}, \boldsymbol{P}_{ij|ij})$ and $\boldsymbol{\alpha}_{i(j+1)}|\boldsymbol{\alpha}_{ij} \sim N_\psi(\boldsymbol{\alpha}_{ij}, \Sigma_\eta)$. 
+* After combining the two densities $\boldsymbol{m}_{ij} = E_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)}) = \boldsymbol{\alpha}_{ij|ij} + \boldsymbol{L}_{ij} (\boldsymbol{\alpha}_{i(j+1)} - \boldsymbol{\alpha}_{i(j+1)|ij})$ and $\boldsymbol{R}_{ij} = \text{Var}_\psi(\boldsymbol{\alpha}_{ij}| \boldsymbol{\alpha}_{i(j+1)},\boldsymbol{y}_{i(1:j)})= \boldsymbol{P}_{ij|ij} - \boldsymbol{L}_{ij}^2 \boldsymbol{P}_{i(j+1)|ij}$. 
+* Because of normality, the posterior distribution for $\boldsymbol{\alpha}_{ij}$ is $N(\boldsymbol{m}_{ij}, \boldsymbol{R}_{ij})$.
+
+## $\beta$ Posterior
+
+\begin{equation*}
+\begin{aligned}
+P(Y, & \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta}) = P(\boldsymbol{y}_1, ..., \boldsymbol{y}_J, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., \boldsymbol{\alpha}_J, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \Sigma_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon, \boldsymbol{\beta})\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= & P(\boldsymbol{y}_J|\boldsymbol{\alpha}_J, \Sigma_\varepsilon \boldsymbol{\beta})P(\boldsymbol{\alpha}_{T-1}|{\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta)\\
+& \times P(\boldsymbol{y}_1, ..., \boldsymbol{y}_{T-1}, \boldsymbol{\alpha}_1, ..., {\boldsymbol{\alpha}_{T-1}}, \Sigma_\eta, \Sigma_\varepsilon | \boldsymbol{\beta})\\
+= &P(\Sigma_\varepsilon)P(\Sigma_\eta)\bigg(\prod^J_{k=0} P(\boldsymbol{\alpha}_k|\boldsymbol{\alpha}_{k-1},\Sigma_{\eta})\bigg) \prod^J_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \Sigma_\varepsilon, \boldsymbol{\beta})\\
+\propto & \prod^J_{j=1} P(\boldsymbol{y}_j|\boldsymbol{\alpha}_j, \Sigma_\varepsilon, \boldsymbol{\beta})
+\end{aligned}
+\end{equation*}
+
+## $\beta$ Posterior
+
+Due to independence from subject to subject we can write the -2 log likelihood as,
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP&(Y, \boldsymbol{\alpha}, \Sigma_\eta, \Sigma_\varepsilon|\boldsymbol{\beta})\\ & \propto  \sum^N_{i=1}\sum^T_{j=1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})' \Sigma_\varepsilon^{-1}(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{\beta})\\
+\text{where,}\\
+y_j = \begin{bmatrix}y_{ij1}\\y_{ij2}\\ \vdots \\ y_{ijK}\end{bmatrix}, \ \ \
+\alpha_j = \begin{bmatrix}\alpha_{ij1}\\\alpha_{ij2}\\ \vdots \\ \alpha_{ijK}\end{bmatrix}, \ \ \ &
+\boldsymbol{ \mathbb{X}}_{ij} = \begin{bmatrix}\boldsymbol{x}_{ij} & 0 & \dots & 0 \\ 0 & \boldsymbol{x}_{ij} \\ \vdots & & \ddots \\
+0 & & & \boldsymbol{x}_{ij}\end{bmatrix} \ \ \
+\beta = \begin{bmatrix}\boldsymbol{\beta}_1\\ \boldsymbol{\beta}_2 \\ \vdots \\ \boldsymbol{\beta}_K\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+## $\beta$ Posterior
+
+Next, we write the -2 log likelihood in terms of $\beta$,
+
+
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP&(Y, \boldsymbol{\alpha}, \sigma^2_\eta, \sigma^2_\varepsilon|\boldsymbol{\beta}) \\  &
+\propto  \boldsymbol{\beta}'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij})\boldsymbol{\beta} -2\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta} 
+\end{aligned}
+\end{equation*}
+
+Similarly, the prior can be written in a similar format,
+
+
+\begin{equation*}
+\begin{aligned}
+-2logP(\boldsymbol{\beta}) &\propto 
+(\boldsymbol{\beta} - \theta)'\Sigma_{\beta}^{-1}(\boldsymbol{\beta} - \theta) \\
+&\propto \boldsymbol{\beta}'\Sigma_{\beta}^{-1}\boldsymbol{\beta} - 2\theta\Sigma_{\beta}^{-1}\boldsymbol{\beta}
+\end{aligned}
+\end{equation*}
+
+## $\beta$ Posterior
+
+Combining the two we are able to get the proportionality of the posterior,
+
+
+\begin{equation*}
+\begin{aligned}
+&\beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij})\beta -2\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij}\beta + \beta'\Sigma_{\beta}^{-1}\beta - 2\theta\Sigma_{\beta}^{-1}\beta \\
+&= \beta'(\sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1})\beta -2(\sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}) \beta
+\end{aligned}
+\end{equation*}
+
+## $\beta$ Posterior
+
+Which, after completing the square, has the form
+
+
+\begin{equation*}
+\begin{aligned}
+(\boldsymbol{\beta} - \boldsymbol{\Sigma}^{-1} B)'
+\boldsymbol{\Sigma}
+(\boldsymbol{\beta} - \boldsymbol{\Sigma}^{-1}B)
+\end{aligned}
+\end{equation*}
+
+
+
+Where, $B = \sum^N_{i=1}\sum^T_{j=1}(y_{ij} - \alpha_{ij})'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \theta\Sigma_{\beta}^{-1}$ and $\boldsymbol{\Sigma} = \sum^N_{i=1}\sum^T_{j=1}\boldsymbol{ \mathbb{X}}_{ij}'\Sigma_\varepsilon^{-1}\boldsymbol{ \mathbb{X}}_{ij} + \Sigma_{\beta}^{-1}p$.
+
+Thus, the posterior for $\beta$ has the following distribution,
+
+
+\begin{equation*}
+\boldsymbol{\beta}| ... \sim N(\Sigma^{-1}B, \Sigma^{-1})
+\end{equation*}
+
+## $\Sigma_\varepsilon$ Posterior
+
+For the posterior of $\Sigma_\varepsilon$, if we assume the matrix is non-diagnol as in Model 1, then we give $\Sigma_\varepsilon$ an inverse-Wishart distribution.
+
+
+\begin{align*}
+&\Sigma_\varepsilon  \sim  \text{Inv-Wishart}_{\nu_\varepsilon}(\Lambda_\varepsilon)\\
+P(\Sigma_\varepsilon)  \propto & |\Sigma_\varepsilon|^{-(\nu_\varepsilon+p+1)/2}\text{exp}(-tr(\Lambda_\varepsilon\Sigma_\varepsilon^{-1}))
+\end{align*}
+
+
+\begin{align*}
+P&(Y, \boldsymbol{\alpha},   \Sigma_\eta,\boldsymbol{\beta}|\Sigma_\varepsilon) \propto \\ & |\Sigma_\varepsilon|^{-(NJ)/2}\text{exp}(-\sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})'\Sigma_\varepsilon^{-1}(\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})/2 
+\end{align*}
+
+
+## $\Sigma_\varepsilon$ Posterior
+
+\begin{align*}
+P&(\Sigma_\varepsilon|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta})  = P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\varepsilon)P(\Sigma_\varepsilon) \\ 
+&\propto |\Sigma_\varepsilon|^{-(NJ +\nu_\varepsilon+p+1)/2}\text{exp}(-tr(\Lambda_\varepsilon + \sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})^2)\Sigma_\varepsilon^{-1})\\
+\Sigma_\varepsilon| ... & \sim \text{Inv-Wishart}_{\nu_\varepsilon + NJ}(\Lambda_\varepsilon+\sum^N_{i = 1}\sum^J_{j= 1} (\boldsymbol{y}_{ij} - \boldsymbol{\alpha}_{ij} - \boldsymbol{ \mathbb{X}}_{ij}\boldsymbol{\beta})^2)
+\end{align*}
+
+The posterior for the diagnol matrix $\Sigma_\varepsilon$ can be calculated independently for each test as was previously shown [Paper1] using the inverse-gamma for each test.
+
+
+## $\Sigma_\eta$ Posterior
+
+Similarly, if $\Sigma_\eta$ is non-diagonal:
+
+
+\begin{align*}
+& \Sigma_\eta \sim \text{Inv-Wishart}_{\nu_\eta}(\Lambda_\eta)\\
+P(\Sigma_\eta) \propto & |\Sigma_\eta|^{-(\nu_\eta+p+1)/2}\text{exp}(-tr(\Lambda_\eta\Sigma_\eta^{-1}))
+\end{align*}
+
+
+\begin{align*}
+P&(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\eta) \propto \\ & |\Sigma_\eta|^{-(N(J-1))/2}\text{exp}(-\sum^N_{i = 1}\sum^{J}_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})'\Sigma_\eta^{-1}(\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})/2 \end{align*}
+
+## $\Sigma_\eta$ Posterior
+
+\begin{align*}
+P&(\Sigma_\eta|Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta})  = P(Y, \boldsymbol{\alpha}, \Sigma_\eta, \boldsymbol{\beta}|\Sigma_\eta)P(\Sigma_\eta) \\ 
+&\propto |\Sigma_\eta|^{-(N(J-1) +\nu_\eta+p+1)/2}\text{exp}(-tr(\Lambda_\eta + \sum^N_{i = 1}\sum^J_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})^2)\Sigma_\eta^{-1})\\
+\Sigma_\eta| ...  & \sim \text{Inv-Wishart}_{\nu_\eta + N(J-1)}(\Lambda_\eta+\sum^N_{i = 1}\sum^J_{j= 2} (\boldsymbol{\alpha}_{ij} - \boldsymbol{\alpha}_{i(j-1)})^2)
+\end{align*}
+
+## $\beta$ Standardization
+
+\begin{equation*}
+\begin{aligned}
+\boldsymbol{y}_{ij} &= \boldsymbol{\alpha}_{ij}^{(m)} + \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)} + \boldsymbol{\varepsilon}_{ij}\\
+\boldsymbol{y}_{ij}-\boldsymbol{\alpha}_{ij}^{(m)} &=   \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)} + \boldsymbol{\varepsilon}_{ij}\\
+(\boldsymbol{y}_{ij}-\boldsymbol{\alpha}_{ij}^{(m)})(\Sigma_{\varepsilon}^{(m)})^{-1/2} &=   \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1/2} + \boldsymbol{\varepsilon}_{ij}(\Sigma_{\varepsilon}^{(m)})^{-1/2}\\
+\boldsymbol{y}_{ij}^{(m)*} &= \boldsymbol{ \mathbb{X}}_{ij} \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1/2} + \boldsymbol{\varepsilon}_{ij}^*
+\end{aligned}
+\end{equation*}
+
+Now, var($\boldsymbol{\varepsilon}_{ij}^*$) = $I$. Each test is now independent and effect comparison can be made using $\boldsymbol{\beta}^{*(m)} = \boldsymbol{\beta}^{(m)}(\Sigma_{\varepsilon}^{(m)})^{-1/2}$.
+
+
+## Fully Simulated Data Analysis
+
+We simulated 100 subjects with between 2-13 observations from the following model:
+
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+y_{ij3}
+\end{bmatrix}
+&= \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\alpha_{ij3}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta_1}\\
+\boldsymbol{x_{ij}\beta_2}\\
+\boldsymbol{x_{ij}\beta_3} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\varepsilon_{ij3}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\varepsilon_{ij3}
+\end{bmatrix} 
+\sim N(0, 
+\begin{bmatrix}
+15 & 2.4 & 1\\
+2.4 & 15 & 1\\
+1 & 1 & 10
+\end{bmatrix}
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\alpha_{ij3}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\alpha_{i(j-1)3}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\eta_{ij3}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\eta_{ij3}
+\end{bmatrix} \sim N(0, \delta_{ij}
+\begin{bmatrix}
+5 & 3.7 & 0\\
+3.7 & 5 & 0\\
+0 & 0 & 2
+\end{bmatrix}
+)
+\end{aligned}
+\end{equation*}
+
+
+
+## Fully Simulated Effect Coverage
+
+```{r, fig.height=6}
+fse <- readRDS("JPrezTab/Fake_Effects.RDS") %>%
+  map2(names(.), ~cbind(.x, method = .y) %>% mutate(beta = c(4, 2, 1, -3, 0, 1, 0, 0, 0))) %>%
+  do.call("rbind", .) %>%
+  mutate(
+    Variable = case_when(
+      Beta %in% paste("B", c(1, 4, 7), sep = "") ~ "X1",
+      Beta %in% paste("B", c(1, 4, 7)+1, sep = "") ~ "X2",
+      Beta %in% paste("B", c(1, 4, 7)+2, sep = "") ~ "X3"
+    ), 
+    Test = case_when(
+      Beta %in% paste("B", 1:3, sep = "") ~ "Y1",
+      Beta %in% paste("B", (1:3) + 3, sep = "") ~ "Y2",
+      Beta %in% paste("B", (1:3) + 6, sep = "") ~ "Y3"
+    ),
+    BLCL = LCL - (AvgMean - avgBias),
+    BUCL = UCL - (AvgMean - avgBias),
+    Method = case_when(
+      method == "Dub" ~ "Meas &\nLat",
+      method == "St" ~ "Lat",
+      method == "Obs" ~ "Meas",
+      method == "Ind" ~ "Ind",
+    ) %>%
+      factor(levels = c("Ind", "Meas", "Lat", "Meas &\nLat")),
+    Coverage = round(Coverage, 3)
+  )
+
+fse %>%
+  select(Test, Variable, Beta = beta, Coverage, Method) %>%
+  spread(Method, Coverage) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+## Fully Simulated Linear Effect Bias
+
+```{r, fig.height=6}
+fse %>%
+  ggplot(aes(x = Method, y = avgBias, color = Method, shape = Method)) +
+  geom_hline(yintercept = 0) + 
+  geom_point(size = 5) +
+  geom_errorbar(aes(ymin = BLCL, ymax = BUCL)) +
+  facet_grid(Test ~ Variable) +
+  scale_color_manual(values = c("#405E92",   "#DF3116",     "#DFB916", "#409247"))  +
+  scale_shape_manual(values = c(15,10,  9, 8))  +
+  ylab("Avg Bias")  +
+  theme_bw()
+```
+
+
+
+## Fully Simulated Correlated Measurement Error
+
+```{r}
+EpsL <- readRDS("JPrezTab/Fake_Eps.RDS")
+
+sigeps <- c(15, 15, 10)
+SIGeps <- diag(sigeps)
+SIGeps[1,2] <- SIGeps[2, 1] <- 2.4
+SIGeps[1,3] <- SIGeps[3, 1] <- 1
+SIGeps[2,3] <- SIGeps[3, 2] <- 1
+
+EpsLdf <- EpsL %>%
+  map("avg") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = SIGeps[!lower.tri(SIGeps)]) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EpsLdf %>%
+  select(param, true, ind, meas = obs, lat = st, `meas & lat` = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+## Fully Simulated Correlated Measurement Error Coverage
+
+```{r}
+EpsLdfcov <- EpsL %>%
+  map("coverage") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EpsLdfcov %>%
+  select(param, ind,  meas = obs, lat = st, `meas & lat` = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+```{r, eval = FALSE}
+## Fully Simulated State Correlation Estimation
+EpsLdfcor <- EpsL %>%
+  map("avg") %>%
+  map(cov2cor) %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = cov2cor(SIGeps)[!lower.tri(SIGeps)]) %>%
+  round(3) %>%
+  data.frame
+
+EpsLdfcor$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EpsLdfcor %>%
+  select(param, true, ind,  meas = obs, lat = st, `meas & lat` = dub) %>%
+  filter(!(param %in% c("1,1", "2,2", "3,3"))) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+
+## Fully Simulated Correlated Latent Variables
+
+```{r}
+Sigma <- c(5, 3.714281, 0, 3.714281, 5, 0, 0, 0, 2) %>%
+  matrix(3, 3)
+
+EtaL <- readRDS("JPrezTab/Fake_Eta.RDS")
+
+
+
+EtaLdf <- EtaL %>%
+  map("avg") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = Sigma[!lower.tri(Sigma)]) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdf$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(Sigma)])
+
+EtaLdf %>%
+  select(param, true, ind,  meas = obs, lat = st, `meas & lat` = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+
+
+```{r, eval = FALSE}
+## Fully Simulated State Correlation Estimation
+EtaLdfcor <- EtaL %>%
+  map("avg") %>%
+  map(cov2cor) %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  cbind(true = cov2cor(Sigma)[!lower.tri(Sigma)]) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdfcor$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(Sigma)])
+
+EtaLdfcor %>%
+  select(param, true, ind,  meas = obs, lat = st, `meas & lat` = dub) %>%
+  filter(!(param %in% c("1,1", "2,2", "3,3"))) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+## Fully Simulated State Variance Coverage
+
+```{r}
+EtaLdfcov <- EtaL %>%
+  map("coverage") %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame
+
+EtaLdfcov$param = (param = outer(1:3, 1:3, FUN = "paste", sep = ",")[!lower.tri(SIGeps)])
+
+EtaLdfcov %>%
+  select(param, ind,  meas = obs, lat = st, `meas & lat` = dub) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+
+
+```
+
+
+
+
+## Full Simulated Standardized Effect Coverage
+
+```{r}
+seL <- readRDS("JPrezTab/Fake_Stan.RDS")
+
+seL %>%
+  map("coverage")%>%
+  map(~c(.x)) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame %>%
+  mutate(test = paste("Y", rep(1:3, 3), sep = ""), variable = paste("X", sort(rep(1:3, 3)), sep = "")) %>%
+  select(test, variable, meas = obs, lat = state, `meas & lat` = dub) %>%
+  arrange(test) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+
+## Real Data Simulation
+
+* For the DIGIB, DIGIF, TRAILSA, and TRAILSB test, we randomly added a linear effect of "1" onto each outcome for half the subjects.
+* We then estimate that effect in the model:
+
+
+\begin{equation*}
+\begin{aligned}
+\text{Outcome} \sim & (1 + \text{I\{Transitioned to MCI or Dementia\}} + \text{APOE} + \text{Sex} + \\ & \text{APOE*Sex} + \text{Race} + \text{Age} + \text{Education} + \text{Group}) * \text{Time}
+\end{aligned}
+\end{equation*}
+
+
+
+## Real Data Simulation Effect Estimate
+
+
+```{r, fig.height=6}
+rse <- readRDS("JPrezTab/Real_Effect.RDS") %>%
+  map2(names(.), ~cbind(.x, method = .y)) %>%
+  do.call("rbind", .) %>%
+  mutate(
+    BLCL = Bias - CIlength/2,
+    BUCL = Bias + CIlength/2, 
+    Coverage = round(Coverage, 3),
+    Method = case_when(
+      method == "Both" ~ "meas & lat",
+      method == "Independent" ~ "ind",
+      method == "Observation" ~ "meas",
+      method == "State" ~ "lat"
+    ) %>%
+      factor(levels = c("ind", "meas", "lat", "meas & lat"))
+  )
+
+rse %>%
+  select(Coverage, Method, Outcome) %>%
+  spread(Method, Coverage) %>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+## Real Data Simulation Effect Bias
+
+```{r, fig.height=6}
+rse %>%
+  ggplot(aes(x = Method, y = Bias, color = Method, shape = Method)) +
+  geom_hline(yintercept = 0) + 
+  geom_point(size = 5) +
+  geom_errorbar(aes(ymin = BLCL, ymax = BUCL)) +
+  facet_grid(Outcome ~ .) +
+  scale_color_manual(values = c("#405E92",   "#DF3116",     "#DFB916", "#409247"))  +
+  scale_shape_manual(values = c(15,10,  9, 8))  +
+  ylab("Avg Bias")  +
+  theme_bw()
+```
+
+
+
+```{r, eval = FALSE}
+## Real Data Simulation Observation Variance
+reps <- readRDS("JPrezTab/Real_Eps.RDS")
+repsDF <- reps %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame()
+
+allComb <- outer(colnames(reps[[1]]), colnames(reps[[1]]), paste, sep = ", ")
+repsDF$param <- allComb[!lower.tri(allComb)]
+
+repsDF %>%
+  select(param, ind = Independent, meas = Observation, lat = State, `meas & lat` = Both)%>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+## Real Data Simulation Correlated Measurement Error
+
+```{r}
+reps <- readRDS("JPrezTab/Real_Eps.RDS")
+allComb <- outer(colnames(reps[[1]]), colnames(reps[[1]]), paste, sep = ", ")
+
+repsDFcor <- reps %>%
+  map(cov2cor) %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame()
+
+repsDFcor$param <- allComb[!lower.tri(allComb)]
+
+repsDFcor %>%
+  select(param, ind = Independent, meas = Observation, lat = State, `meas & lat` = Both) %>%
+  filter(!(param %in% c("DIGIF, DIGIF", "DIGIB, DIGIB", "TRAILA, TRAILA", "TRAILB, TRAILB")))%>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+
+
+
+```{r, eval = FALSE}
+## Real Data Simulation Observation Variance
+reta <- readRDS("JPrezTab/Real_Eta.RDS")
+retaDF <- reps %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame()
+
+retaDF$param <- allComb[!lower.tri(allComb)]
+
+retaDF %>%
+  select(param, ind = Independent, meas = Observation, lat = State, `meas & lat` = Both)%>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+## Real Data Simulation Correlated Latent Process
+
+```{r}
+reta <- readRDS("JPrezTab/Real_Eta.RDS")
+retaDFcor <- reta %>%
+  map(cov2cor) %>%
+  map(~.x[!lower.tri(.x)]) %>%
+  do.call("cbind", .) %>%
+  round(3) %>%
+  data.frame()
+
+retaDFcor$param <- allComb[!lower.tri(allComb)]
+
+retaDFcor %>%
+  select(param, ind = Independent, meas = Observation, lat = State, `meas & lat` = Both) %>%
+  filter(!(param %in% c("DIGIF, DIGIF", "DIGIB, DIGIB", "TRAILA, TRAILA", "TRAILB, TRAILB")))%>%
+  kbl(row.names = FALSE,  longtable = TRUE)
+```
+
+# Project 3 Overview
+
+## Project 3 Aims
+
+* We wish to better measure the underlying relatedness between cognition tests and how they load to certain domains.
+* We propose the use of an LLT factor analysis.
+
+## Project 3
+
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+\vdots\\
+y_{ijK}
+\end{bmatrix}
+&= G \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijq}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta^{(1)}}\\
+\boldsymbol{x_{ij}\beta^{(2)}}\\
+\vdots\\
+\boldsymbol{x_{ij}\beta^{(K)}} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix} 
+\sim N(0, \sigma^2_\varepsilon I
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijq}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\vdots\\
+\alpha_{i(j-1)q}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijq}
+\end{bmatrix}, \ \ \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijq}
+\end{bmatrix} \sim N(0, \delta_{ij}\sigma^2_\eta I)
+\end{aligned}
+\end{equation*}
+
+
+Where $G \in R^{K\times q}$ is a factor loading matrix. We will again model this in the Bayesian context and give each entry of G a normal prior ($G_{s,t} \sim N(0, \sigma^2_G)$).
+
+
+## Project 3
+
+\begin{equation*}
+\begin{aligned}
+\begin{bmatrix}
+y_{ij1}\\
+y_{ij2}\\
+\vdots\\
+y_{ijK}
+\end{bmatrix}
+&= G \begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix}
++ 
+\begin{bmatrix}
+\boldsymbol{x_{ij}\beta^{(1)}}\\
+\boldsymbol{x_{ij}\beta^{(2)}}\\
+\vdots\\
+\boldsymbol{x_{ij}\beta^{(K)}} 
+\end{bmatrix} +
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix}, \ \ \ 
+\begin{bmatrix}
+\varepsilon_{ij1}\\
+\varepsilon_{ij2}\\
+\vdots\\
+\varepsilon_{ijK}
+\end{bmatrix} 
+\sim N(0, \sigma^2_\varepsilon I
+)\\
+\begin{bmatrix}
+\alpha_{ij1}\\
+\alpha_{ij2}\\
+\vdots\\
+\alpha_{ijK}
+\end{bmatrix} & = 
+\begin{bmatrix}
+\alpha_{i(j-1)1}\\
+\alpha_{i(j-1)2}\\
+\vdots\\
+\alpha_{i(j-1)K}
+\end{bmatrix} +
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix}, \
+\begin{bmatrix}
+\eta_{ij1}\\
+\eta_{ij2}\\
+\vdots\\
+\eta_{ijK}
+\end{bmatrix} \sim \tau N(0, \delta_{ij}\sigma^2_\eta I) + (1-\tau) N(0, w)
+\end{aligned}
+\end{equation*}
+
+Where $G$ is now a $K\times K$ matrix and each chain of $\alpha$ has a spike and slab distribution. The vector $\tau$ is of length $K$ and controls which chains of $\alpha$ will be set to 0. Using this spike and slab we are able to see how the underlying cognition levels naturally cluster together.
+
+
+
+## Timeline
+
+* Project 1 is finished.
+* Start coding project 3 immediately while finishing a write up for project 2 by the end of March.
+* Finish project 3 in June/July.
+* Defend September.
+
+
+## Thank you!
+
+* Recommendations?
+* Questions?
+ 
