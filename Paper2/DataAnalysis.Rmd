@@ -185,9 +185,9 @@ h
 
 
 ```{r}
-fdo_demen <- readRDS("Paper2/paperData/FullDataOutput_demen.RDS")
+fdo_demen <- readRDS("Paper2/paperData/FullDataOutput_ntatb_demen.RDS")
 
-fdo_non_demen <- readRDS("Paper2/paperData/FullDataOutput_non_demen.RDS")
+fdo_non_demen <- readRDS("Paper2/paperData/FullDataOutput_ntatb__non_demen.RDS")
 
 demen_eta_cor <- map(2000:5000, function(i)cov2cor(fdo_demen$Eta.Track[,,i] )) %>%
   abind::abind(along = 3)

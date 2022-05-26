@@ -152,7 +152,7 @@ for( i in colnames(EtaLdfcov)){
 }
 
 
-EtaLdf$st[c(2, 4, 5)] <- EtaLdf$ind[c(2, 4, 5)] <- '-'
+EtaLdf$obs[c(2, 4, 5)] <- EtaLdf$ind[c(2, 4, 5)] <- '-'
 
 rbind(mutate(EpsLdf, Error = "Observation Error"), mutate(EtaLdf, Error = "State Process")) %>%
   mutate_all(.funs = list(function(x)gsub("100%", "-", x))) %>%
